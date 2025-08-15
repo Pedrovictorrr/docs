@@ -1,0 +1,1278 @@
+---
+title: 'Endpoints de Emissão'
+description: 'Rotas da API para emissão de documentos fiscais eletrônicos'
+---
+
+# Endpoints de Emissão - Manager SaaS API
+
+A API do Manager SaaS permite comunicação direta através de requisições HTTPS para emissão de todos os tipos de documentos fiscais eletrônicos.
+
+## Autenticação
+
+### **Certificado Digital**
+
+Para realizar a assinatura das notas e documentos, é **obrigatório** cadastrar o certificado digital modelo A1 no Manager SaaS.
+
+<Note>
+🔐 **Importante**: O certificado digital é essencial para a validade jurídica dos documentos emitidos.
+</Note>
+
+### **Dados de Autenticação**
+
+Os dados de autenticação para consumir a API são os mesmos cadastrados na sua Conta do Manager SaaS:
+
+- **Token de Acesso**: Gerado no dashboard do Manager SaaS
+- **Empresa ID**: Identificador único da sua empresa
+- **Ambiente**: Produção ou Homologação
+
+## Base URL
+
+```
+https://api.managersaas.com/v1
+```
+
+## Headers Obrigatórios
+
+```http
+Authorization: Bearer SEU_TOKEN_AQUI
+Content-Type: application/json
+User-Agent: SeuApp/1.0
+```
+
+## Endpoints de CT-e OS
+
+### **Emissão de CT-e OS**
+
+```http
+POST /cte/os/emitir
+```
+
+**Descrição**: Emite um Conhecimento de Transporte Eletrônico - Outros Serviços.
+
+**Corpo da Requisição**:
+```json
+{
+  "tipo_documento": "CTE_OS",
+  "emissor": {
+    "cnpj": "12345678000199",
+    "inscricao_estadual": "123456789",
+    "razao_social": "TRANSPORTADORA EXEMPLO LTDA",
+    "endereco": {
+      "logradouro": "Rua das Flores, 123",
+      "bairro": "Centro",
+      "municipio": "São Paulo",
+      "uf": "SP",
+      "cep": "01234-567"
+    }
+  },
+  "tomador": {
+    "cnpj": "98765432000188",
+    "razao_social": "CLIENTE EXEMPLO LTDA",
+    "endereco": {
+      "logradouro": "Av. Paulista, 1000",
+      "bairro": "Bela Vista",
+      "municipio": "São Paulo",
+      "uf": "SP",
+      "cep": "01310-100"
+    }
+  },
+  "servico": {
+    "descricao": "Transporte de carga geral",
+    "valor_frete": 150.00,
+    "valor_seguro": 25.00,
+    "valor_despesas": 15.00,
+    "valor_total": 190.00
+  },
+  "transporte": {
+    "tipo_veiculo": "TRUCK",
+    "placa": "ABC1234",
+    "motorista": {
+      "nome": "João Silva",
+      "cpf": "12345678901",
+      "cnh": "12345678901"
+    }
+  }
+}
+```
+
+**Resposta de Sucesso** (200):
+```json
+{
+  "status": "success",
+  "message": "CT-e OS emitido com sucesso",
+  "data": {
+    "numero": "123456",
+    "chave_acesso": "35231234567890123456789012345678901234567890",
+    "protocolo": "123456789012345",
+    "data_emissao": "2024-01-15T10:30:00Z",
+    "status": "AUTORIZADO",
+    "xml_url": "https://api.managersaas.com/v1/cte/os/123456/xml",
+    "pdf_url": "https://api.managersaas.com/v1/cte/os/123456/pdf"
+  }
+}
+```
+
+**Resposta de Erro** (400):
+```json
+{
+  "status": "error",
+  "message": "Dados inválidos",
+  "errors": [
+    {
+      "field": "emissor.cnpj",
+      "message": "CNPJ inválido"
+    },
+    {
+      "field": "servico.valor_frete",
+      "message": "Valor do frete deve ser maior que zero"
+    }
+  ]
+}
+```
+
+### **Consulta de Status**
+
+```http
+GET /cte/os/{numero}/status
+```
+
+**Descrição**: Consulta o status atual de um CT-e OS específico.
+
+**Parâmetros de URL**:
+- `numero`: Número do CT-e OS
+
+**Resposta** (200):
+```json
+{
+  "status": "success",
+  "data": {
+    "numero": "123456",
+    "status": "AUTORIZADO",
+    "data_emissao": "2024-01-15T10:30:00Z",
+    "data_autorizacao": "2024-01-15T10:31:15Z",
+    "protocolo": "123456789012345",
+    "chave_acesso": "35231234567890123456789012345678901234567890"
+  }
+}
+```
+
+### **Consulta Avançada de CT-e OS**
+
+```http
+GET /cteos/consulta
+```
+
+**Descrição**: Consulta avançada para buscar CT-e OS com filtros personalizados e campos específicos.
+
+**Headers Obrigatórios**:
+```http
+Authorization: Basic YWRtaW46MTIzbXVkYXI=
+Content-Type: application/json
+```
+
+**Parâmetros de Query**:
+
+| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |
+|-----------|------|-------------|-----------|---------|
+| `Grupo` | string | ✅ | Nome do grupo | `Grupo=GRUPO_EMPRESA` |
+| `CNPJ` | string | ✅ | CNPJ do grupo (apenas números) | `CNPJ=12345678000199` |
+| `Filtro` | string | ❌ | Filtro da consulta | `Filtro=situacao=AUTORIZADA` |
+| `Campos` | string | ✅ | Campos a retornar (separados por vírgula) | `Campos=chave,situacao,numero` |
+| `Limite` | number | ❌ | Limite de registros (máx: 100) | `Limite=50` |
+| `Ordem` | string | ❌ | Ordenação dos resultados | `Ordem=dtemissao DESC` |
+| `Visao` | string | ❌ | Tabela de consulta | `Visao=TspdCTeOSVWConsulta` |
+
+**Exemplo de Requisição**:
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=situacao=AUTORIZADA&Campos=chave,situacao,numero,dtemissao&Limite=50" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -H "Content-Type: application/json"
+```
+
+**Resposta de Sucesso**:
+```
+41150408187168000160576660000006671000000012, AUTORIZADA, 667, 15/01/2024 10:30:00
+41150408187168000160576660000006672000000012, AUTORIZADA, 668, 15/01/2024 11:15:00
+```
+
+**Resposta de Erro**:
+```
+Nenhum registro encontrado.
+```
+
+**Campos Disponíveis para Consulta**:
+
+| Campo | Descrição | Tipo |
+|-------|-----------|------|
+| `idintegracao` | Número do idintegração | number |
+| `situacao` | Situação do CT-e OS | string |
+| `numero` | Número do CT-e OS | number |
+| `codct` | Código numérico da Chave de Acesso | string |
+| `nprotenvio` | Protocolo de envio (15 dígitos) | string |
+| `nprotcanc` | Protocolo de cancelamento (15 dígitos) | string |
+| `nprotinutil` | Protocolo de inutilização (15 dígitos) | string |
+| `modoentrada` | Modo de entrada (Normal,EPEC,FSDA,SVSRS,SVCSP) | string |
+| `dtemissao` | Data de emissão | datetime |
+| `email` | E-mail do Tomador | string |
+| `handle` | Handle único do registro | string |
+| `chave` | Chave do CT-e OS (44 dígitos) | string |
+| `dtautorizacao` | Data de autorização | datetime |
+| `dtcancelamento` | Data de cancelamento | datetime |
+| `cnpj` | CNPJ do Emitente | string |
+| `idgrupo` | ID do grupo | number |
+| `serie` | Série do CT-e OS | string |
+| `nomegrupo` | Nome do Grupo configurado | string |
+| `docdestinatario` | CNPJ do Destinatário | string |
+| `eventos` | Quantidade de eventos recebidos | number |
+| `origem` | Origem dos registros (1-4) | number |
+| `tomador` | Papel do tomador (0-3) | number |
+| `nomedestinatario` | Nome do Destinatário | string |
+| `xmlcteosautorizado` | XML autorizado do CT-e OS | text |
+| `doctomador` | CNPJ do Tomador | string |
+| `docremetente` | CNPJ do Remetente | string |
+| `docexpedidor` | CNPJ do Expedidor | string |
+| `docrecebedor` | CNPJ do Recebedor | string |
+| `dtcadastro` | Data de cadastro no sistema | datetime |
+| `ambiente` | Ambiente (1-Produção, 2-Homologação) | number |
+| `impressora` | Nome da impressora padrão | string |
+| `motivo` | Mensagem de autorização/rejeição | string |
+| `cstat` | Código de status da SEFAZ | number |
+| `sincronizadopm` | Sincronização com PrintManager (0-1) | number |
+| `impresso` | Status de impressão (Sim/Não) | string |
+| `emailtomador` | E-mail do Tomador | string |
+| `envemail` | Status do envio de e-mail (Sim/Não) | string |
+
+**Exemplos de Filtros**:
+
+#### **Consulta por Situação**
+```
+Filtro=situacao=AUTORIZADA
+```
+
+#### **Consulta por Data**
+```
+Filtro=dtautorizacao>=01/01/2024
+```
+
+#### **Consulta por CNPJ**
+```
+Filtro=cnpj=12345678000199
+```
+
+#### **Consulta Múltipla**
+```
+Filtro=situacao=AUTORIZADA and dtemissao>=01/01/2024
+```
+
+#### **Consulta por Chave**
+```
+Filtro=chave=41150408187168000160576660000006671000000012
+```
+
+**Exemplos de Ordenação**:
+
+#### **Por Data de Emissão (Decrescente)**
+```
+Ordem=dtemissao DESC
+```
+
+#### **Por Número (Crescente)**
+```
+Ordem=numero ASC
+```
+
+#### **Por Situação e Data**
+```
+Ordem=situacao ASC, dtemissao DESC
+```
+
+**Exemplos de Consultas Completas**:
+
+#### **1. CT-e OS Autorizados do Mês**
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=situacao=AUTORIZADA and dtemissao>=01/01/2024&Campos=chave,situacao,numero,dtemissao,valor_total&Ordem=dtemissao DESC&Limite=100"
+```
+
+#### **2. CT-e OS por CNPJ do Tomador**
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=doctomador=98765432000188&Campos=chave,situacao,numero,dtemissao,doctomador&Ordem=dtemissao DESC&Limite=50"
+```
+
+#### **3. CT-e OS Cancelados**
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=situacao=CANCELADA&Campos=chave,situacao,numero,dtcancelamento,motivo&Ordem=dtcancelamento DESC&Limite=100"
+```
+
+#### **4. CT-e OS por Série**
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=serie=324&Campos=chave,situacao,numero,serie,dtemissao&Ordem=numero ASC&Limite=100"
+```
+
+**Tratamento de Erros**:
+
+#### **Erro de Autenticação (401)**
+```
+Unauthorized: Credenciais inválidas
+```
+
+#### **Erro de Parâmetros (400)**
+```
+Bad Request: Parâmetros obrigatórios não informados
+```
+
+#### **Erro de Limite (400)**
+```
+Bad Request: Limite máximo excedido (máximo: 100)
+```
+
+#### **Erro de Filtro (400)**
+```
+Bad Request: Filtro inválido
+```
+
+**Implementação em Diferentes Linguagens**:
+
+#### **JavaScript/Node.js**
+```javascript
+const consultarCTeOS = async (params) => {
+  const queryString = new URLSearchParams(params).toString();
+  const url = `https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?${queryString}`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI=',
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.text();
+    
+    if (data === 'Nenhum registro encontrado.') {
+      return { registros: [], total: 0 };
+    }
+    
+    // Parse da resposta em formato CSV
+    const registros = data.split('\n')
+      .filter(linha => linha.trim())
+      .map(linha => {
+        const campos = linha.split(', ');
+        return {
+          chave: campos[0],
+          situacao: campos[1],
+          numero: campos[2],
+          dtemissao: campos[3]
+        };
+      });
+    
+    return { registros, total: registros.length };
+    
+  } catch (error) {
+    console.error('Erro na consulta:', error);
+    throw error;
+  }
+};
+
+// Uso
+const resultado = await consultarCTeOS({
+  Grupo: 'GRUPO_EMPRESA',
+  CNPJ: '12345678000199',
+  Filtro: 'situacao=AUTORIZADA',
+  Campos: 'chave,situacao,numero,dtemissao',
+  Limite: 50,
+  Ordem: 'dtemissao DESC'
+});
+```
+
+#### **Python**
+```python
+import requests
+from urllib.parse import urlencode
+
+def consultar_cte_os(params):
+    base_url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta"
+    
+    headers = {
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI=',
+        'Content-Type': 'application/json'
+    }
+    
+    try:
+        response = requests.get(f"{base_url}?{urlencode(params)}", headers=headers)
+        response.raise_for_status()
+        
+        data = response.text
+        
+        if data == 'Nenhum registro encontrado.':
+            return {'registros': [], 'total': 0}
+        
+        # Parse da resposta
+        registros = []
+        for linha in data.strip().split('\n'):
+            if linha.strip():
+                campos = linha.split(', ')
+                registros.append({
+                    'chave': campos[0],
+                    'situacao': campos[1],
+                    'numero': campos[2],
+                    'dtemissao': campos[3]
+                })
+        
+        return {'registros': registros, 'total': len(registros)}
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Erro na consulta: {e}")
+        raise
+
+# Uso
+resultado = consultar_cte_os({
+    'Grupo': 'GRUPO_EMPRESA',
+    'CNPJ': '12345678000199',
+    'Filtro': 'situacao=AUTORIZADA',
+    'Campos': 'chave,situacao,numero,dtemissao',
+    'Limite': 50,
+    'Ordem': 'dtemissao DESC'
+})
+```
+
+#### **PHP**
+```php
+function consultarCTeOS($params) {
+    $baseUrl = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta";
+    $queryString = http_build_query($params);
+    $url = $baseUrl . '?' . $queryString;
+    
+    $headers = [
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI=',
+        'Content-Type: application/json'
+    ];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("Erro HTTP: " . $httpCode);
+    }
+    
+    if ($response === 'Nenhum registro encontrado.') {
+        return ['registros' => [], 'total' => 0];
+    }
+    
+    // Parse da resposta
+    $linhas = explode("\n", trim($response));
+    $registros = [];
+    
+    foreach ($linhas as $linha) {
+        if (trim($linha)) {
+            $campos = explode(', ', $linha);
+            $registros[] = [
+                'chave' => $campos[0],
+                'situacao' => $campos[1],
+                'numero' => $campos[2],
+                'dtemissao' => $campos[3]
+            ];
+        }
+    }
+    
+    return ['registros' => $registros, 'total' => count($registros)];
+}
+
+// Uso
+try {
+    $resultado = consultarCTeOS([
+        'Grupo' => 'GRUPO_EMPRESA',
+        'CNPJ' => '12345678000199',
+        'Filtro' => 'situacao=AUTORIZADA',
+        'Campos' => 'chave,situacao,numero,dtemissao',
+        'Limite' => 50,
+        'Ordem' => 'dtemissao DESC'
+    ]);
+    
+    print_r($resultado);
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
+}
+```
+
+### **Cancelamento**
+
+```http
+POST /cte/os/{numero}/cancelar
+```
+
+**Descrição**: Cancela um CT-e OS autorizado.
+
+**Parâmetros de URL**:
+- `numero`: Número do CT-e OS
+
+**Corpo da Requisição**:
+```json
+{
+  "justificativa": "Erro na digitação dos dados"
+}
+```
+
+**Resposta** (200):
+```json
+{
+  "status": "success",
+  "message": "CT-e OS cancelado com sucesso",
+  "data": {
+    "numero": "123456",
+    "protocolo_cancelamento": "987654321098765",
+    "data_cancelamento": "2024-01-15T11:00:00Z"
+  }
+}
+```
+
+### **Download de Arquivos**
+
+#### **XML**
+```http
+GET /cte/os/{numero}/xml
+```
+
+#### **PDF**
+```http
+GET /cte/os/{numero}/pdf
+```
+
+**Descrição**: Download dos arquivos XML e PDF do CT-e OS.
+
+**Parâmetros de URL**:
+- `numero`: Número do CT-e OS
+
+**Resposta**: Arquivo binário (XML ou PDF)
+
+### **Conversão TX2 para XML**
+
+```http
+POST /cteos/exportaxml
+```
+
+**Descrição**: Converte arquivo TX2 para XML com ou sem assinatura digital.
+
+**Headers Obrigatórios**:
+```http
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic YWRtaW46MTIzbXVkYXI=
+```
+
+### **Descarte de CT-e OS**
+
+```http
+POST /cteos/descarta
+```
+
+**Descrição**: Descarta um CT-e OS rejeitado ou registrado para permitir reutilização da numeração.
+
+**Headers Obrigatórios**:
+```http
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic YWRtaW46MTIzbXVkYXI=
+```
+
+**Parâmetros do Body**:
+
+| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |
+|-----------|------|-------------|-----------|---------|
+| `Grupo` | string | ✅ | Nome do grupo configurado no SaaS | `GRUPO_EMPRESA` |
+| `CNPJ` | string | ✅ | CNPJ do grupo (apenas números) | `12345678000199` |
+| `ChaveNota` | string | ✅ | Chave do CT-e OS (44 dígitos) | `41150408187168000160576660000006671000000012` |
+| `NumeroLote` | string | ✅ | Número do lote do CT-e OS | `LOTE001` |
+
+**Exemplo de Requisição**:
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/descarta" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&ChaveNota=41150408187168000160576660000006671000000012&NumeroLote=LOTE001"
+```
+
+**Resposta de Sucesso**:
+```
+OK, Operação realizada com sucesso
+```
+
+**Resposta de Erro**:
+```
+EXCEPTION,EspdCheckParamsException,Somente CTe-OS REJEITADA\delimiter INUTILIZADA\delimiter REGISTRADA ou IMPORTADA(Não autorizada) pode ser descartada.
+```
+
+**Implementação em Diferentes Linguagens**:
+
+#### **JavaScript/Node.js**
+```javascript
+const descartarCTeOS = async (params) => {
+  const formData = new URLSearchParams();
+  formData.append('Grupo', params.grupo);
+  formData.append('CNPJ', params.cnpj);
+  formData.append('ChaveNota', params.chaveNota);
+  formData.append('NumeroLote', params.numeroLote);
+  
+  try {
+    const response = await fetch('https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/descarta', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const resultado = await response.text();
+    
+    if (resultado.includes('OK, Operação realizada com sucesso')) {
+      return { success: true, message: resultado };
+    } else {
+      return { success: false, error: resultado };
+    }
+    
+  } catch (error) {
+    console.error('Erro no descarte:', error);
+    throw error;
+  }
+};
+
+// Uso
+const resultado = await descartarCTeOS({
+  grupo: 'GRUPO_EMPRESA',
+  cnpj: '12345678000199',
+  chaveNota: '41150408187168000160576660000006671000000012',
+  numeroLote: 'LOTE001'
+});
+```
+
+#### **Python**
+```python
+import requests
+
+def descartar_cte_os(params):
+    url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/descarta"
+    
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+    }
+    
+    data = {
+        'Grupo': params['grupo'],
+        'CNPJ': params['cnpj'],
+        'ChaveNota': params['chave_nota'],
+        'NumeroLote': params['numero_lote']
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()
+        
+        resultado = response.text
+        
+        if 'OK, Operação realizada com sucesso' in resultado:
+            return {'success': True, 'message': resultado}
+        else:
+            return {'success': False, 'error': resultado}
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Erro no descarte: {e}")
+        raise
+
+# Uso
+resultado = descartar_cte_os({
+    'grupo': 'GRUPO_EMPRESA',
+    'cnpj': '12345678000199',
+    'chave_nota': '41150408187168000160576660000006671000000012',
+    'numero_lote': 'LOTE001'
+})
+```
+
+#### **PHP**
+```php
+function descartarCTeOS($params) {
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/descarta";
+    
+    $headers = [
+        'Content-Type: application/x-www-form-urlencoded',
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI='
+    ];
+    
+    $postData = http_build_query([
+        'Grupo' => $params['grupo'],
+        'CNPJ' => $params['cnpj'],
+        'ChaveNota' => $params['chaveNota'],
+        'NumeroLote' => $params['numeroLote']
+    ]);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("Erro HTTP: " . $httpCode);
+    }
+    
+    if (strpos($response, 'OK, Operação realizada com sucesso') !== false) {
+        return ['success' => true, 'message' => $response];
+    } else {
+        return ['success' => false, 'error' => $response];
+    }
+}
+
+// Uso
+try {
+    $resultado = descartarCTeOS([
+        'grupo' => 'GRUPO_EMPRESA',
+        'cnpj' => '12345678000199',
+        'chaveNota' => '41150408187168000160576660000006671000000012',
+        'numeroLote' => 'LOTE001'
+    ]);
+    
+    if ($resultado['success']) {
+        echo "Descarte realizado: " . $resultado['message'];
+    } else {
+        echo "Erro no descarte: " . $resultado['error'];
+    }
+    
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
+}
+```
+
+**Parâmetros do Body**:
+
+| Parâmetro | Tipo | Obrigatório | Descrição | Valores |
+|-----------|------|-------------|-----------|---------|
+| `Grupo` | string | ✅ | Nome do grupo configurado no SaaS | `GRUPO_EMPRESA` |
+| `CNPJ` | string | ✅ | CNPJ do grupo (apenas números) | `12345678000199` |
+| `Arquivo` | file | ✅ | Conteúdo do arquivo TX2 | Conteúdo binário |
+| `Converter` | number | ✅ | Ativa conversão TX2 para XML | `1` (Sim), `0` (Não) |
+| `Assinado` | number | ❌ | XML com ou sem assinatura | `1` (Assinado), `0` (Não assinado) |
+| `Url` | number | ❌ | Formato de retorno | `0` (Conteúdo), `1` (URL download) |
+
+**Exemplo de Requisição**:
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/exportaxml" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Converter=1&Assinado=1&Url=0" \
+  --data-binary @arquivo.txt
+```
+
+**Resposta de Sucesso**:
+
+**URL = 0 (Conteúdo do XML)**:
+```xml
+<CTeOS versao="3.00" xmlns="http://www.portalfiscal.inf.br/cte">
+    <infCte Id="CTe35211223856927000123670730000000051100000270" versao="3.00">
+        <ide>
+            <cUF>35</cUF>
+            <cCT>000000005</cCT>
+            <CFOP>5353</CFOP>
+            <natOp>PRESTACAO DE SERVICOS DE TRANSPORTE</natOp>
+            <mod>57</mod>
+            <serie>1</serie>
+            <nCT>000000270</nCT>
+            <dhEmi>2021-11-22T10:00:00-03:00</dhEmi>
+            <tpImp>1</tpImp>
+            <tpEmis>1</tpEmis>
+            <tpCTe>0</tpCTe>
+            <procEmi>0</procEmi>
+            <verProc>1.0</verProc>
+            <cMunEnv>3550308</cMunEnv>
+            <xMunEnv>SAO PAULO</xMunEnv>
+            <UFEnv>SP</UFEnv>
+            <modal>01</modal>
+            <tpServ>0</tpServ>
+        </ide>
+        <!-- ... resto do XML ... -->
+    </infCte>
+</CTeOS>
+```
+
+**URL = 1 (URL para download)**:
+```
+http://managersaashom.tecnospeed.com.br:7071/ManagerAPIWeb/download/ManagerCTeOS/43170704086596000145578460000000011000000009.xml
+```
+
+**Resposta de Erro**:
+```
+EXCEPTION,EspdAPIWebServerErrorException,Tipo: deve ser informado
+```
+
+**Implementação em Diferentes Linguagens**:
+
+#### **JavaScript/Node.js**
+```javascript
+const converterTX2ParaXML = async (arquivoTX2, params) => {
+  const formData = new FormData();
+  formData.append('Grupo', params.grupo);
+  formData.append('CNPJ', params.cnpj);
+  formData.append('Arquivo', arquivoTX2);
+  formData.append('Converter', params.converter);
+  formData.append('Assinado', params.assinado);
+  formData.append('Url', params.url);
+  
+  try {
+    const response = await fetch('https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/exportaxml', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    if (params.url === 1) {
+      // Retorna URL para download
+      return await response.text();
+    } else {
+      // Retorna conteúdo do XML
+      return await response.text();
+    }
+    
+  } catch (error) {
+    console.error('Erro na conversão:', error);
+    throw error;
+  }
+};
+
+// Uso
+const resultado = await converterTX2ParaXML(arquivoTX2, {
+  grupo: 'GRUPO_EMPRESA',
+  cnpj: '12345678000199',
+  converter: 1,
+  assinado: 1,
+  url: 0
+});
+```
+
+#### **Python**
+```python
+import requests
+
+def converter_tx2_para_xml(arquivo_tx2, params):
+    url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/exportaxml"
+    
+    headers = {
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+    }
+    
+    files = {
+        'Arquivo': ('arquivo.txt', arquivo_tx2, 'text/plain')
+    }
+    
+    data = {
+        'Grupo': params['grupo'],
+        'CNPJ': params['cnpj'],
+        'Converter': params['converter'],
+        'Assinado': params['assinado'],
+        'Url': params['url']
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, files=files, data=data)
+        response.raise_for_status()
+        
+        if params['url'] == 1:
+            # Retorna URL para download
+            return response.text
+        else:
+            # Retorna conteúdo do XML
+            return response.text
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Erro na conversão: {e}")
+        raise
+
+# Uso
+with open('arquivo.txt', 'rb') as f:
+    arquivo_tx2 = f.read()
+
+resultado = converter_tx2_para_xml(arquivo_tx2, {
+    'grupo': 'GRUPO_EMPRESA',
+    'cnpj': '12345678000199',
+    'converter': 1,
+    'assinado': 1,
+    'url': 0
+})
+```
+
+#### **PHP**
+```php
+function converterTX2ParaXML($arquivoTX2, $params) {
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/exportaxml";
+    
+    $headers = [
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI='
+    ];
+    
+    $postData = [
+        'Grupo' => $params['grupo'],
+        'CNPJ' => $params['cnpj'],
+        'Converter' => $params['converter'],
+        'Assinado' => $params['assinado'],
+        'Url' => $params['url']
+    ];
+    
+    // Cria o arquivo temporário
+    $tempFile = tempnam(sys_get_temp_dir(), 'tx2_');
+    file_put_contents($tempFile, $arquivoTX2);
+    
+    $postData['Arquivo'] = new CURLFile($tempFile, 'text/plain', 'arquivo.txt');
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    // Remove arquivo temporário
+    unlink($tempFile);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("Erro HTTP: " . $httpCode);
+    }
+    
+    return $response;
+}
+
+// Uso
+try {
+    $arquivoTX2 = file_get_contents('arquivo.txt');
+    
+    $resultado = converterTX2ParaXML($arquivoTX2, [
+        'grupo' => 'GRUPO_EMPRESA',
+        'cnpj' => '12345678000199',
+        'converter' => 1,
+        'assinado' => 1,
+        'url' => 0
+    ]);
+    
+    echo $resultado;
+    
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
+}
+```
+
+## Endpoints de NF-e
+
+### **Emissão de NF-e**
+
+```http
+POST /nfe/emitir
+```
+
+**Corpo da Requisição**:
+```json
+{
+  "tipo_documento": "NFE",
+  "emissor": {
+    "cnpj": "12345678000199",
+    "inscricao_estadual": "123456789",
+    "razao_social": "EMPRESA EXEMPLO LTDA"
+  },
+  "destinatario": {
+    "cnpj": "98765432000188",
+    "razao_social": "CLIENTE EXEMPLO LTDA"
+  },
+  "itens": [
+    {
+      "codigo": "PROD001",
+      "descricao": "Produto Exemplo",
+      "quantidade": 2,
+      "valor_unitario": 50.00,
+      "valor_total": 100.00
+    }
+  ]
+}
+```
+
+### **Consulta de Status NF-e**
+
+```http
+GET /nfe/{numero}/status
+```
+
+### **Cancelamento NF-e**
+
+```http
+POST /nfe/{numero}/cancelar
+```
+
+## Endpoints de NFC-e
+
+### **Emissão de NFC-e**
+
+```http
+POST /nfce/emitir
+```
+
+### **Consulta de Status NFC-e**
+
+```http
+GET /nfce/{numero}/status
+```
+
+### **Cancelamento NFC-e**
+
+```http
+POST /nfce/{numero}/cancelar
+```
+
+## Endpoints de MDF-e
+
+### **Emissão de MDF-e**
+
+```http
+POST /mdfe/emitir
+```
+
+### **Encerramento de MDF-e**
+
+```http
+POST /mdfe/{numero}/encerrar
+```
+
+## Endpoints de CF-e
+
+### **Emissão CF-e SAT**
+
+```http
+POST /cfe/sat/emitir
+```
+
+### **Emissão CF-e MFE**
+
+```http
+POST /cfe/mfe/emitir
+```
+
+## Endpoints de GNRE
+
+### **Emissão de GNRE**
+
+```http
+POST /gnre/emitir
+```
+
+## Códigos de Status HTTP
+
+### **Sucesso**
+- **200 OK**: Requisição processada com sucesso
+- **201 Created**: Documento criado com sucesso
+
+### **Erro do Cliente**
+- **400 Bad Request**: Dados inválidos ou malformados
+- **401 Unauthorized**: Token de autenticação inválido
+- **403 Forbidden**: Token sem permissão para a operação
+- **404 Not Found**: Recurso não encontrado
+- **429 Too Many Requests**: Rate limit excedido
+
+### **Erro do Servidor**
+- **500 Internal Server Error**: Erro interno do servidor
+- **502 Bad Gateway**: Erro na comunicação com SEFAZ
+- **503 Service Unavailable**: Serviço temporariamente indisponível
+
+## Rate Limiting
+
+### **Limites por Token**
+- **Requisições por minuto**: 1000
+- **Requisições por hora**: 50000
+- **Requisições por dia**: 1000000
+
+### **Headers de Rate Limiting**
+```http
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1642248600
+```
+
+## Tratamento de Erros
+
+### **Estrutura de Erro Padrão**
+```json
+{
+  "status": "error",
+  "code": "ERROR_CODE",
+  "message": "Descrição do erro",
+  "details": {
+    "field": "campo_específico",
+    "value": "valor_informado",
+    "constraint": "restrição_violada"
+  },
+  "timestamp": "2024-01-15T10:30:00Z",
+  "request_id": "req_123456789"
+}
+```
+
+### **Códigos de Erro Comuns**
+
+| Código | Descrição | Solução |
+|--------|-----------|---------|
+| `INVALID_CNPJ` | CNPJ inválido | Verificar formato e validade |
+| `INVALID_IE` | Inscrição estadual inválida | Verificar com a SEFAZ |
+| `MISSING_REQUIRED_FIELD` | Campo obrigatório ausente | Preencher todos os campos obrigatórios |
+| `INVALID_VALUE` | Valor inválido | Verificar formato e regras de negócio |
+| `CERTIFICATE_EXPIRED` | Certificado digital expirado | Renovar certificado no dashboard |
+| `SEFAZ_UNAVAILABLE` | SEFAZ indisponível | Aguardar e tentar novamente |
+
+## Exemplos de Uso
+
+### **cURL - Emissão de CT-e OS**
+
+```bash
+curl -X POST "https://api.managersaas.com/v1/cte/os/emitir" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tipo_documento": "CTE_OS",
+    "emissor": {
+      "cnpj": "12345678000199",
+      "razao_social": "TRANSPORTADORA EXEMPLO LTDA"
+    },
+    "servico": {
+      "descricao": "Transporte de carga",
+      "valor_frete": 150.00
+    }
+  }'
+```
+
+### **JavaScript - Emissão de CT-e OS**
+
+```javascript
+const emitirCTeOS = async (dados) => {
+  try {
+    const response = await fetch('https://api.managersaas.com/v1/cte/os/emitir', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dados)
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erro na emissão:', error);
+    throw error;
+  }
+};
+```
+
+### **Python - Emissão de CT-e OS**
+
+```python
+import requests
+
+def emitir_cte_os(dados, token):
+    url = "https://api.managersaas.com/v1/cte/os/emitir"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.post(url, json=dados, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Erro na emissão: {e}")
+        raise
+```
+
+## Webhooks
+
+### **Configuração de Webhook**
+
+```http
+POST /webhooks/configurar
+```
+
+**Corpo da Requisição**:
+```json
+{
+  "url": "https://seu-site.com/webhook",
+  "eventos": ["documento_autorizado", "documento_rejeitado"],
+  "ativo": true
+}
+```
+
+### **Eventos Disponíveis**
+- `documento_autorizado`: Documento autorizado pela SEFAZ
+- `documento_rejeitado`: Documento rejeitado pela SEFAZ
+- `documento_cancelado`: Documento cancelado
+- `documento_processando`: Documento em processamento
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Modelos de Dados"
+    href="/api/models/request"
+    icon="database"
+  >
+    Estrutura completa dos dados de entrada
+  </Card>
+  <Card
+    title="Exemplos de Integração"
+    href="/examples/php"
+    icon="code"
+  >
+    Veja exemplos práticos em diferentes linguagens
+  </Card>
+  <Card
+    title="Monitorador de Pastas"
+    href="/api/monitor/overview"
+    icon="folder"
+  >
+    Alternativa à API REST
+  </Card>
+  <Card
+    title="Suporte"
+    href="mailto:suporte@managersaas.com"
+    icon="message-circle"
+  >
+    Entre em contato conosco
+  </Card>
+</CardGroup>
+
+---
+
+🔌 **API Completa**: Todos os endpoints estão documentados com exemplos práticos e códigos de resposta. Para dúvidas específicas, consulte nossa equipe de suporte. 

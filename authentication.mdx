@@ -1,0 +1,355 @@
+---
+title: 'Autenticação'
+description: 'Como autenticar e autorizar suas requisições para a API do Manager SaaS'
+---
+
+# Autenticação - Manager SaaS API
+
+A API do Manager SaaS utiliza autenticação baseada em tokens (Bearer Token) para garantir a segurança e controle de acesso aos recursos.
+
+## Visão Geral
+
+### **Tipo de Autenticação**
+- **Método**: Bearer Token Authentication
+- **Formato**: `Authorization: Bearer <token>`
+- **Validade**: Tokens não expiram (podem ser revogados)
+- **Escopo**: Controle granular de permissões
+
+### **Segurança**
+- Todas as comunicações são criptografadas via HTTPS
+- Tokens são armazenados de forma segura
+- Logs de auditoria para todas as operações
+- Rate limiting para prevenir abuso
+
+## Obtenção do Token
+
+### **1. Acesso ao Dashboard**
+
+1. Acesse [dashboard.managersaas.com](https://dashboard.managersaas.com)
+2. Faça login com suas credenciais
+3. Navegue para **Configurações > API Keys**
+
+### **2. Geração de Nova Chave**
+
+1. Clique em **"Gerar Nova Chave"**
+2. Preencha os campos:
+   - **Nome**: Identificação da chave (ex: "Sistema ERP")
+   - **Descrição**: Descrição opcional
+   - **Ambiente**: Produção ou Homologação
+3. Clique em **"Gerar"**
+
+### **3. Configuração de Permissões**
+
+Selecione as permissões necessárias:
+
+<CardGroup cols={2}>
+  <Card
+    title="Documentos"
+    icon="file-text"
+  >
+    - Emitir documentos
+    - Consultar documentos
+    - Cancelar documentos
+    - Download de arquivos
+  </Card>
+  <Card
+    title="Empresa"
+    icon="building"
+  >
+    - Consultar configurações
+    - Atualizar dados
+    - Gerenciar usuários
+  </Card>
+  <Card
+    title="Monitoramento"
+    icon="eye"
+  >
+    - Status da API
+    - Logs de sistema
+    - Métricas de uso
+  </Card>
+  <Card
+    title="Webhooks"
+    icon="bell"
+  >
+    - Configurar webhooks
+    - Gerenciar eventos
+    - Histórico de notificações
+  </Card>
+</CardGroup>
+
+## Uso do Token
+
+### **Header de Autorização**
+
+Inclua o token em todas as requisições:
+
+```bash
+curl -X GET "https://api.managersaas.com/v1/status" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -H "Content-Type: application/json"
+```
+
+### **Exemplos em Diferentes Linguagens**
+
+#### **JavaScript/Node.js**
+```javascript
+const response = await fetch('https://api.managersaas.com/v1/status', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+#### **Python**
+```python
+import requests
+
+headers = {
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json'
+}
+
+response = requests.get(
+    'https://api.managersaas.com/v1/status',
+    headers=headers
+)
+```
+
+#### **PHP**
+```php
+$headers = [
+    'Authorization: Bearer ' . $token,
+    'Content-Type: application/json'
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, 'https://api.managersaas.com/v1/status');
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+```
+
+#### **Java**
+```java
+HttpClient client = HttpClient.newHttpClient();
+
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.managersaas.com/v1/status"))
+    .header("Authorization", "Bearer " + token)
+    .header("Content-Type", "application/json")
+    .GET()
+    .build();
+
+HttpResponse<String> response = client.send(request, 
+    HttpResponse.BodyHandlers.ofString());
+```
+
+## Gerenciamento de Tokens
+
+### **Listar Tokens Ativos**
+
+```bash
+curl -X GET "https://api.managersaas.com/v1/auth/tokens" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
+
+**Resposta:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "id": "tok_123456789",
+      "nome": "Sistema ERP",
+      "descricao": "Token para integração com ERP",
+      "criado_em": "2024-01-15T10:30:00Z",
+      "ultimo_uso": "2024-01-15T15:45:00Z",
+      "permissoes": ["documentos:emitir", "documentos:consultar"],
+      "ativo": true
+    }
+  ]
+}
+```
+
+### **Revogar Token**
+
+```bash
+curl -X DELETE "https://api.managersaas.com/v1/auth/tokens/tok_123456789" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
+
+### **Atualizar Permissões**
+
+```bash
+curl -X PUT "https://api.managersaas.com/v1/auth/tokens/tok_123456789" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "permissoes": ["documentos:emitir", "documentos:consultar", "empresa:consultar"]
+  }'
+```
+
+## Permissões Disponíveis
+
+### **Documentos**
+- `documentos:emitir` - Emitir documentos fiscais
+- `documentos:consultar` - Consultar documentos
+- `documentos:cancelar` - Cancelar documentos
+- `documentos:download` - Download de arquivos
+
+### **Empresa**
+- `empresa:consultar` - Consultar dados da empresa
+- `empresa:atualizar` - Atualizar dados da empresa
+- `empresa:usuarios` - Gerenciar usuários
+
+### **Monitoramento**
+- `monitoramento:status` - Consultar status da API
+- `monitoramento:logs` - Acessar logs do sistema
+- `monitoramento:metricas` - Consultar métricas de uso
+
+### **Webhooks**
+- `webhooks:configurar` - Configurar webhooks
+- `webhooks:gerenciar` - Gerenciar configurações
+- `webhooks:historico` - Consultar histórico
+
+## Boas Práticas de Segurança
+
+### **1. Armazenamento Seguro**
+```bash
+# ❌ NUNCA faça isso
+echo "TOKEN=abc123" >> .env
+
+# ✅ Faça isso
+echo "TOKEN=$(openssl rand -hex 32)" >> .env
+chmod 600 .env
+```
+
+### **2. Rotação de Tokens**
+- Revogue tokens antigos regularmente
+- Use tokens específicos para cada ambiente
+- Monitore o uso dos tokens
+
+### **3. Controle de Acesso**
+- Aplique o princípio do menor privilégio
+- Revogue tokens de funcionários que saíram
+- Monitore logs de acesso
+
+### **4. Validação de Tokens**
+```javascript
+// Valide se o token está presente
+if (!token) {
+  throw new Error('Token de autenticação é obrigatório');
+}
+
+// Valide formato do token
+if (!/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/.test(token)) {
+  throw new Error('Formato de token inválido');
+}
+```
+
+## Tratamento de Erros
+
+### **Erro 401 - Não Autorizado**
+```json
+{
+  "status": "error",
+  "code": "UNAUTHORIZED",
+  "message": "Token de autenticação inválido ou expirado",
+  "details": {
+    "token_provided": "abc123...",
+    "error_type": "INVALID_TOKEN"
+  }
+}
+```
+
+**Soluções:**
+- Verifique se o token está correto
+- Confirme se o token não foi revogado
+- Verifique as permissões necessárias
+
+### **Erro 403 - Proibido**
+```json
+{
+  "status": "error",
+  "code": "FORBIDDEN",
+  "message": "Token não possui permissão para esta operação",
+  "details": {
+    "permission_required": "documentos:emitir",
+    "permissions_granted": ["documentos:consultar"]
+  }
+}
+```
+
+**Soluções:**
+- Solicite permissões adicionais
+- Verifique se está usando o token correto
+- Entre em contato com o administrador
+
+## Rate Limiting
+
+### **Limites por Token**
+- **Requisições por minuto**: 1000
+- **Requisições por hora**: 50000
+- **Requisições por dia**: 1000000
+
+### **Headers de Rate Limiting**
+```http
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1642248600
+```
+
+### **Tratamento de Rate Limiting**
+```javascript
+if (response.status === 429) {
+  const resetTime = response.headers.get('X-RateLimit-Reset');
+  const waitTime = (resetTime * 1000) - Date.now();
+  
+  if (waitTime > 0) {
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+    // Retry the request
+  }
+}
+```
+
+## Logs de Auditoria
+
+### **Informações Registradas**
+- Data e hora da requisição
+- Token utilizado
+- Endpoint acessado
+- Método HTTP
+- Status da resposta
+- IP de origem
+- User-Agent
+
+### **Consulta de Logs**
+```bash
+curl -X GET "https://api.managersaas.com/v1/auth/logs" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -G \
+  -d "data_inicio=2024-01-01" \
+  -d "data_fim=2024-01-15" \
+  -d "token_id=tok_123456789"
+```
+
+## Suporte e Contato
+
+### **Problemas de Autenticação**
+- **Email**: suporte@managersaas.com
+- **Documentação**: docs.managersaas.com
+- **Status**: status.managersaas.com
+
+### **Recursos Adicionais**
+- [Primeiros Passos](/quickstart) - Configure sua primeira integração
+- [Referência da API](/api/endpoints/emission) - Todos os endpoints disponíveis
+- [Exemplos de Integração](/examples/php) - Casos práticos
+
+---
+
+🔐 **Segurança é nossa prioridade!** Para dúvidas sobre autenticação ou segurança, entre em contato com nossa equipe de suporte. 

@@ -1,0 +1,782 @@
+---
+title: 'Integração PHP'
+description: 'Exemplos práticos de integração com o Manager SaaS usando PHP'
+---
+
+# Integração PHP - Manager SaaS
+
+Exemplos práticos de como integrar sua aplicação PHP com a API do Manager SaaS para emissão de documentos fiscais eletrônicos.
+
+## Configuração Inicial
+
+### **1. Instalação de Dependências**
+
+```bash
+composer require guzzlehttp/guzzle
+composer require monolog/monolog
+```
+
+### **2. Arquivo de Configuração**
+
+```php
+<?php
+// config/manager_saas.php
+
+return [
+    'api_url' => env('MANAGER_SAAS_API_URL', 'https://api.managersaas.com/v1'),
+    'token' => env('MANAGER_SAAS_TOKEN'),
+    'empresa_id' => env('MANAGER_SAAS_EMPRESA_ID'),
+    'ambiente' => env('MANAGER_SAAS_ENVIRONMENT', 'production'),
+    'timeout' => env('MANAGER_SAAS_TIMEOUT', 30),
+    'retries' => env('MANAGER_SAAS_RETRIES', 3),
+    'webhook_url' => env('MANAGER_SAAS_WEBHOOK_URL'),
+];
+```
+
+### **3. Variáveis de Ambiente**
+
+```bash
+# .env
+MANAGER_SAAS_API_URL=https://api.managersaas.com/v1
+MANAGER_SAAS_TOKEN=seu_token_aqui
+MANAGER_SAAS_EMPRESA_ID=seu_empresa_id
+MANAGER_SAAS_ENVIRONMENT=production
+MANAGER_SAAS_TIMEOUT=30
+MANAGER_SAAS_RETRIES=3
+MANAGER_SAAS_WEBHOOK_URL=https://seu-site.com/webhook
+```
+
+## Cliente Principal
+
+### **Classe ManagerSaasClient**
+
+```php
+<?php
+// src/ManagerSaas/ManagerSaasClient.php
+
+namespace App\ManagerSaas;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+class ManagerSaasClient
+{
+    private Client $httpClient;
+    private Logger $logger;
+    private array $config;
+    
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+        
+        $this->httpClient = new Client([
+            'base_uri' => $config['api_url'],
+            'timeout' => $config['timeout'],
+            'headers' => [
+                'Authorization' => 'Bearer ' . $config['token'],
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'ManagerSaas-PHP-Client/1.0'
+            ]
+        ]);
+        
+        $this->logger = new Logger('manager_saas');
+        $this->logger->pushHandler(new StreamHandler(storage_path('logs/manager_saas.log')));
+    }
+    
+    /**
+     * Emite um CT-e OS
+     */
+    public function emitirCTeOS(array $dados): array
+    {
+        try {
+            $response = $this->httpClient->post('/cte/os/emitir', [
+                'json' => $dados
+            ]);
+            
+            $resultado = json_decode($response->getBody()->getContents(), true);
+            
+            $this->logger->info('CT-e OS emitido com sucesso', [
+                'numero' => $resultado['data']['numero'] ?? null,
+                'dados' => $dados
+            ]);
+            
+            return $resultado;
+            
+        } catch (RequestException $e) {
+            $this->logger->error('Erro ao emitir CT-e OS', [
+                'error' => $e->getMessage(),
+                'dados' => $dados
+            ]);
+            
+            throw new ManagerSaasException(
+                'Erro ao emitir CT-e OS: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+    
+    /**
+     * Emite uma NF-e
+     */
+    public function emitirNFe(array $dados): array
+    {
+        try {
+            $response = $this->httpClient->post('/nfe/emitir', [
+                'json' => $dados
+            ]);
+            
+            $resultado = json_decode($response->getBody()->getContents(), true);
+            
+            $this->logger->info('NF-e emitida com sucesso', [
+                'numero' => $resultado['data']['numero'] ?? null,
+                'dados' => $dados
+            ]);
+            
+            return $resultado;
+            
+        } catch (RequestException $e) {
+            $this->logger->error('Erro ao emitir NF-e', [
+                'error' => $e->getMessage(),
+                'dados' => $dados
+            ]);
+            
+            throw new ManagerSaasException(
+                'Erro ao emitir NF-e: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+    
+    /**
+     * Consulta o status de um documento
+     */
+    public function consultarStatus(string $tipo, string $numero): array
+    {
+        try {
+            $response = $this->httpClient->get("/{$tipo}/{$numero}/status");
+            
+            return json_decode($response->getBody()->getContents(), true);
+            
+        } catch (RequestException $e) {
+            $this->logger->error('Erro ao consultar status', [
+                'tipo' => $tipo,
+                'numero' => $numero,
+                'error' => $e->getMessage()
+            ]);
+            
+            throw new ManagerSaasException(
+                'Erro ao consultar status: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+    
+    /**
+     * Cancela um documento
+     */
+    public function cancelarDocumento(string $tipo, string $numero, string $justificativa): array
+    {
+        try {
+            $response = $this->httpClient->post("/{$tipo}/{$numero}/cancelar", [
+                'json' => ['justificativa' => $justificativa]
+            ]);
+            
+            $resultado = json_decode($response->getBody()->getContents(), true);
+            
+            $this->logger->info('Documento cancelado com sucesso', [
+                'tipo' => $tipo,
+                'numero' => $numero,
+                'justificativa' => $justificativa
+            ]);
+            
+            return $resultado;
+            
+        } catch (RequestException $e) {
+            $this->logger->error('Erro ao cancelar documento', [
+                'tipo' => $tipo,
+                'numero' => $numero,
+                'error' => $e->getMessage()
+            ]);
+            
+            throw new ManagerSaasException(
+                'Erro ao cancelar documento: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+    
+    /**
+     * Download de arquivos (XML, PDF)
+     */
+    public function downloadArquivo(string $tipo, string $numero, string $formato): string
+    {
+        try {
+            $response = $this->httpClient->get("/{$tipo}/{$numero}/{$formato}");
+            
+            return $response->getBody()->getContents();
+            
+        } catch (RequestException $e) {
+            $this->logger->error('Erro ao baixar arquivo', [
+                'tipo' => $tipo,
+                'numero' => $numero,
+                'formato' => $formato,
+                'error' => $e->getMessage()
+            ]);
+            
+            throw new ManagerSaasException(
+                'Erro ao baixar arquivo: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+}
+```
+
+## Exemplos de Uso
+
+### **1. Emissão de CT-e OS**
+
+```php
+<?php
+// examples/cte_os_example.php
+
+require_once 'vendor/autoload.php';
+
+use App\ManagerSaas\ManagerSaasClient;
+
+// Carrega configuração
+$config = require 'config/manager_saas.php';
+$client = new ManagerSaasClient($config);
+
+// Dados para emissão
+$dadosCTeOS = [
+    'tipo_documento' => 'CTE_OS',
+    'emissor' => [
+        'cnpj' => '12345678000199',
+        'inscricao_estadual' => '123456789',
+        'razao_social' => 'TRANSPORTADORA EXEMPLO LTDA',
+        'endereco' => [
+            'logradouro' => 'Rua das Flores, 123',
+            'bairro' => 'Centro',
+            'municipio' => 'São Paulo',
+            'uf' => 'SP',
+            'cep' => '01234-567'
+        ]
+    ],
+    'tomador' => [
+        'cnpj' => '98765432000188',
+        'razao_social' => 'CLIENTE EXEMPLO LTDA',
+        'endereco' => [
+            'logradouro' => 'Av. Paulista, 1000',
+            'bairro' => 'Bela Vista',
+            'municipio' => 'São Paulo',
+            'uf' => 'SP',
+            'cep' => '01310-100'
+        ]
+    ],
+    'servico' => [
+        'descricao' => 'Transporte de carga geral',
+        'valor_frete' => 150.00,
+        'valor_seguro' => 25.00,
+        'valor_despesas' => 15.00,
+        'valor_total' => 190.00
+    ],
+    'transporte' => [
+        'tipo_veiculo' => 'TRUCK',
+        'placa' => 'ABC1234',
+        'motorista' => [
+            'nome' => 'João Silva',
+            'cpf' => '12345678901',
+            'cnh' => '12345678901'
+        ]
+    ]
+];
+
+try {
+    // Emite o CT-e OS
+    $resultado = $client->emitirCTeOS($dadosCTeOS);
+    
+    echo "CT-e OS emitido com sucesso!\n";
+    echo "Número: " . $resultado['data']['numero'] . "\n";
+    echo "Chave de Acesso: " . $resultado['data']['chave_acesso'] . "\n";
+    echo "Status: " . $resultado['data']['status'] . "\n";
+    
+    // Salva no banco de dados
+    $this->salvarCTeOS($resultado['data']);
+    
+} catch (Exception $e) {
+    echo "Erro ao emitir CT-e OS: " . $e->getMessage() . "\n";
+}
+```
+
+### **2. Emissão de NF-e**
+
+```php
+<?php
+// examples/nfe_example.php
+
+require_once 'vendor/autoload.php';
+
+use App\ManagerSaas\ManagerSaasClient;
+
+$config = require 'config/manager_saas.php';
+$client = new ManagerSaasClient($config);
+
+// Dados para emissão de NF-e
+$dadosNFe = [
+    'tipo_documento' => 'NFE',
+    'emissor' => [
+        'cnpj' => '12345678000199',
+        'inscricao_estadual' => '123456789',
+        'razao_social' => 'EMPRESA EXEMPLO LTDA',
+        'endereco' => [
+            'logradouro' => 'Rua das Flores, 123',
+            'bairro' => 'Centro',
+            'municipio' => 'São Paulo',
+            'uf' => 'SP',
+            'cep' => '01234-567'
+        ]
+    ],
+    'destinatario' => [
+        'cnpj' => '98765432000188',
+        'razao_social' => 'CLIENTE EXEMPLO LTDA',
+        'endereco' => [
+            'logradouro' => 'Av. Paulista, 1000',
+            'bairro' => 'Bela Vista',
+            'municipio' => 'São Paulo',
+            'uf' => 'SP',
+            'cep' => '01310-100'
+        ]
+    ],
+    'itens' => [
+        [
+            'codigo' => 'PROD001',
+            'descricao' => 'Produto Exemplo',
+            'quantidade' => 2,
+            'valor_unitario' => 50.00,
+            'valor_total' => 100.00,
+            'ncm' => '12345678'
+        ]
+    ],
+    'impostos' => [
+        'icms' => [
+            'cst' => '102',
+            'aliquota' => 18.00,
+            'valor' => 18.00
+        ]
+    ],
+    'pagamento' => [
+        'forma' => 'CARTAO_CREDITO',
+        'valor' => 118.00
+    ]
+];
+
+try {
+    $resultado = $client->emitirNFe($dadosNFe);
+    
+    echo "NF-e emitida com sucesso!\n";
+    echo "Número: " . $resultado['data']['numero'] . "\n";
+    echo "Chave de Acesso: " . $resultado['data']['chave_acesso'] . "\n";
+    
+} catch (Exception $e) {
+    echo "Erro ao emitir NF-e: " . $e->getMessage() . "\n";
+}
+```
+
+### **3. Monitoramento de Status**
+
+```php
+<?php
+// examples/monitor_status_example.php
+
+require_once 'vendor/autoload.php';
+
+use App\ManagerSaas\ManagerSaasClient;
+
+$config = require 'config/manager_saas.php';
+$client = new ManagerSaasClient($config);
+
+// Lista de documentos para monitorar
+$documentos = [
+    ['tipo' => 'cte', 'numero' => '123456'],
+    ['tipo' => 'nfe', 'numero' => '789012'],
+    ['tipo' => 'nfce', 'numero' => '345678']
+];
+
+echo "Monitorando status dos documentos...\n\n";
+
+foreach ($documentos as $doc) {
+    try {
+        $status = $client->consultarStatus($doc['tipo'], $doc['numero']);
+        
+        echo "Documento {$doc['tipo']} #{$doc['numero']}: {$status['data']['status']}\n";
+        
+        // Se autorizado, baixa os arquivos
+        if ($status['data']['status'] === 'AUTORIZADO') {
+            $this->baixarArquivos($client, $doc['tipo'], $doc['numero']);
+        }
+        
+    } catch (Exception $e) {
+        echo "Erro ao consultar {$doc['tipo']} #{$doc['numero']}: " . $e->getMessage() . "\n";
+    }
+}
+
+function baixarArquivos(ManagerSaasClient $client, string $tipo, string $numero): void
+{
+    try {
+        // Download do XML
+        $xml = $client->downloadArquivo($tipo, $numero, 'xml');
+        file_put_contents("downloads/{$tipo}_{$numero}.xml", $xml);
+        
+        // Download do PDF
+        $pdf = $client->downloadArquivo($tipo, $numero, 'pdf');
+        file_put_contents("downloads/{$tipo}_{$numero}.pdf", $pdf);
+        
+        echo "  ✓ Arquivos baixados com sucesso\n";
+        
+    } catch (Exception $e) {
+        echo "  ✗ Erro ao baixar arquivos: " . $e->getMessage() . "\n";
+    }
+}
+```
+
+## Integração com Laravel
+
+### **Service Provider**
+
+```php
+<?php
+// app/Providers/ManagerSaasServiceProvider.php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use App\ManagerSaas\ManagerSaasClient;
+
+class ManagerSaasServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->singleton(ManagerSaasClient::class, function ($app) {
+            $config = config('manager_saas');
+            
+            return new ManagerSaasClient($config);
+        });
+    }
+    
+    public function boot(): void
+    {
+        $this->publishes([
+            __DIR__.'/../../config/manager_saas.php' => config_path('manager_saas.php'),
+        ], 'manager-saas');
+    }
+}
+```
+
+### **Controller de Exemplo**
+
+```php
+<?php
+// app/Http/Controllers/DocumentoController.php
+
+namespace App\Http\Controllers;
+
+use App\ManagerSaas\ManagerSaasClient;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+class DocumentoController extends Controller
+{
+    public function __construct(
+        private ManagerSaasClient $managerSaas
+    ) {}
+    
+    /**
+     * Emite um CT-e OS
+     */
+    public function emitirCTeOS(Request $request): JsonResponse
+    {
+        $request->validate([
+            'emissor.cnpj' => 'required|string',
+            'emissor.razao_social' => 'required|string',
+            'tomador.cnpj' => 'required|string',
+            'servico.descricao' => 'required|string',
+            'servico.valor_frete' => 'required|numeric|min:0'
+        ]);
+        
+        try {
+            $resultado = $this->managerSaas->emitirCTeOS($request->all());
+            
+            return response()->json([
+                'success' => true,
+                'data' => $resultado['data']
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Consulta status de um documento
+     */
+    public function consultarStatus(string $tipo, string $numero): JsonResponse
+    {
+        try {
+            $status = $this->managerSaas->consultarStatus($tipo, $numero);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $status['data']
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Cancela um documento
+     */
+    public function cancelar(Request $request, string $tipo, string $numero): JsonResponse
+    {
+        $request->validate([
+            'justificativa' => 'required|string|min:10'
+        ]);
+        
+        try {
+            $resultado = $this->managerSaas->cancelarDocumento(
+                $tipo, 
+                $numero, 
+                $request->justificativa
+            );
+            
+            return response()->json([
+                'success' => true,
+                'data' => $resultado['data']
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+}
+```
+
+### **Rotas**
+
+```php
+<?php
+// routes/api.php
+
+Route::prefix('documentos')->group(function () {
+    Route::post('/cte-os', [DocumentoController::class, 'emitirCTeOS']);
+    Route::post('/nfe', [DocumentoController::class, 'emitirNFe']);
+    Route::get('/{tipo}/{numero}/status', [DocumentoController::class, 'consultarStatus']);
+    Route::post('/{tipo}/{numero}/cancelar', [DocumentoController::class, 'cancelar']);
+});
+```
+
+## Tratamento de Erros
+
+### **Classe de Exceção Personalizada**
+
+```php
+<?php
+// src/ManagerSaas/ManagerSaasException.php
+
+namespace App\ManagerSaas;
+
+class ManagerSaasException extends \Exception
+{
+    private array $context;
+    
+    public function __construct(string $message, int $code = 0, \Throwable $previous = null, array $context = [])
+    {
+        parent::__construct($message, $code, $previous);
+        $this->context = $context;
+    }
+    
+    public function getContext(): array
+    {
+        return $this->context;
+    }
+    
+    public function isRetryable(): bool
+    {
+        // Códigos que podem ser tentados novamente
+        $retryableCodes = [408, 429, 500, 502, 503, 504];
+        
+        return in_array($this->getCode(), $retryableCodes);
+    }
+}
+```
+
+### **Middleware de Retry**
+
+```php
+<?php
+// app/Http/Middleware/ManagerSaasRetryMiddleware.php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use App\ManagerSaas\ManagerSaasException;
+
+class ManagerSaasRetryMiddleware
+{
+    public function handle(Request $request, Closure $next)
+    {
+        $maxRetries = config('manager_saas.retries', 3);
+        $attempts = 0;
+        
+        do {
+            try {
+                return $next($request);
+                
+            } catch (ManagerSaasException $e) {
+                $attempts++;
+                
+                if (!$e->isRetryable() || $attempts >= $maxRetries) {
+                    throw $e;
+                }
+                
+                // Aguarda antes de tentar novamente
+                sleep(pow(2, $attempts)); // Exponential backoff
+            }
+            
+        } while ($attempts < $maxRetries);
+        
+        throw $e;
+    }
+}
+```
+
+## Testes
+
+### **Teste Unitário**
+
+```php
+<?php
+// tests/Unit/ManagerSaasClientTest.php
+
+namespace Tests\Unit;
+
+use Tests\TestCase;
+use App\ManagerSaas\ManagerSaasClient;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Middleware;
+
+class ManagerSaasClientTest extends TestCase
+{
+    private ManagerSaasClient $client;
+    private array $container;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Mock do cliente HTTP
+        $mock = new MockHandler([
+            new Response(200, [], json_encode([
+                'status' => 'success',
+                'data' => [
+                    'numero' => '123456',
+                    'chave_acesso' => 'test_key',
+                    'status' => 'AUTORIZADO'
+                ]
+            ]))
+        ]);
+        
+        $handlerStack = HandlerStack::create($mock);
+        $this->container = [];
+        $history = Middleware::history($this->container);
+        $handlerStack->push($history);
+        
+        $httpClient = new Client(['handler' => $handlerStack]);
+        
+        $this->client = new ManagerSaasClient([
+            'api_url' => 'https://api.test.com',
+            'token' => 'test_token'
+        ]);
+        
+        // Injeta o cliente HTTP mockado
+        $reflection = new \ReflectionClass($this->client);
+        $property = $reflection->getProperty('httpClient');
+        $property->setAccessible(true);
+        $property->setValue($this->client, $httpClient);
+    }
+    
+    public function test_emite_cte_os_com_sucesso(): void
+    {
+        $dados = [
+            'tipo_documento' => 'CTE_OS',
+            'emissor' => ['cnpj' => '12345678000199'],
+            'servico' => ['descricao' => 'Teste']
+        ];
+        
+        $resultado = $this->client->emitirCTeOS($dados);
+        
+        $this->assertEquals('success', $resultado['status']);
+        $this->assertEquals('123456', $resultado['data']['numero']);
+        $this->assertEquals('AUTORIZADO', $resultado['data']['status']);
+    }
+}
+```
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Outras Linguagens"
+    href="/examples/nodejs"
+    icon="code"
+  >
+    Veja exemplos em Node.js, Python e Java
+  </Card>
+  <Card
+    title="Referência da API"
+    href="/api/endpoints/emission"
+    icon="book"
+  >
+    Explore todos os endpoints disponíveis
+  </Card>
+  <Card
+    title="Monitorador de Pastas"
+    href="/api/monitor/overview"
+    icon="folder"
+  >
+    Alternativa à API REST
+  </Card>
+  <Card
+    title="Suporte"
+    href="mailto:suporte@managersaas.com"
+    icon="message-circle"
+  >
+    Entre em contato conosco
+  </Card>
+</CardGroup>
+
+---
+
+💻 **Código Pronto para Produção**: Todos os exemplos incluem tratamento de erros, logging e boas práticas para uso em ambiente de produção. 

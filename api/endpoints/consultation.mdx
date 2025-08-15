@@ -1,0 +1,427 @@
+---
+title: 'Consulta Avançada'
+description: 'Rota de consulta avançada para CT-e OS com filtros personalizados'
+---
+
+# Consulta Avançada - CT-e OS
+
+A rota de consulta avançada permite buscar CT-e OS com filtros personalizados, campos específicos e ordenação personalizada, oferecendo flexibilidade total para consultas no banco de dados.
+
+## Endpoint de Consulta
+
+```http
+GET https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta
+```
+
+## Autenticação
+
+### **Headers Obrigatórios**
+
+```http
+Authorization: Basic YWRtaW46MTIzbXVkYXI=
+Content-Type: application/json
+```
+
+<Note>
+🔐 **Importante**: As credenciais de autenticação são as mesmas utilizadas para login como administrador no grupo do SaaS.
+</Note>
+
+## Parâmetros da Query
+
+### **Parâmetros Obrigatórios**
+
+| Parâmetro | Tipo | Descrição | Exemplo |
+|-----------|------|-----------|---------|
+| `Grupo` | string | Nome do grupo configurado no SaaS | `Grupo=GRUPO_EMPRESA` |
+| `CNPJ` | string | CNPJ vinculado ao grupo (apenas números) | `CNPJ=12345678000199` |
+| `Campos` | string | Campos a retornar (separados por vírgula) | `Campos=chave,situacao,numero` |
+
+### **Parâmetros Opcionais**
+
+| Parâmetro | Tipo | Descrição | Exemplo |
+|-----------|------|-----------|---------|
+| `Filtro` | string | Filtro personalizado da consulta | `Filtro=situacao=AUTORIZADA` |
+| `Limite` | number | Limite de registros (máx: 100) | `Limite=50` |
+| `Ordem` | string | Ordenação dos resultados | `Ordem=dtemissao DESC` |
+| `Visao` | string | Tabela específica para consulta | `Visao=TspdCTeOSVWConsulta` |
+
+## Campos Disponíveis para Consulta
+
+### **Campos de Identificação**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `idintegracao` | Número do idintegração | number | `12345` |
+| `handle` | Handle único do registro | string | `abc123def456` |
+| `chave` | Chave do CT-e OS (44 dígitos) | string | `41150408187168000160576660000006671000000012` |
+| `numero` | Número sequencial do CT-e OS | number | `667` |
+| `serie` | Série do CT-e OS | string | `324` |
+| `codct` | Código numérico da Chave de Acesso | string | `6671000000012` |
+
+### **Campos de Status e Protocolo**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `situacao` | Situação atual do CT-e OS | string | `AUTORIZADA`, `CANCELADA`, `REJEITADA` |
+| `nprotenvio` | Protocolo de envio (15 dígitos) | string | `123456789012345` |
+| `nprotcanc` | Protocolo de cancelamento (15 dígitos) | string | `987654321098765` |
+| `nprotinutil` | Protocolo de inutilização (15 dígitos) | string | `111111111111111` |
+| `cstat` | Código de status da SEFAZ | number | `100` |
+| `motivo` | Mensagem de autorização/rejeição | string | `Autorizado o uso da NF-e` |
+
+### **Campos de Data e Hora**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `dtemissao` | Data e hora de emissão | datetime | `15/01/2024 10:30:00` |
+| `dtautorizacao` | Data e hora de autorização | datetime | `15/01/2024 10:31:15` |
+| `dtcancelamento` | Data e hora de cancelamento | datetime | `15/01/2024 11:00:00` |
+| `dtcadastro` | Data de cadastro no sistema | datetime | `15/01/2024 09:00:00` |
+
+### **Campos de Emissor e Grupo**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `cnpj` | CNPJ do Emitente | string | `12345678000199` |
+| `idgrupo` | ID numérico do grupo | number | `1` |
+| `nomegrupo` | Nome do grupo configurado | string | `GRUPO_EMPRESA` |
+| `ambiente` | Ambiente de emissão | number | `1` (Produção), `2` (Homologação) |
+
+### **Campos de Participantes**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `doctomador` | CNPJ do Tomador do serviço | string | `98765432000188` |
+| `docremetente` | CNPJ do Remetente | string | `11111111000199` |
+| `docexpedidor` | CNPJ do Expedidor | string | `22222222000199` |
+| `docrecebedor` | CNPJ do Recebedor | string | `33333333000199` |
+| `docdestinatario` | CNPJ do Destinatário | string | `44444444000199` |
+| `nomedestinatario` | Nome do Destinatário | string | `CLIENTE EXEMPLO LTDA` |
+
+### **Campos de Classificação**
+
+| Campo | Descrição | Tipo | Valores |
+|-------|-----------|------|---------|
+| `origem` | Origem dos registros | number | `1` (Emitidas à Terceiros)<br>`2` (Recebidas de Terceiros)<br>`3` (Operação Interna)<br>`4` (Todas) |
+| `tomador` | Papel do tomador | number | `0` (Remetente)<br>`1` (Expedidor)<br>`2` (Recebedor)<br>`3` (Destinatário) |
+| `modoentrada` | Modo de entrada | string | `Normal`, `EPEC`, `FSDA`, `SVSRS`, `SVCSP` |
+
+### **Campos de Sistema e Controle**
+
+| Campo | Descrição | Tipo | Valores |
+|-------|-----------|------|---------|
+| `eventos` | Quantidade de eventos recebidos | number | `0`, `1`, `2`, etc. |
+| `sincronizadopm` | Sincronização com PrintManager | number | `0` (Não sincronizado)<br>`1` (Sincronizado) |
+| `impresso` | Status de impressão | string | `Sim`, `Não` |
+| `envemail` | Status do envio de e-mail | string | `Sim`, `Não` |
+| `impressora` | Nome da impressora padrão | string | `IMPRESSORA_PADRAO` |
+
+### **Campos de Contato e Comunicação**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `email` | E-mail do Tomador | string | `cliente@email.com` |
+| `emailtomador` | E-mail do Tomador (alternativo) | string | `tomador@email.com` |
+
+### **Campos de Conteúdo**
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| `xmlcteosautorizado` | XML completo autorizado | text | `<cteProc>...</cteProc>` |
+
+## Exemplos de Filtros
+
+### **Filtros Simples**
+
+#### **Por Situação**
+```
+Filtro=situacao=AUTORIZADA
+```
+
+#### **Por CNPJ do Emissor**
+```
+Filtro=cnpj=12345678000199
+```
+
+#### **Por Número**
+```
+Filtro=numero=667
+```
+
+#### **Por Série**
+```
+Filtro=serie=324
+```
+
+#### **Por Chave de Acesso**
+```
+Filtro=chave=41150408187168000160576660000006671000000012
+```
+
+### **Filtros por Data**
+
+#### **Por Data de Emissão**
+```
+Filtro=dtemissao>=01/01/2024
+```
+
+#### **Por Data de Autorização**
+```
+Filtro=dtautorizacao>=01/01/2024
+```
+
+#### **Por Período de Emissão**
+```
+Filtro=dtemissao>=01/01/2024 and dtemissao<=31/01/2024
+```
+
+#### **Por Data de Cancelamento**
+```
+Filtro=dtcancelamento>=01/01/2024
+```
+
+### **Filtros Múltiplos**
+
+#### **CT-e OS Autorizados do Mês**
+```
+Filtro=situacao=AUTORIZADA and dtemissao>=01/01/2024
+```
+
+#### **CT-e OS por CNPJ e Situação**
+```
+Filtro=cnpj=12345678000199 and situacao=AUTORIZADA
+```
+
+#### **CT-e OS por Tomador e Período**
+```
+Filtro=doctomador=98765432000188 and dtemissao>=01/01/2024
+```
+
+#### **CT-e OS Cancelados com Motivo**
+```
+Filtro=situacao=CANCELADA and motivo like %erro%
+```
+
+### **Filtros Avançados**
+
+#### **Por Ambiente**
+```
+Filtro=ambiente=1
+```
+
+#### **Por Origem**
+```
+Filtro=origem=1
+```
+
+#### **Por Papel do Tomador**
+```
+Filtro=tomador=3
+```
+
+#### **Por Modo de Entrada**
+```
+Filtro=modoentrada=Normal
+```
+
+## Exemplos de Ordenação
+
+### **Ordenação Simples**
+
+#### **Por Data de Emissão (Decrescente)**
+```
+Ordem=dtemissao DESC
+```
+
+#### **Por Número (Crescente)**
+```
+Ordem=numero ASC
+```
+
+#### **Por Situação (Alfabética)**
+```
+Ordem=situacao ASC
+```
+
+### **Ordenação Múltipla**
+
+#### **Por Situação e Data**
+```
+Ordem=situacao ASC, dtemissao DESC
+```
+
+#### **Por CNPJ e Número**
+```
+Ordem=cnpj ASC, numero DESC
+```
+
+#### **Por Data de Cadastro e Handle**
+```
+Ordem=dtcadastro DESC, handle ASC
+```
+
+## Exemplos de Consultas Completas
+
+### **1. CT-e OS Autorizados do Mês Atual**
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=situacao=AUTORIZADA and dtemissao>=01/01/2024&Campos=chave,situacao,numero,dtemissao,valor_total&Ordem=dtemissao DESC&Limite=100"
+```
+
+**Campos retornados**: chave, situação, número, data de emissão, valor total
+**Filtro**: Apenas CT-e OS autorizados emitidos em janeiro de 2024
+**Ordenação**: Por data de emissão (mais recentes primeiro)
+**Limite**: 100 registros
+
+### **2. CT-e OS por CNPJ do Tomador**
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=doctomador=98765432000188&Campos=chave,situacao,numero,dtemissao,doctomador,nomedestinatario&Ordem=dtemissao DESC&Limite=50"
+```
+
+**Campos retornados**: chave, situação, número, data de emissão, CNPJ do tomador, nome do destinatário
+**Filtro**: Apenas CT-e OS onde o tomador é o CNPJ específico
+**Ordenação**: Por data de emissão (mais recentes primeiro)
+**Limite**: 50 registros
+
+### **3. CT-e OS Cancelados com Motivo**
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=situacao=CANCELADA&Campos=chave,situacao,numero,dtcancelamento,motivo,doctomador&Ordem=dtcancelamento DESC&Limite=100"
+```
+
+**Campos retornados**: chave, situação, número, data de cancelamento, motivo, CNPJ do tomador
+**Filtro**: Apenas CT-e OS cancelados
+**Ordenação**: Por data de cancelamento (mais recentes primeiro)
+**Limite**: 100 registros
+
+### **4. CT-e OS por Série Específica**
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=serie=324&Campos=chave,situacao,numero,serie,dtemissao,doctomador&Ordem=numero ASC&Limite=100"
+```
+
+**Campos retornados**: chave, situação, número, série, data de emissão, CNPJ do tomador
+**Filtro**: Apenas CT-e OS da série 324
+**Ordenação**: Por número (crescente)
+**Limite**: 100 registros
+
+### **5. CT-e OS por Período e Ambiente**
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?Grupo=GRUPO_EMPRESA&CNPJ=12345678000199&Filtro=dtemissao>=01/01/2024 and ambiente=1&Campos=chave,situacao,numero,dtemissao,ambiente,origem&Ordem=dtemissao DESC&Limite=100"
+```
+
+**Campos retornados**: chave, situação, número, data de emissão, ambiente, origem
+**Filtro**: CT-e OS emitidos em 2024 no ambiente de produção
+**Ordenação**: Por data de emissão (mais recentes primeiro)
+**Limite**: 100 registros
+
+## Tratamento de Respostas
+
+### **Resposta de Sucesso**
+
+A resposta é retornada em formato CSV simples, com os campos separados por vírgula e espaço:
+
+```
+41150408187168000160576660000006671000000012, AUTORIZADA, 667, 15/01/2024 10:30:00
+41150408187168000160576660000006672000000012, AUTORIZADA, 668, 15/01/2024 11:15:00
+41150408187168000160576660000006673000000012, CANCELADA, 669, 15/01/2024 12:00:00
+```
+
+### **Resposta sem Registros**
+
+```
+Nenhum registro encontrado.
+```
+
+### **Tratamento de Erros**
+
+#### **Erro de Autenticação (401)**
+```
+Unauthorized: Credenciais inválidas
+```
+
+#### **Erro de Parâmetros (400)**
+```
+Bad Request: Parâmetros obrigatórios não informados
+```
+
+#### **Erro de Limite (400)**
+```
+Bad Request: Limite máximo excedido (máximo: 100)
+```
+
+#### **Erro de Filtro (400)**
+```
+Bad Request: Filtro inválido
+```
+
+#### **Erro de Servidor (500)**
+```
+Internal Server Error: Erro interno do servidor
+```
+
+## Limitações e Considerações
+
+### **Limite de Registros**
+- **Máximo**: 100 registros por consulta
+- **Padrão**: 100 registros (se não especificado)
+- **Recomendação**: Use filtros específicos para reduzir resultados
+
+### **Performance**
+- Consultas com muitos filtros podem ser mais lentas
+- Use índices apropriados nos campos de filtro
+- Evite consultas muito amplas sem filtros
+
+### **Formato de Data**
+- Use formato brasileiro: `DD/MM/AAAA HH:MM:SS`
+- Exemplo: `01/01/2024 10:30:00`
+
+### **Operadores de Filtro**
+- **Igualdade**: `=`
+- **Maior que**: `>`
+- **Maior ou igual**: `>=`
+- **Menor que**: `<`
+- **Menor ou igual**: `<=`
+- **Diferente**: `<>`
+- **Contém**: `like %texto%`
+- **E lógico**: `and`
+- **OU lógico**: `or`
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Endpoints de Emissão"
+    href="/api/endpoints/emission"
+    icon="rocket"
+  >
+    Aprenda a emitir documentos
+  </Card>
+  <Card
+    title="Modelos de Dados"
+    href="/api/models/request"
+    icon="database"
+  >
+    Estrutura dos dados de entrada
+  </Card>
+  <Card
+    title="Exemplos de Integração"
+    href="/examples/php"
+    icon="code"
+  >
+    Veja exemplos práticos
+  </Card>
+  <Card
+    title="Suporte"
+    href="mailto:suporte@managersaas.com"
+    icon="message-circle"
+  >
+    Entre em contato conosco
+  </Card>
+</CardGroup>
+
+---
+
+🔍 **Consulta Poderosa**: A rota de consulta oferece flexibilidade total para buscar e filtrar CT-e OS conforme suas necessidades específicas. Para dúvidas sobre filtros ou campos, consulte nossa equipe de suporte. 

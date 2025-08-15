@@ -1,97 +1,130 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: 'Manager SaaS API'
+description: 'API completa para emissão de documentos fiscais eletrônicos no Brasil'
 ---
 
-## Setting up
+# Manager SaaS API
 
-Get your documentation site up and running in minutes.
+O **Manager SaaS** é uma solução completa em nuvem para gerenciar e executar todos os processos de emissão de documentos fiscais eletrônicos no Brasil.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+## O que é o Manager SaaS?
 
-## Make it yours
+O Manager SaaS é uma API robusta que automatiza todo o processo de emissão fiscal, desde a geração do XML até a impressão do documento auxiliar. Nossa solução elimina a complexidade de implementar e manter sistemas fiscais, permitindo que você foque no seu negócio.
 
-Design a docs site that looks great and empowers your users.
+## Documentos Suportados
 
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
+    title="NF-e"
+    href="/documents/nfe/overview"
+    icon="file-text"
   >
-    Edit your docs locally and preview them in real time.
+    Nota Fiscal Eletrônica - documento principal para operações comerciais
   </Card>
   <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
+    title="NFC-e"
+    href="/documents/nfce/overview"
+    icon="receipt"
   >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+    Nota Fiscal de Consumidor Eletrônica - para vendas ao consumidor final
   </Card>
   <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
+    title="CT-e"
+    href="/documents/cte/overview"
+    icon="truck"
   >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
-
-## Create beautiful pages
-
-Everything you need to create world-class documentation.
-
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+    Conhecimento de Transporte Eletrônico - para operações de transporte
   </Card>
   <Card
-    title="Code samples"
+    title="MDF-e"
+    href="/documents/mdfe/overview"
+    icon="package"
+  >
+    Manifesto Eletrônico de Documentos Fiscais - para transportes
+  </Card>
+  <Card
+    title="CF-e"
+    href="/documents/cfe/overview"
+    icon="credit-card"
+  >
+    Cupom Fiscal Eletrônico - SAT e MFE
+  </Card>
+  <Card
+    title="GNRE"
+    href="/documents/gnre/overview"
+    icon="file-check"
+  >
+    Guia Nacional de Recolhimento de Tributos Estaduais
+  </Card>
+</CardGroup>
+
+## Como Funciona
+
+### 1. **API REST**
+Comunique-se diretamente com nossa API através de requisições HTTPS para emissão, cancelamento e consulta de documentos.
+
+### 2. **Monitorador de Pastas**
+Alternativamente, utilize nosso sistema de monitoramento de pastas para troca de arquivos, ideal para integrações batch.
+
+### 3. **Processamento Automático**
+Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
+- Validação dos dados
+- Geração do XML conforme especificações da SEFAZ
+- Transmissão para a SEFAZ
+- Processamento da resposta
+- Geração do documento auxiliar
+
+## Vantagens
+
+<CardGroup cols={3}>
+  <Card
+    title="Simplicidade"
+    icon="zap"
+  >
+    API intuitiva e bem documentada para rápida integração
+  </Card>
+  <Card
+    title="Confiabilidade"
+    icon="shield-check"
+  >
+    Infraestrutura robusta com 99.9% de disponibilidade
+  </Card>
+  <Card
+    title="Conformidade"
+    icon="check-circle"
+  >
+    Sempre atualizado com as últimas legislações fiscais
+  </Card>
+</CardGroup>
+
+## Comece Agora
+
+<CardGroup cols={2}>
+  <Card
+    title="Primeiros Passos"
+    href="/quickstart"
+    icon="rocket"
+  >
+    Configure sua primeira integração em minutos
+  </Card>
+  <Card
+    title="Documentação da API"
+    href="/api/endpoints/emission"
     icon="code"
-    href="/essentials/code"
   >
-    Add sample code to demonstrate how to use your product.
+    Explore todos os endpoints disponíveis
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Suporte
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+Precisa de ajuda? Nossa equipe está sempre disponível para auxiliar:
+
+- 📧 **Email**: suporte@managersaas.com
+- 📚 **Documentação**: docs.managersaas.com
+- 🚀 **Dashboard**: dashboard.managersaas.com
+
+---
+
+*Manager SaaS - Simplificando a gestão fiscal do seu negócio*
+

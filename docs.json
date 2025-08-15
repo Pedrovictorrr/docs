@@ -1,7 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Manager SaaS API",
+  "description": "API completa para emissão de documentos fiscais eletrônicos",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -11,58 +12,126 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Introdução",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Primeiros passos",
             "pages": [
               "index",
               "quickstart",
-              "development"
+              "authentication"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Conceitos básicos",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "concepts/overview",
+              "concepts/document-types",
+              "concepts/communication-methods"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Documentos Fiscais",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "NF-e",
             "pages": [
-              "api-reference/introduction"
+              "documents/nfe/overview",
+              "documents/nfe/emission",
+              "documents/nfe/cancellation"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "NFC-e",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "documents/nfce/overview",
+              "documents/nfce/emission"
+            ]
+          },
+          {
+            "group": "CT-e",
+            "pages": [
+              "documents/cte/overview",
+              "documents/cte/emission",
+              "documents/cte/os-emission"
+            ]
+          },
+          {
+            "group": "MDF-e",
+            "pages": [
+              "documents/mdfe/overview",
+              "documents/mdfe/emission"
+            ]
+          },
+          {
+            "group": "CF-e",
+            "pages": [
+              "documents/cfe/overview",
+              "documents/cfe/sat",
+              "documents/cfe/mfe"
+            ]
+          },
+          {
+            "group": "GNRE",
+            "pages": [
+              "documents/gnre/overview",
+              "documents/gnre/emission"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/endpoints/emission",
+              "api/endpoints/consultation",
+              "api/endpoints/conversion",
+              "api/endpoints/disposal",
+              "api/endpoints/cancellation",
+              "api/endpoints/status"
+            ]
+          },
+          {
+            "group": "Modelos de dados",
+            "pages": [
+              "api/models/request",
+              "api/models/response",
+              "api/models/errors"
+            ]
+          },
+          {
+            "group": "Monitorador",
+            "pages": [
+              "api/monitor/overview",
+              "api/monitor/folder-structure",
+              "api/monitor/file-formats"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Exemplos",
+        "groups": [
+          {
+            "group": "Integrações",
+            "pages": [
+              "examples/php",
+              "examples/nodejs",
+              "examples/python",
+              "examples/java"
+            ]
+          },
+          {
+            "group": "Casos de uso",
+            "pages": [
+              "examples/ecommerce",
+              "examples/erp",
+              "examples/pos"
             ]
           }
         ]
@@ -71,19 +140,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "anchor": "Suporte",
+          "href": "mailto:suporte@managersaas.com",
+          "icon": "message-circle"
+        },
+        {
+          "anchor": "Documentação",
+          "href": "https://docs.managersaas.com",
           "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
         }
       ]
     }
@@ -95,14 +159,18 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Suporte",
+        "href": "mailto:suporte@managersaas.com"
+      },
+      {
+        "label": "Status",
+        "href": "https://status.managersaas.com"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://dashboard.managersaas.com"
     }
   },
   "contextual": {
@@ -119,9 +187,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/managersaas",
+      "github": "https://github.com/managersaas",
+      "linkedin": "https://linkedin.com/company/managersaas"
     }
   }
 }
