@@ -1,0 +1,390 @@
+---
+title: 'Visão Geral da API'
+description: 'Visão geral da API REST do Manager SaaS para documentos fiscais eletrônicos'
+---
+
+# Visão Geral da API
+
+O Manager SaaS oferece uma API REST completa e robusta para gerenciar todos os tipos de documentos fiscais eletrônicos brasileiros. Esta documentação fornece informações detalhadas sobre todos os endpoints, modelos de dados e funcionalidades disponíveis.
+
+## Características da API
+
+### **🔐 Autenticação**
+- **Bearer Token**: Para a maioria dos endpoints
+- **Basic Auth**: Para endpoints específicos (consulta, conversão, envio)
+- **Certificado Digital A1**: Obrigatório para assinatura de documentos
+
+### **📡 Comunicação**
+- **HTTPS**: Todas as comunicações são criptografadas
+- **REST**: Arquitetura RESTful com JSON
+- **Síncrona**: Resposta imediata para operações críticas
+- **Assíncrona**: Webhooks para notificações de status
+
+### **🌐 Base URL**
+```
+https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb
+```
+
+### **📊 Formatos de Dados**
+- **Entrada**: JSON para emissão, TX2/XML para envio
+- **Saída**: JSON, XML, CSV, arquivos binários
+- **Codificação**: UTF-8 para caracteres especiais
+
+## Estrutura da API
+
+### **📋 Endpoints Principais**
+
+| Categoria | Endpoint | Método | Descrição |
+|-----------|----------|---------|-----------|
+| **Emissão** | `/cteos/emite` | POST | Cria novo CT-e OS |
+| **Envio** | `/cteos/envia` | POST | Envia para SEFAZ |
+| **Consulta** | `/cteos/consulta` | GET | Consulta avançada |
+| **Conversão** | `/cteos/exportaxml` | POST | TX2 para XML |
+| **Descarte** | `/cteos/descarta` | POST | Descarta CT-e OS |
+| **Status** | `/cteos/status` | GET | Status do documento |
+| **Download** | `/cteos/{numero}/xml` | GET | Download XML |
+| **Download** | `/cteos/{numero}/pdf` | GET | Download PDF |
+
+### **📚 Modelos de Dados**
+- **Request Models**: Estruturas de entrada para cada documento
+- **Response Models**: Formatos de resposta padronizados
+- **Error Models**: Tratamento de erros consistente
+
+### **🔧 Funcionalidades**
+- **Validação**: Validação automática de dados
+- **Assinatura**: Assinatura digital automática
+- **Monitoramento**: Status em tempo real
+- **Webhooks**: Notificações automáticas
+
+## Códigos de Status HTTP
+
+### **✅ Respostas de Sucesso**
+
+| Código | Descrição | Uso |
+|--------|-----------|-----|
+| `200 OK` | Requisição bem-sucedida | Operações de leitura e consulta |
+| `201 Created` | Recurso criado | Emissão de documentos |
+| `202 Accepted` | Requisição aceita | Processamento assíncrono |
+
+### **❌ Respostas de Erro**
+
+| Código | Descrição | Causa |
+|--------|-----------|-------|
+| `400 Bad Request` | Requisição inválida | Parâmetros incorretos |
+| `401 Unauthorized` | Não autorizado | Token inválido ou expirado |
+| `403 Forbidden` | Acesso negado | Permissões insuficientes |
+| `404 Not Found` | Recurso não encontrado | Endpoint ou documento inexistente |
+| `429 Too Many Requests` | Muitas requisições | Rate limit excedido |
+| `500 Internal Server Error` | Erro interno | Problema no servidor |
+| `502 Bad Gateway` | Gateway inválido | Problema de comunicação |
+| `503 Service Unavailable` | Serviço indisponível | Manutenção ou sobrecarga |
+
+## Rate Limiting
+
+### **📈 Limites de Uso**
+
+| Tipo de Operação | Limite | Período |
+|------------------|--------|---------|
+| **Emissão** | 100/min | Por minuto |
+| **Consulta** | 1000/min | Por minuto |
+| **Download** | 500/min | Por minuto |
+| **Conversão** | 200/min | Por minuto |
+
+### **📊 Headers de Rate Limiting**
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1640995200
+```
+
+### **⚠️ Excedendo o Limite**
+
+Quando o rate limit é excedido, a API retorna:
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+```
+
+## Autenticação
+
+### **🔑 Bearer Token**
+
+Para a maioria dos endpoints:
+
+```http
+Authorization: Bearer <seu_token_aqui>
+```
+
+### **🔐 Basic Auth**
+
+Para endpoints específicos:
+
+```http
+Authorization: Basic <base64_encoded_credentials>
+```
+
+### **📝 Obtendo um Token**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/auth/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "seu_usuario",
+    "password": "sua_senha"
+  }'
+```
+
+## Headers Comuns
+
+### **📋 Headers de Requisição**
+
+| Header | Descrição | Exemplo |
+|--------|-----------|---------|
+| `Authorization` | Token de autenticação | `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `Content-Type` | Tipo de conteúdo | `application/json` |
+| `Accept` | Tipo de resposta aceita | `application/json` |
+| `User-Agent` | Identificação do cliente | `ManagerSaaS-Client/1.0` |
+
+### **📤 Headers de Resposta**
+
+| Header | Descrição | Exemplo |
+|--------|-----------|---------|
+| `Content-Type` | Tipo de conteúdo retornado | `application/json` |
+| `X-Request-ID` | ID único da requisição | `req_1234567890abcdef` |
+| `X-RateLimit-Limit` | Limite de rate limiting | `100` |
+| `X-RateLimit-Remaining` | Requisições restantes | `95` |
+
+## Tratamento de Erros
+
+### **📝 Formato de Erro Padrão**
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Parâmetros inválidos",
+    "details": [
+      {
+        "field": "cnpj",
+        "message": "CNPJ deve ter 14 dígitos"
+      }
+    ],
+    "request_id": "req_1234567890abcdef",
+    "timestamp": "2024-01-01T12:00:00Z"
+  }
+}
+```
+
+### **🔍 Códigos de Erro Comuns**
+
+| Código | Descrição | Solução |
+|--------|-----------|---------|
+| `VALIDATION_ERROR` | Erro de validação | Verificar parâmetros |
+| `AUTHENTICATION_ERROR` | Erro de autenticação | Verificar token |
+| `AUTHORIZATION_ERROR` | Erro de autorização | Verificar permissões |
+| `RATE_LIMIT_EXCEEDED` | Rate limit excedido | Aguardar e tentar novamente |
+| `INTERNAL_ERROR` | Erro interno | Contatar suporte |
+
+## Webhooks
+
+### **🔔 Configuração de Webhooks**
+
+```json
+{
+  "url": "https://seu-servidor.com/webhook",
+  "events": ["document.authorized", "document.rejected"],
+  "secret": "seu_secret_aqui"
+}
+```
+
+### **📡 Eventos Disponíveis**
+
+| Evento | Descrição | Dados Enviados |
+|--------|-----------|----------------|
+| `document.authorized` | Documento autorizado | ID, chave, status |
+| `document.rejected` | Documento rejeitado | ID, erro, detalhes |
+| `document.cancelled` | Documento cancelado | ID, motivo |
+| `document.downloaded` | Documento baixado | ID, usuário, timestamp |
+
+### **🔒 Segurança dos Webhooks**
+
+- **Assinatura**: Cada webhook é assinado com HMAC-SHA256
+- **Verificação**: Sempre verifique a assinatura
+- **Retry**: Implemente retry com backoff exponencial
+
+## Paginação
+
+### **📄 Endpoints com Paginação**
+
+Para consultas que retornam múltiplos registros:
+
+```http
+GET /cteos/consulta?page=1&limit=50
+```
+
+### **📊 Headers de Paginação**
+
+```http
+X-Total-Count: 150
+X-Page-Count: 3
+X-Current-Page: 1
+X-Per-Page: 50
+```
+
+### **📋 Parâmetros de Paginação**
+
+| Parâmetro | Tipo | Padrão | Descrição |
+|-----------|------|--------|-----------|
+| `page` | integer | 1 | Número da página |
+| `limit` | integer | 50 | Registros por página |
+| `offset` | integer | 0 | Registros para pular |
+
+## Filtros e Ordenação
+
+### **🔍 Filtros Disponíveis**
+
+```http
+GET /cteos/consulta?status=authorized&date_from=2024-01-01&date_to=2024-01-31
+```
+
+### **📊 Operadores de Filtro**
+
+| Operador | Descrição | Exemplo |
+|----------|-----------|---------|
+| `eq` | Igual | `status=eq:authorized` |
+| `ne` | Diferente | `status=ne:rejected` |
+| `gt` | Maior que | `value=gt:100` |
+| `lt` | Menor que | `value=lt:1000` |
+| `in` | Contido em | `status=in:authorized,rejected` |
+
+### **📈 Ordenação**
+
+```http
+GET /cteos/consulta?sort=created_at:desc,status:asc
+```
+
+## Versionamento
+
+### **🔢 Versões da API**
+
+| Versão | Status | Suporte até |
+|--------|--------|-------------|
+| `v1` | ✅ Ativa | 2025-12-31 |
+| `v2` | 🚧 Beta | - |
+| `v3` | 📋 Planejada | - |
+
+### **📝 Especificação da Versão**
+
+```http
+Accept: application/vnd.managersaas.v1+json
+```
+
+## SDKs e Bibliotecas
+
+### **💻 SDKs Oficiais**
+
+| Linguagem | Repositório | Status |
+|-----------|-------------|--------|
+| **JavaScript** | `@managersaas/js-sdk` | ✅ Disponível |
+| **Python** | `managersaas-python` | ✅ Disponível |
+| **PHP** | `managersaas-php` | 🚧 Em desenvolvimento |
+| **Java** | `managersaas-java` | 📋 Planejado |
+
+### **🔧 Exemplo de Uso com SDK**
+
+```javascript
+import { ManagerSaaS } from '@managersaas/js-sdk';
+
+const client = new ManagerSaaS({
+  apiKey: 'sua_api_key',
+  environment: 'production'
+});
+
+const cte = await client.cte.create({
+  // dados do CT-e
+});
+```
+
+## Testes e Sandbox
+
+### **🧪 Ambiente de Testes**
+
+```http
+https://sandbox.managersaas.com:8081/ManagerAPIWeb
+```
+
+### **🔑 Credenciais de Teste**
+
+| Campo | Valor |
+|-------|-------|
+| **API Key** | `test_key_123456` |
+| **Username** | `test_user` |
+| **Password** | `test_pass` |
+
+### **📋 Dados de Teste**
+
+- CNPJs válidos para teste
+- Certificados digitais de homologação
+- Documentos de exemplo
+
+## Suporte e Comunidade
+
+### **📞 Suporte Técnico**
+
+- **Email**: suporte@managersaas.com
+- **Telefone**: +55 11 99999-9999
+- **Chat**: Disponível no dashboard
+- **Documentação**: docs.managersaas.com
+
+### **🌐 Recursos Adicionais**
+
+- **Status da API**: status.managersaas.com
+- **Blog**: blog.managersaas.com
+- **YouTube**: youtube.com/managersaas
+- **LinkedIn**: linkedin.com/company/managersaas
+
+### **📚 Documentação Relacionada**
+
+- **Guia de Integração**: Guia passo a passo
+- **Exemplos de Código**: Repositório GitHub
+- **FAQ**: Perguntas frequentes
+- **Changelog**: Histórico de mudanças
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Endpoints"
+    href="/api/endpoints/emission"
+    icon="code"
+  >
+    Explore todos os endpoints
+  </Card>
+  <Card
+    title="Modelos de Dados"
+    href="/api/models/request"
+    icon="database"
+  >
+    Estruturas de dados
+  </Card>
+  <Card
+    title="Exemplos"
+    href="/examples/php"
+    icon="play"
+  >
+    Exemplos práticos
+  </Card>
+  <Card
+    title="Suporte"
+    href="mailto:suporte@managersaas.com"
+    icon="message-circle"
+  >
+    Entre em contato
+  </Card>
+</CardGroup>
+
+---
+
+🚀 **API Completa**: Explore todos os endpoints, modelos de dados e funcionalidades da API do Manager SaaS. Para dúvidas técnicas ou suporte, nossa equipe está sempre disponível. 

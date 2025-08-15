@@ -86,6 +86,12 @@
         "tab": "API Reference",
         "groups": [
           {
+            "group": "Visão Geral",
+            "pages": [
+              "api/overview"
+            ]
+          },
+          {
             "group": "Endpoints",
             "pages": [
               "api/endpoints/emission",
