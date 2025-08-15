@@ -91,6 +91,7 @@
               "api/endpoints/emission",
               "api/endpoints/consultation",
               "api/endpoints/conversion",
+              "api/endpoints/sending",
               "api/endpoints/disposal",
               "api/endpoints/cancellation",
               "api/endpoints/status"

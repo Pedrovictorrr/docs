@@ -570,6 +570,269 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Basic YWRtaW46MTIzbXVkYXI=
 ```
 
+### **Envio para SEFAZ**
+
+```http
+POST /cteos/envia
+```
+
+**Descrição**: Envia CT-e OS para a SEFAZ de forma síncrona para autorização ou rejeição.
+
+**Headers Obrigatórios**:
+```http
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic YWRtaW46MTIzbXVkYXI=
+```
+
+**Parâmetros do Body**:
+
+| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |
+|-----------|------|-------------|-----------|---------|
+| `Grupo` | string | ✅ | Nome do grupo configurado no SaaS | `GRUPO_EMPRESA` |
+| `CNPJ` | string | ✅ | CNPJ do emitente (apenas números) | `11111111111111` |
+| `Arquivo` | file | ✅ | Conteúdo do TX2 ou XML | Conteúdo binário |
+
+**Exemplo de Requisição**:
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=GRUPO_EMPRESA&CNPJ=11111111111111" \
+  --data-binary @arquivo.txt
+```
+
+**Resposta de Sucesso**:
+```
+12345678,42120605793827000113574580000000031123456786,100,Autorizado o uso do CTe-OS
+```
+
+**Formato da Resposta**:
+`"Número do lote", "Chave do CTe-OS", "cStat (Código de status)", "Mensagem da SEFAZ"`
+
+**Resposta de Erro**:
+```
+EXCEPTION,EspdManCTeOSAssinarException,Problema ao assinar Nota(s). Exception: Falha ao Validar Lote para Envio. Erro: EspdSchemaValidationException O arquivo contém 1 ou mais erros no de validação de esquema '5.00' viola a restrição pattern de '3.00'. Falha da analise do atributo 'versao' com valor '5.00'
+```
+
+**Implementação em Diferentes Linguagens**:
+
+#### **JavaScript/Node.js**
+```javascript
+const enviarCTeOS = async (arquivo, params) => {
+  const formData = new FormData();
+  formData.append('Grupo', params.grupo);
+  formData.append('CNPJ', params.cnpj);
+  formData.append('Arquivo', arquivo);
+  
+  try {
+    const response = await fetch('https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const resultado = await response.text();
+    
+    // Verifica se é uma resposta de sucesso ou erro
+    if (resultado.includes('EXCEPTION')) {
+      return { success: false, error: resultado };
+    } else {
+      // Parse da resposta de sucesso
+      const [numeroLote, chave, cStat, mensagem] = resultado.split(',').map(s => s.trim());
+      return {
+        success: true,
+        numeroLote,
+        chave,
+        cStat: parseInt(cStat),
+        mensagem,
+        raw: resultado
+      };
+    }
+    
+  } catch (error) {
+    console.error('Erro no envio:', error);
+    throw error;
+  }
+};
+
+// Uso
+const resultado = await enviarCTeOS(arquivo, {
+  grupo: 'GRUPO_EMPRESA',
+  cnpj: '11111111111111'
+});
+
+if (resultado.success) {
+  console.log('CT-e OS enviado com sucesso!');
+  console.log('Lote:', resultado.numeroLote);
+  console.log('Chave:', resultado.chave);
+  console.log('Status:', resultado.cStat);
+  console.log('Mensagem:', resultado.mensagem);
+} else {
+  console.error('Erro no envio:', resultado.error);
+}
+```
+
+#### **Python**
+```python
+import requests
+
+def enviar_cte_os(arquivo_path, params):
+    url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia"
+    
+    headers = {
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+    }
+    
+    # Lê o arquivo
+    with open(arquivo_path, 'rb') as f:
+        arquivo = f.read()
+    
+    files = {
+        'Arquivo': ('arquivo.txt', arquivo, 'text/plain')
+    }
+    
+    data = {
+        'Grupo': params['grupo'],
+        'CNPJ': params['cnpj']
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, files=files, data=data)
+        response.raise_for_status()
+        
+        resultado = response.text
+        
+        # Verifica se é uma resposta de sucesso ou erro
+        if 'EXCEPTION' in resultado:
+            return {'success': False, 'error': resultado}
+        else:
+            # Parse da resposta de sucesso
+            partes = [part.strip() for part in resultado.split(',')]
+            if len(partes) >= 4:
+                return {
+                    'success': True,
+                    'numero_lote': partes[0],
+                    'chave': partes[1],
+                    'c_stat': int(partes[2]),
+                    'mensagem': partes[3],
+                    'raw': resultado
+                }
+            else:
+                return {'success': False, 'error': 'Formato de resposta inválido'}
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Erro no envio: {e}")
+        raise
+
+# Uso
+resultado = enviar_cte_os('arquivo.txt', {
+    'grupo': 'GRUPO_EMPRESA',
+    'cnpj': '11111111111111'
+})
+
+if resultado['success']:
+    print(f"CT-e OS enviado com sucesso!")
+    print(f"Lote: {resultado['numero_lote']}")
+    print(f"Chave: {resultado['chave']}")
+    print(f"Status: {resultado['c_stat']}")
+    print(f"Mensagem: {resultado['mensagem']}")
+else:
+    print(f"Erro no envio: {resultado['error']}")
+```
+
+#### **PHP**
+```php
+function enviarCTeOS($arquivoPath, $params) {
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia";
+    
+    $headers = [
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI='
+    ];
+    
+    // Lê o arquivo
+    if (!file_exists($arquivoPath)) {
+        throw new Exception("Arquivo não encontrado: {$arquivoPath}");
+    }
+    
+    $arquivo = file_get_contents($arquivoPath);
+    
+    // Cria arquivo temporário
+    $tempFile = tempnam(sys_get_temp_dir(), 'cte_');
+    file_put_contents($tempFile, $arquivo);
+    
+    $postData = [
+        'Grupo' => $params['grupo'],
+        'CNPJ' => $params['cnpj'],
+        'Arquivo' => new CURLFile($tempFile, 'text/plain', 'arquivo.txt')
+    ];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    // Remove arquivo temporário
+    unlink($tempFile);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("Erro HTTP: " . $httpCode);
+    }
+    
+    // Verifica se é uma resposta de sucesso ou erro
+    if (strpos($response, 'EXCEPTION') !== false) {
+        return ['success' => false, 'error' => $response];
+    } else {
+        // Parse da resposta de sucesso
+        $partes = array_map('trim', explode(',', $response));
+        if (count($partes) >= 4) {
+            return [
+                'success' => true,
+                'numero_lote' => $partes[0],
+                'chave' => $partes[1],
+                'c_stat' => intval($partes[2]),
+                'mensagem' => $partes[3],
+                'raw' => $response
+            ];
+        } else {
+            return ['success' => false, 'error' => 'Formato de resposta inválido'];
+        }
+    }
+}
+
+// Uso
+try {
+    $resultado = enviarCTeOS('arquivo.txt', [
+        'grupo' => 'GRUPO_EMPRESA',
+        'cnpj' => '11111111111111'
+    ]);
+    
+    if ($resultado['success']) {
+        echo "CT-e OS enviado com sucesso!\n";
+        echo "Lote: " . $resultado['numero_lote'] . "\n";
+        echo "Chave: " . $resultado['chave'] . "\n";
+        echo "Status: " . $resultado['c_stat'] . "\n";
+        echo "Mensagem: " . $resultado['mensagem'] . "\n";
+    } else {
+        echo "Erro no envio: " . $resultado['error'] . "\n";
+    }
+    
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage() . "\n";
+}
+```
+
 ### **Descarte de CT-e OS**
 
 ```http
