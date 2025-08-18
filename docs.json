@@ -70,83 +70,8 @@
               ]
             }
           ]
-        },
-        {
-          "tab": "API Reference",
-          "groups": [
-            {
-              "group": "Visão Geral",
-              "pages": [
-                "api/overview"
-              ]
-            },
-            {
-              "group": "Endpoints",
-              "pages": [
-                "api/endpoints/emission",
-                "api/endpoints/consultation",
-                "api/endpoints/conversion",
-                "api/endpoints/sending",
-                "api/endpoints/disposal",
-                "api/endpoints/cancellation",
-                "api/endpoints/status"
-              ]
-            },
-            {
-              "group": "Modelos de dados",
-              "pages": [
-                "api/models/request",
-                "api/models/response",
-                "api/models/errors"
-              ]
-            },
-            {
-              "group": "Monitorador",
-              "pages": [
-                "api/monitor/overview",
-                "api/monitor/folder-structure",
-                "api/monitor/file-formats"
-              ]
-            }
-          ]
-        },
-        {
-          "tab": "Exemplos",
-          "groups": [
-            {
-              "group": "Integrações",
-              "pages": [
-                "examples/php",
-                "examples/nodejs",
-                "examples/python",
-                "examples/java"
-              ]
-            },
-            {
-              "group": "Casos de uso",
-              "pages": [
-                "examples/ecommerce",
-                "examples/erp",
-                "examples/pos"
-              ]
-            }
-          ]
         }
-      ],
-      "global": {
-        "anchors": [
-          {
-            "anchor": "Suporte",
-            "href": "mailto:suporte@managersaas.com",
-            "icon": "message-circle"
-          },
-          {
-            "anchor": "Documentação",
-            "href": "https://docs.managersaas.com",
-            "icon": "book-open-cover"
-          }
-        ]
-      }
+      ]
     },
     "logo": {
       "light": "/logo/light.svg",
@@ -154,14 +79,7 @@
     },
     "navbar": {
       "links": [
-        {
-          "label": "Suporte",
-          "href": "mailto:suporte@managersaas.com"
-        },
-        {
-          "label": "Status",
-          "href": "https://status.managersaas.com"
-        }
+       
       ],
       "primary": {
         "type": "button",
