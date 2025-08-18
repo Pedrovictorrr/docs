@@ -1,11 +1,11 @@
 ---
-title: 'Primeiros Passos'
-description: 'Configure sua primeira integração com o Manager SaaS em minutos'
+title: 'Primeiros Passos - Manager SaaS CT-e'
+description: 'Configure sua primeira integração com o Manager SaaS CT-e em minutos'
 ---
 
-# Primeiros Passos - Manager SaaS
+# Primeiros Passos - Manager SaaS CT-e
 
-Configure sua primeira integração com o Manager SaaS em poucos minutos e comece a emitir documentos fiscais eletrônicos.
+Configure sua primeira integração com o Manager SaaS CT-e em poucos minutos e comece a emitir Conhecimentos de Transporte Eletrônico.
 
 ## Pré-requisitos
 
@@ -25,24 +25,58 @@ Configure sua primeira integração com o Manager SaaS em poucos minutos e comec
 - Cliente HTTP (cURL, Postman, Insomnia)
 - Conhecimento básico de APIs REST
 
-## Passo 1: Obter Credenciais
+## Passo 1: Autenticação e Obtenção de Token
 
-### **1.1 Acesse o Dashboard**
-1. Acesse [dashboard.managersaas.com](https://dashboard.managersaas.com)
-2. Faça login com suas credenciais
-3. Navegue para a seção "API Keys"
+### **1.1 Endpoint de Autenticação**
 
-### **1.2 Gere seu Token**
-1. Clique em "Gerar Nova Chave"
-2. Escolha um nome para identificação
-3. Selecione as permissões necessárias
-4. Copie o token gerado
+Para obter o token de autenticação, faça uma requisição para:
+
+**Endpoint:** `https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token`
+
+**Método:** `POST`
+
+**Headers:**
+```http
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "email": "seu_email@exemplo.com",
+  "senha": "sua_senha",
+  "gerar": 1,
+  "api": 0
+}
+```
+
+### **1.2 Parâmetros do Body**
+
+| Parâmetro | Descrição | Valores |
+|-----------|-----------|---------|
+| `email` | E-mail do login da Software House | String |
+| `senha` | Senha da Software House | String |
+| `gerar` | Indica se o token deve ser gerado | `1` - Gerar novo token<br>`0` - Não gerar |
+| `api` | Tipo de token a ser gerado | `1` - Token da API (sem expiração)<br>`0` - Token com data de expiração |
+
+### **1.3 Exemplo de Requisição**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "seu_email@exemplo.com",
+    "senha": "sua_senha",
+    "gerar": 1,
+    "api": 0
+  }'
+```
 
 <Note>
 ⚠️ **Importante**: Guarde seu token em local seguro. Ele não será exibido novamente.
 </Note>
 
-## Passo 2: Configurar o Ambiente
+## Passo 2: Configuração do Ambiente
 
 ### **2.1 Variáveis de Ambiente**
 
@@ -50,7 +84,7 @@ Crie um arquivo `.env` com suas credenciais:
 
 ```bash
 # Manager SaaS Configuration
-MANAGER_SAAS_API_URL=https://api.managersaas.com/v1
+MANAGER_SAAS_API_URL=https://managersaas.tecnospeed.com.br:1337/api/v1
 MANAGER_SAAS_TOKEN=seu_token_aqui
 MANAGER_SAAS_ENVIRONMENT=production
 ```
@@ -59,7 +93,7 @@ MANAGER_SAAS_ENVIRONMENT=production
 
 Configure o Postman ou Insomnia:
 
-- **Base URL**: `https://api.managersaas.com/v1`
+- **Base URL**: `https://managersaas.tecnospeed.com.br:1337/api/v1`
 - **Authorization**: `Bearer SEU_TOKEN`
 - **Content-Type**: `application/json`
 
@@ -70,7 +104,7 @@ Configure o Postman ou Insomnia:
 Vamos testar se sua conexão está funcionando:
 
 ```bash
-curl -X GET "https://api.managersaas.com/v1/status" \
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/status" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -H "Content-Type: application/json"
 ```
@@ -90,18 +124,18 @@ curl -X GET "https://api.managersaas.com/v1/status" \
 Verifique suas configurações de empresa:
 
 ```bash
-curl -X GET "https://api.managersaas.com/v1/empresa/configuracoes" \
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/empresa/configuracoes" \
   -H "Authorization: Bearer SEU_TOKEN"
 ```
 
-## Passo 4: Emitir Primeiro Documento
+## Passo 4: Emitir Primeiro CT-e OS
 
 ### **4.1 Emissão de CT-e OS**
 
 Vamos emitir um CT-e OS simples para teste:
 
 ```bash
-curl -X POST "https://api.managersaas.com/v1/cte/os/emitir" \
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/emitir" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -149,8 +183,8 @@ curl -X POST "https://api.managersaas.com/v1/cte/os/emitir" \
     "protocolo": "123456789012345",
     "data_emissao": "2024-01-15T10:30:00Z",
     "status": "AUTORIZADO",
-    "xml_url": "https://api.managersaas.com/v1/cte/os/123456/xml",
-    "pdf_url": "https://api.managersaas.com/v1/cte/os/123456/pdf"
+    "xml_url": "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/123456/xml",
+    "pdf_url": "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/123456/pdf"
   }
 }
 ```
@@ -160,7 +194,7 @@ curl -X POST "https://api.managersaas.com/v1/cte/os/emitir" \
 ### **5.1 Consulta de Status**
 
 ```bash
-curl -X GET "https://api.managersaas.com/v1/cte/os/123456/status" \
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/123456/status" \
   -H "Authorization: Bearer SEU_TOKEN"
 ```
 
@@ -168,12 +202,12 @@ curl -X GET "https://api.managersaas.com/v1/cte/os/123456/status" \
 
 ```bash
 # Download do XML
-curl -X GET "https://api.managersaas.com/v1/cte/os/123456/xml" \
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/123456/xml" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -o cte_os_123456.xml
 
 # Download do PDF
-curl -X GET "https://api.managersaas.com/v1/cte/os/123456/pdf" \
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/123456/pdf" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -o cte_os_123456.pdf
 ```
@@ -203,7 +237,7 @@ Crie a seguinte estrutura no seu servidor:
 Crie `config/config.txt`:
 
 ```txt
-API_URL=https://api.managersaas.com/v1
+API_URL=https://managersaas.tecnospeed.com.br:1337/api/v1
 TOKEN=seu_token_aqui
 EMPRESA_ID=seu_empresa_id
 AMBIENTE=production
@@ -226,13 +260,47 @@ SERVICO_VALOR_FRETE=150.00
 SERVICO_VALOR_TOTAL=150.00
 ```
 
-## Passo 7: Implementar em Produção
+## Passo 7: Configurações Avançadas
 
-### **7.1 Tratamento de Erros**
+### **7.1 Configurações MODO**
+
+Para personalizar o comportamento do sistema, utilize as configurações MODO:
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/configuracao" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "GetConfig": 1,
+    "AutoEmail": 1,
+    "AutoImprimir": 1,
+    "Modo": "NORMAL",
+    "Ambiente": 1
+  }'
+```
+
+### **7.2 Configurações de Certificado**
+
+Configure seu certificado digital:
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/configurar" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Repositorio": "LOCAL_MACHINE_STORE",
+    "NomeCertificado": "SEU_CNPJ",
+    "PinCode": "sua_senha_certificado"
+  }'
+```
+
+## Passo 8: Implementar em Produção
+
+### **8.1 Tratamento de Erros**
 
 ```javascript
 try {
-  const response = await fetch('https://api.managersaas.com/v1/cte/os/emitir', {
+  const response = await fetch('https://managersaas.tecnospeed.com.br:1337/api/v1/cte/os/emitir', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -254,12 +322,12 @@ try {
 }
 ```
 
-### **7.2 Webhooks**
+### **8.2 Webhooks**
 
 Configure webhooks para receber notificações em tempo real:
 
 ```bash
-curl -X POST "https://api.managersaas.com/v1/webhooks/configurar" \
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/webhooks/configurar" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -269,36 +337,83 @@ curl -X POST "https://api.managersaas.com/v1/webhooks/configurar" \
   }'
 ```
 
+## Passo 9: Funcionalidades Avançadas
+
+### **9.1 Carta de Correção Eletrônica**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/cce/enviar" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "numero_cte": "123456",
+    "correcoes": [
+      {
+        "campo": "valor_frete",
+        "valor_anterior": "100.00",
+        "valor_corrigido": "150.00"
+      }
+    ]
+  }'
+```
+
+### **9.2 Cancelamento de CT-e**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/cancelar" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "numero_cte": "123456",
+    "justificativa": "Erro nos dados do documento"
+  }'
+```
+
+### **9.3 Prévia do DACTE**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/cte/prever-dacte" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dados_cte": {
+      "emissor": {...},
+      "tomador": {...},
+      "servico": {...}
+    }
+  }'
+```
+
 ## Próximos Passos
 
 <CardGroup cols={2}>
   <Card
-    title="Documentação da API"
-    href="/api/endpoints/emission"
-    icon="code"
-  >
-    Explore todos os endpoints disponíveis
-  </Card>
-  <Card
-    title="Exemplos de Integração"
-    href="/examples/php"
-    icon="terminal"
-  >
-    Veja exemplos práticos em diferentes linguagens
-  </Card>
-  <Card
-    title="Tipos de Documentos"
+    title="Visão Geral CT-e"
     href="/documents/cte/overview"
     icon="file-text"
   >
-    Conheça todos os documentos suportados
+    Conheça todos os detalhes sobre CT-e
   </Card>
   <Card
-    title="Suporte"
-    href="mailto:suporte@managersaas.com"
-    icon="message-circle"
+    title="Emissão CT-e OS"
+    href="/documents/cte/os-emission"
+    icon="clipboard-list"
   >
-    Entre em contato com nossa equipe
+    Aprenda sobre emissão de CT-e OS
+  </Card>
+  <Card
+    title="Autenticação"
+    href="/documents/cte/autenticacao"
+    icon="key"
+  >
+    Configuração de autenticação
+  </Card>
+  <Card
+    title="Configurações"
+    href="/documents/cte/configuracao-modo"
+    icon="settings"
+  >
+    Configurações avançadas do sistema
   </Card>
 </CardGroup>
 
@@ -328,4 +443,4 @@ curl -X POST "https://api.managersaas.com/v1/webhooks/configurar" \
 
 ---
 
-🎉 **Parabéns!** Você configurou com sucesso sua integração com o Manager SaaS. Agora pode começar a emitir documentos fiscais eletrônicos de forma automatizada e eficiente.
+🎉 **Parabéns!** Você configurou com sucesso sua integração com o Manager SaaS CT-e. Agora pode começar a emitir Conhecimentos de Transporte Eletrônico de forma automatizada e eficiente.

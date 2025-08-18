@@ -11,12 +11,42 @@ O **Manager SaaS** é uma solução completa em nuvem para gerenciar e executar 
 
 O Manager SaaS CT-e é uma API robusta que automatiza todo o processo de emissão de CT-e, desde a geração do XML até a impressão do DACTE (Documento Auxiliar do Conhecimento de Transporte Eletrônico). Nossa solução elimina a complexidade de implementar e manter sistemas fiscais para transporte, permitindo que você foque no seu negócio.
 
-## Funcionalidades CT-e
+## Tipos de CT-e Suportados
+
+<CardGroup cols={2}>
+  <Card
+    title="CT-e Normal"
+    icon="file-text"
+  >
+    Para transportes de cargas entre diferentes estabelecimentos, documentando o transporte de mercadorias
+  </Card>
+  <Card
+    title="CT-e OS (Outros Serviços)"
+    href="/documents/cte/os-emission"
+    icon="clipboard-list"
+  >
+    Para prestação de serviços de transporte diversos como armazenagem e logística
+  </Card>
+  <Card
+    title="CT-e Complementar"
+    icon="plus-circle"
+  >
+    Para complementar informações de CT-e já emitido, adicionando dados não incluídos no original
+  </Card>
+  <Card
+    title="CT-e Substituição"
+    icon="refresh-cw"
+  >
+    Para substituir CT-e anterior em caso de correções ou alterações necessárias
+  </Card>
+</CardGroup>
+
+## Funcionalidades Principais
 
 <CardGroup cols={2}>
   <Card
     title="Emissão"
-    href="/documents/cte/emission"
+    href="/documents/cte/enviar"
     icon="file-plus"
   >
     Emissão completa de CT-e com validação automática e transmissão para SEFAZ
@@ -89,6 +119,53 @@ O Manager SaaS CT-e é uma API robusta que automatiza todo o processo de emissã
   >
     Impressão de DACTE e outros documentos relacionados
   </Card>
+  <Card
+    title="Obter XML"
+    href="/documents/cte/obter-xml"
+    icon="code"
+  >
+    Download dos arquivos XML originais da SEFAZ
+  </Card>
+  <Card
+    title="Resolver Pendências"
+    href="/documents/cte/resolver"
+    icon="check-circle"
+  >
+    Resolução automática de pendências e problemas de processamento
+  </Card>
+</CardGroup>
+
+## Configuração e Autenticação
+
+<CardGroup cols={2}>
+  <Card
+    title="Autenticação"
+    href="/documents/cte/autenticacao"
+    icon="key"
+  >
+    Configuração de autenticação por API Key para acesso seguro à API
+  </Card>
+  <Card
+    title="Configurações"
+    href="/documents/cte/configuracao-modo"
+    icon="settings"
+  >
+    Configurações avançadas para personalizar o comportamento do sistema
+  </Card>
+  <Card
+    title="Certificados"
+    href="/documents/cte/certificado"
+    icon="shield"
+  >
+    Gerenciamento de certificados digitais para assinatura eletrônica
+  </Card>
+  <Card
+    title="Exportar V2"
+    href="/documents/cte/exportar-v2"
+    icon="upload"
+  >
+    Sistema avançado de exportação de dados e relatórios
+  </Card>
 </CardGroup>
 
 ## Como Funciona
@@ -106,6 +183,32 @@ Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
 - Transmissão para a SEFAZ
 - Processamento da resposta
 - Geração do DACTE
+
+## Estrutura do CT-e
+
+### **Cabeçalho**
+- Dados do emitente (transportadora)
+- Dados do tomador (contratante)
+- Informações do documento
+- Dados fiscais
+
+### **Dados de Transporte**
+- Origem e destino
+- Tipo de veículo
+- Dados do motorista
+- Rota de transporte
+
+### **Carga**
+- Descrição das mercadorias
+- Peso e volume
+- Valor da carga
+- Impostos incidentes
+
+### **Serviços**
+- Valor do frete
+- Despesas acessórias
+- Seguro de transporte
+- Condições de pagamento
 
 ## Vantagens para Transporte
 
@@ -159,6 +262,21 @@ Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
   </Card>
 </CardGroup>
 
+## Status do Documento
+
+### **Fluxo de Status**
+1. **PENDENTE**: Documento recebido
+2. **PROCESSANDO**: Em processamento
+3. **AUTORIZADO**: Documento aprovado
+4. **REJEITADO**: Documento rejeitado
+5. **CANCELADO**: Documento cancelado
+
+### **Consultas**
+- Status em tempo real
+- Histórico de alterações
+- Logs de processamento
+- Arquivos XML e PDF
+
 ## Comece Agora
 
 <CardGroup cols={2}>
@@ -170,11 +288,11 @@ Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
     Configure sua primeira integração de CT-e em minutos
   </Card>
   <Card
-    title="Documentação da API"
-    href="/api/endpoints/emission"
-    icon="code"
+    title="Visão Geral CT-e"
+    href="/documents/cte/overview"
+    icon="file-text"
   >
-    Explore todos os endpoints disponíveis para CT-e
+    Conheça todos os detalhes sobre Conhecimento de Transporte Eletrônico
   </Card>
 </CardGroup>
 
