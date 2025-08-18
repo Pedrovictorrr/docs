@@ -330,152 +330,41 @@ Bad Request: Limite máximo excedido (máximo: 100)
 Bad Request: Filtro inválido
 ```
 
-**Implementação em Diferentes Linguagens**:
+**Implementação em PHP**:
 
-#### **JavaScript/Node.js**
-```javascript
-const consultarCTeOS = async (params) => {
-  const queryString = new URLSearchParams(params).toString();
-  const url = `https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?${queryString}`;
-  
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI=',
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.text();
-    
-    if (data === 'Nenhum registro encontrado.') {
-      return { registros: [], total: 0 };
-    }
-    
-    // Parse da resposta em formato CSV
-    const registros = data.split('\n')
-      .filter(linha => linha.trim())
-      .map(linha => {
-        const campos = linha.split(', ');
-        return {
-          chave: campos[0],
-          situacao: campos[1],
-          numero: campos[2],
-          dtemissao: campos[3]
-        };
-      });
-    
-    return { registros, total: registros.length };
-    
-  } catch (error) {
-    console.error('Erro na consulta:', error);
-    throw error;
-  }
-};
-
-// Uso
-const resultado = await consultarCTeOS({
-  Grupo: 'GRUPO_EMPRESA',
-  CNPJ: '12345678000199',
-  Filtro: 'situacao=AUTORIZADA',
-  Campos: 'chave,situacao,numero,dtemissao',
-  Limite: 50,
-  Ordem: 'dtemissao DESC'
-});
-```
-
-#### **Python**
-```python
-import requests
-from urllib.parse import urlencode
-
-def consultar_cte_os(params):
-    base_url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta"
-    
-    headers = {
-        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI=',
-        'Content-Type': 'application/json'
-    }
-    
-    try:
-        response = requests.get(f"{base_url}?{urlencode(params)}", headers=headers)
-        response.raise_for_status()
-        
-        data = response.text
-        
-        if data == 'Nenhum registro encontrado.':
-            return {'registros': [], 'total': 0}
-        
-        # Parse da resposta
-        registros = []
-        for linha in data.strip().split('\n'):
-            if linha.strip():
-                campos = linha.split(', ')
-                registros.append({
-                    'chave': campos[0],
-                    'situacao': campos[1],
-                    'numero': campos[2],
-                    'dtemissao': campos[3]
-                })
-        
-        return {'registros': registros, 'total': len(registros)}
-        
-    except requests.exceptions.RequestException as e:
-        print(f"Erro na consulta: {e}")
-        raise
-
-# Uso
-resultado = consultar_cte_os({
-    'Grupo': 'GRUPO_EMPRESA',
-    'CNPJ': '12345678000199',
-    'Filtro': 'situacao=AUTORIZADA',
-    'Campos': 'chave,situacao,numero,dtemissao',
-    'Limite': 50,
-    'Ordem': 'dtemissao DESC'
-})
-```
-
-#### **PHP**
 ```php
+<?php
 function consultarCTeOS($params) {
-    $baseUrl = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta";
     $queryString = http_build_query($params);
-    $url = $baseUrl . '?' . $queryString;
-    
-    $headers = [
-        'Authorization: Basic YWRtaW46MTIzbXVkYXI=',
-        'Content-Type: application/json'
-    ];
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/consulta?{$queryString}";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI=',
+        'Content-Type: application/json'
+    ]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPGET, true);
     
-    $response = curl_exec($ch);
+    $data = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     
     if ($httpCode !== 200) {
-        throw new Exception("Erro HTTP: " . $httpCode);
+        throw new Exception("HTTP error! status: " . $httpCode);
     }
     
-    if ($response === 'Nenhum registro encontrado.') {
+    if ($data === 'Nenhum registro encontrado.') {
         return ['registros' => [], 'total' => 0];
     }
     
-    // Parse da resposta
-    $linhas = explode("\n", trim($response));
+    // Parse da resposta em formato CSV
+    $linhas = explode("\n", $data);
     $registros = [];
     
     foreach ($linhas as $linha) {
-        if (trim($linha)) {
+        $linha = trim($linha);
+        if (!empty($linha)) {
             $campos = explode(', ', $linha);
             $registros[] = [
                 'chave' => $campos[0],
@@ -490,13 +379,21 @@ function consultarCTeOS($params) {
 }
 
 // Uso
-try {
-    $resultado = consultarCTeOS([
-        'Grupo' => 'GRUPO_EMPRESA',
-        'CNPJ' => '12345678000199',
-        'Filtro' => 'situacao=AUTORIZADA',
-        'Campos' => 'chave,situacao,numero,dtemissao',
-        'Limite' => 50,
+$resultado = consultarCTeOS([
+    'Grupo' => 'GRUPO_EMPRESA',
+    'CNPJ' => '12345678000199',
+    'Filtro' => 'situacao=AUTORIZADA',
+    'Campos' => 'chave,situacao,numero,dtemissao',
+    'Limite' => 50,
+    'Ordem' => 'dtemissao DESC'
+]);
+```
+
+
+    
+
+
+
         'Ordem' => 'dtemissao DESC'
     ]);
     
@@ -616,110 +513,80 @@ EXCEPTION,EspdManCTeOSAssinarException,Problema ao assinar Nota(s). Exception: F
 
 **Implementação em Diferentes Linguagens**:
 
-#### **JavaScript/Node.js**
-```javascript
-const enviarCTeOS = async (arquivo, params) => {
-  const formData = new FormData();
-  formData.append('Grupo', params.grupo);
-  formData.append('CNPJ', params.cnpj);
-  formData.append('Arquivo', arquivo);
-  
-  try {
-    const response = await fetch('https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
-      },
-      body: formData
-    });
+```php
+<?php
+function enviarCTeOS($arquivoPath, $params) {
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia";
     
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    $headers = [
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI='
+    ];
+    
+    // Lê o arquivo
+    $arquivo = file_get_contents($arquivoPath);
+    
+    $postData = [
+        'Grupo' => $params['grupo'],
+        'CNPJ' => $params['cnpj'],
+        'Arquivo' => $arquivo
+    ];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $resultado = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("HTTP error! status: " . $httpCode);
     }
-    
-    const resultado = await response.text();
     
     // Verifica se é uma resposta de sucesso ou erro
-    if (resultado.includes('EXCEPTION')) {
-      return { success: false, error: resultado };
+    if (strpos($resultado, 'EXCEPTION') !== false) {
+        return ['success' => false, 'error' => $resultado];
     } else {
-      // Parse da resposta de sucesso
-      const [numeroLote, chave, cStat, mensagem] = resultado.split(',').map(s => s.trim());
-      return {
-        success: true,
-        numeroLote,
-        chave,
-        cStat: parseInt(cStat),
-        mensagem,
-        raw: resultado
-      };
+        // Parse da resposta de sucesso
+        $partes = array_map('trim', explode(',', $resultado));
+        if (count($partes) >= 4) {
+            return [
+                'success' => true,
+                'numeroLote' => $partes[0],
+                'chave' => $partes[1],
+                'cStat' => (int)$partes[2],
+                'mensagem' => $partes[3],
+                'raw' => $resultado
+            ];
+        }
     }
-    
-  } catch (error) {
-    console.error('Erro no envio:', error);
-    throw error;
-  }
-};
+}
 
 // Uso
-const resultado = await enviarCTeOS(arquivo, {
-  grupo: 'GRUPO_EMPRESA',
-  cnpj: '11111111111111'
-});
-
-if (resultado.success) {
-  console.log('CT-e OS enviado com sucesso!');
-  console.log('Lote:', resultado.numeroLote);
-  console.log('Chave:', resultado.chave);
-  console.log('Status:', resultado.cStat);
-  console.log('Mensagem:', resultado.mensagem);
-} else {
-  console.error('Erro no envio:', resultado.error);
+try {
+    $resultado = enviarCTeOS('arquivo.txt', [
+        'grupo' => 'GRUPO_EMPRESA',
+        'cnpj' => '11111111111111'
+    ]);
+    
+    if ($resultado['success']) {
+        echo 'CT-e OS enviado com sucesso!' . PHP_EOL;
+        echo 'Lote: ' . $resultado['numeroLote'] . PHP_EOL;
+        echo 'Chave: ' . $resultado['chave'] . PHP_EOL;
+        echo 'Status: ' . $resultado['cStat'] . PHP_EOL;
+        echo 'Mensagem: ' . $resultado['mensagem'] . PHP_EOL;
+    } else {
+        echo 'Erro no envio: ' . $resultado['error'] . PHP_EOL;
+    }
+} catch (Exception $e) {
+    echo 'Erro: ' . $e->getMessage() . PHP_EOL;
 }
 ```
 
-#### **Python**
-```python
-import requests
 
-def enviar_cte_os(arquivo_path, params):
-    url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia"
-    
-    headers = {
-        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
-    }
-    
-    # Lê o arquivo
-    with open(arquivo_path, 'rb') as f:
-        arquivo = f.read()
-    
-    files = {
-        'Arquivo': ('arquivo.txt', arquivo, 'text/plain')
-    }
-    
-    data = {
-        'Grupo': params['grupo'],
-        'CNPJ': params['cnpj']
-    }
-    
-    try:
-        response = requests.post(url, headers=headers, files=files, data=data)
-        response.raise_for_status()
-        
-        resultado = response.text
-        
-        # Verifica se é uma resposta de sucesso ou erro
-        if 'EXCEPTION' in resultado:
-            return {'success': False, 'error': resultado}
-        else:
-            # Parse da resposta de sucesso
-            partes = [part.strip() for part in resultado.split(',')]
-            if len(partes) >= 4:
-                return {
-                    'success': True,
-                    'numero_lote': partes[0],
-                    'chave': partes[1],
-                    'c_stat': int(partes[2]),
                     'mensagem': partes[3],
                     'raw': resultado
                 }

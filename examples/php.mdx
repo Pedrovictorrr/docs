@@ -1,19 +1,24 @@
 ---
-title: 'Integração PHP'
-description: 'Exemplos práticos de integração com o Manager SaaS usando PHP'
+title: 'Integração Laravel PHP'
+description: 'Exemplos práticos de integração com o Manager SaaS usando Laravel PHP'
 ---
 
-# Integração PHP - Manager SaaS
+# Integração Laravel PHP - Manager SaaS
 
-Exemplos práticos de como integrar sua aplicação PHP com a API do Manager SaaS para emissão de documentos fiscais eletrônicos.
+Exemplos práticos de como integrar sua aplicação Laravel com a API do Manager SaaS para emissão de documentos fiscais eletrônicos.
 
 ## Configuração Inicial
 
 ### **1. Instalação de Dependências**
 
 ```bash
+# Em um projeto Laravel existente
 composer require guzzlehttp/guzzle
-composer require monolog/monolog
+
+# Ou criar um novo projeto Laravel
+composer create-project laravel/laravel managersaas-integration
+cd managersaas-integration
+composer require guzzlehttp/guzzle
 ```
 
 ### **2. Arquivo de Configuração**
@@ -30,6 +35,7 @@ return [
     'timeout' => env('MANAGER_SAAS_TIMEOUT', 30),
     'retries' => env('MANAGER_SAAS_RETRIES', 3),
     'webhook_url' => env('MANAGER_SAAS_WEBHOOK_URL'),
+    'log_channel' => env('MANAGER_SAAS_LOG_CHANNEL', 'stack'),
 ];
 ```
 
@@ -58,13 +64,11 @@ namespace App\ManagerSaas;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+use Illuminate\Support\Facades\Log;
 
 class ManagerSaasClient
 {
     private Client $httpClient;
-    private Logger $logger;
     private array $config;
     
     public function __construct(array $config)
@@ -77,12 +81,9 @@ class ManagerSaasClient
             'headers' => [
                 'Authorization' => 'Bearer ' . $config['token'],
                 'Content-Type' => 'application/json',
-                'User-Agent' => 'ManagerSaas-PHP-Client/1.0'
+                'User-Agent' => 'ManagerSaas-Laravel-Client/1.0'
             ]
         ]);
-        
-        $this->logger = new Logger('manager_saas');
-        $this->logger->pushHandler(new StreamHandler(storage_path('logs/manager_saas.log')));
     }
     
     /**
@@ -97,7 +98,7 @@ class ManagerSaasClient
             
             $resultado = json_decode($response->getBody()->getContents(), true);
             
-            $this->logger->info('CT-e OS emitido com sucesso', [
+            Log::channel($this->config['log_channel'])->info('CT-e OS emitido com sucesso', [
                 'numero' => $resultado['data']['numero'] ?? null,
                 'dados' => $dados
             ]);
@@ -752,7 +753,7 @@ class ManagerSaasClientTest extends TestCase
     href="/examples/nodejs"
     icon="code"
   >
-    Veja exemplos em Node.js, Python e Java
+    Veja exemplos práticos em Laravel
   </Card>
   <Card
     title="Referência da API"

@@ -48,41 +48,46 @@ A **API REST** é uma interface de programação baseada em HTTP que permite com
 
 ### **Exemplo de Uso**
 
-```javascript
+```php
+<?php
 // Emissão de CT-e OS via API REST
-const emitirCTeOS = async (dados) => {
-  try {
-    const response = await fetch('https://api.managersaas.com/v1/cte/os/emitir', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dados)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+function emitirCTeOS($dados) {
+    try {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.managersaas.com/v1/cte/os/emitir');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $GLOBALS['token'],
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($dados));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode !== 200) {
+            throw new Exception("HTTP error! status: " . $httpCode);
+        }
+        
+        return json_decode($response, true);
+        
+    } catch (Exception $error) {
+        error_log('Erro na emissão: ' . $error->getMessage());
+        throw $error;
     }
-    
-    const result = await response.json();
-    return result;
-    
-  } catch (error) {
-    console.error('Erro na emissão:', error);
-    throw error;
-  }
-};
+}
 
 // Uso
-const resultado = await emitirCTeOS({
-  tipo_documento: 'CTE_OS',
-  emissor: { /* dados do emissor */ },
-  tomador: { /* dados do tomador */ },
-  servico: { /* dados do serviço */ }
-});
+$resultado = emitirCTeOS([
+    'tipo_documento' => 'CTE_OS',
+    'emissor' => [ /* dados do emissor */ ],
+    'tomador' => [ /* dados do tomador */ ],
+    'servico' => [ /* dados do serviço */ ]
+]);
 
-console.log('CT-e OS emitido:', resultado);
+echo 'CT-e OS emitido: ' . print_r($resultado, true);
 ```
 
 ## Monitorador de Pastas
@@ -239,76 +244,86 @@ A implementação híbrida combina os dois métodos para otimizar diferentes cen
 
 ### **Exemplo de Implementação**
 
-```javascript
+```php
+<?php
 class ManagerSaasClient {
-  constructor(config) {
-    this.apiUrl = config.apiUrl;
-    this.token = config.token;
-    this.monitorPath = config.monitorPath;
-  }
-  
-  // Método principal - tenta API REST primeiro
-  async emitirDocumento(dados, tipo) {
-    try {
-      // Tenta via API REST
-      return await this.emitirViaAPI(dados, tipo);
-    } catch (error) {
-      console.warn('API REST falhou, usando monitorador:', error);
-      
-      // Fallback para monitorador de pastas
-      return await this.emitirViaMonitorador(dados, tipo);
-    }
-  }
-  
-  // Emissão via API REST
-  async emitirViaAPI(dados, tipo) {
-    const endpoint = this.getEndpoint(tipo);
+    private $apiUrl;
+    private $token;
+    private $monitorPath;
     
-    const response = await fetch(`${this.apiUrl}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dados)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    public function __construct($config) {
+        $this->apiUrl = $config['apiUrl'];
+        $this->token = $config['token'];
+        $this->monitorPath = $config['monitorPath'];
     }
     
-    return await response.json();
-  }
-  
-  // Emissão via Monitorador de Pastas
-  async emitirViaMonitorador(dados, tipo) {
-    const arquivo = this.criarArquivoEntrada(dados, tipo);
-    const caminho = `${this.monitorPath}/entrada/${tipo}/${arquivo}`;
-    
-    // Cria o arquivo de entrada
-    await this.escreverArquivo(caminho, dados);
-    
-    // Retorna identificador para acompanhamento
-    return {
-      status: 'enviado_para_monitorador',
-      arquivo: arquivo,
-      caminho: caminho,
-      timestamp: new Date().toISOString()
-    };
-  }
-  
-  // Monitora resultado do monitorador
-  async monitorarResultado(arquivo, tipo) {
-    const caminhoResultado = `${this.monitorPath}/resultados/${tipo}/${arquivo}`;
-    
-    // Verifica se o arquivo de resultado foi criado
-    if (await this.arquivoExiste(caminhoResultado)) {
-      const resultado = await this.lerArquivo(caminhoResultado);
-      return JSON.parse(resultado);
+    // Método principal - tenta API REST primeiro
+    public function emitirDocumento($dados, $tipo) {
+        try {
+            // Tenta via API REST
+            return $this->emitirViaAPI($dados, $tipo);
+        } catch (Exception $error) {
+            error_log('API REST falhou, usando monitorador: ' . $error->getMessage());
+            
+            // Fallback para monitorador de pastas
+            return $this->emitirViaMonitorador($dados, $tipo);
+        }
     }
     
-    return null;
-  }
+    // Emissão via API REST
+    private function emitirViaAPI($dados, $tipo) {
+        $endpoint = $this->getEndpoint($tipo);
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->apiUrl . $endpoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->token,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($dados));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode !== 200) {
+            throw new Exception("HTTP error! status: " . $httpCode);
+        }
+        
+        return json_decode($response, true);
+    }
+    
+    // Emissão via Monitorador de Pastas
+    private function emitirViaMonitorador($dados, $tipo) {
+        $arquivo = $this->criarArquivoEntrada($dados, $tipo);
+        $caminho = $this->monitorPath . '/entrada/' . $tipo . '/' . $arquivo;
+        
+        // Cria o arquivo de entrada
+        $this->escreverArquivo($caminho, $dados);
+        
+        // Retorna identificador para acompanhamento
+        return [
+            'status' => 'enviado_para_monitorador',
+            'arquivo' => $arquivo,
+            'caminho' => $caminho,
+            'timestamp' => date('c')
+        ];
+    }
+    
+    // Monitora resultado do monitorador
+    public function monitorarResultado($arquivo, $tipo) {
+        $caminhoResultado = $this->monitorPath . '/resultados/' . $tipo . '/' . $arquivo;
+        
+        // Verifica se o arquivo de resultado foi criado
+        if ($this->arquivoExiste($caminhoResultado)) {
+            $resultado = $this->lerArquivo($caminhoResultado);
+            return json_decode($resultado, true);
+        }
+        
+        return null;
+    }
 }
 ```
 
@@ -316,17 +331,18 @@ class ManagerSaasClient {
 
 ### **Configuração da API REST**
 
-```javascript
-const config = {
-  apiUrl: 'https://api.managersaas.com/v1',
-  token: process.env.MANAGER_SAAS_TOKEN,
-  timeout: 30000,
-  retries: 3,
-  webhooks: {
-    url: 'https://seu-site.com/webhook',
-    eventos: ['documento_autorizado', 'documento_rejeitado']
-  }
-};
+```php
+<?php
+$config = [
+    'apiUrl' => 'https://api.managersaas.com/v1',
+    'token' => $_ENV['MANAGER_SAAS_TOKEN'],
+    'timeout' => 30000,
+    'retries' => 3,
+    'webhooks' => [
+        'url' => 'https://seu-site.com/webhook',
+        'eventos' => ['documento_autorizado', 'documento_rejeitado']
+    ]
+];
 ```
 
 ### **Configuração do Monitorador**

@@ -1,0 +1,437 @@
+---
+title: Importar um CT-e OS
+description: Documentação da rota para importação de XMLs autorizados de CT-e OS para o SaaS
+---
+
+# Importar um CT-e OS
+
+A rota **Importa** será utilizada para importarmos XMLs já autorizados para o banco do SaaS.
+
+## Endpoint
+
+### POST
+
+```http
+POST https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa
+```
+
+## Headers
+
+| Nome | Descrição | Exemplo |
+|------|-----------|---------|
+| `Content-Type` | Indica o tipo de arquivo | `application/x-www-form-urlencoded` |
+| `Authorization` | Este usuário e senha são os seus dados para logar como administrador em um grupo do SaaS | `Basic YWRtaW46MTIzbXVkYXI=` |
+
+## Body Parameters
+
+| Nome | Descrição | Exemplo |
+|------|-----------|---------|
+| `Grupo` | Nome do grupo | `meugrupo` |
+| `CNPJ` | CNPJ do emitente da CT-e OS, apenas números | `08187168000160` |
+| `Arquivo` | Conteúdo do XML autorizado da CT-e OS | Conteúdo completo do arquivo XML |
+| `Encode` | True | `True` |
+
+## Exemplos de Uso
+
+### Exemplo 1: Importação Básica
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=meugrupo&CNPJ=08187168000160&Arquivo=CONTEUDO_DO_XML&Encode=True"
+```
+
+### Exemplo 2: Importação com Arquivo XML
+
+```bash
+# Ler o arquivo XML e fazer a importação
+XML_CONTENT=$(cat cteos_autorizado.xml)
+
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=meugrupo&CNPJ=08187168000160&Arquivo=$XML_CONTENT&Encode=True"
+```
+
+### Exemplo 3: Importação Múltipla
+
+```bash
+# Importar múltiplos CT-e OS
+for arquivo in *.xml; do
+  XML_CONTENT=$(cat "$arquivo")
+  
+  curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+    -d "Grupo=meugrupo&CNPJ=08187168000160&Arquivo=$XML_CONTENT&Encode=True"
+  
+  echo "Importado: $arquivo"
+  sleep 1  # Aguardar entre as importações
+done
+```
+
+## Respostas
+
+### Exemplo de Retorno com Sucesso
+
+Quando concluído com sucesso será retornado:
+
+```text
+OK, Operação realizada com sucesso
+```
+
+### Exemplo de Retorno com Erro
+
+```text
+"Palavra Exception", "Classe da Exception", "Mensagem de Exception"
+EXCEPTION, EspdMancteosImportaXmlInvalidoException, could not load xml Falha de validação: documento não contém exatamente um nó raiz.
+```
+
+## Parâmetros Obrigatórios
+
+1. **`Grupo`** - Nome do grupo configurado no SaaS
+2. **`CNPJ`** - CNPJ do emitente (apenas números)
+3. **`Arquivo`** - Conteúdo completo do XML autorizado
+4. **`Encode`** - Deve ser sempre `True`
+
+## Casos de Uso
+
+### 1. **Migração de Sistemas**
+- Importar CT-e OS de sistema legado
+- Migração entre ambientes
+- Consolidação de bases de dados
+
+### 2. **Backup e Restauração**
+- Restaurar CT-e OS após falha
+- Recuperar documentos perdidos
+- Sincronização de ambientes
+
+### 3. **Integração com Terceiros**
+- Receber CT-e OS de parceiros
+- Importar documentos externos
+- Sincronização entre sistemas
+
+### 4. **Correção de Dados**
+- Reimportar CT-e OS com correções
+- Atualizar informações desatualizadas
+- Corrigir inconsistências
+
+## Requisitos para Importação
+
+### **XML do CT-e OS:**
+- Deve estar **autorizado** pela SEFAZ
+- Formato válido conforme esquemas da SEFAZ
+- Deve conter exatamente um nó raiz
+- Estrutura XML bem formada
+
+### **Validações:**
+- CNPJ deve estar ativo no grupo
+- Usuário deve ter permissões de administrador
+- XML deve ser válido e bem formado
+- CT-e OS não pode estar duplicado
+
+## Exemplos de Implementação
+
+### **Python**
+
+```python
+import requests
+
+def importar_cteos(grupo, cnpj, xml_content):
+    """
+    Importa um CT-e OS autorizado para o SaaS
+    """
+    url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa"
+    
+    data = {
+        'Grupo': grupo,
+        'CNPJ': cnpj,
+        'Arquivo': xml_content,
+        'Encode': 'True'
+    }
+    
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+    }
+    
+    response = requests.post(url, data=data, headers=headers)
+    
+    if response.status_code == 200:
+        return response.text
+    else:
+        return f'Erro HTTP: {response.status_code} - {response.text}'
+
+# Exemplo de uso
+def importar_arquivo_xml(grupo, cnpj, caminho_arquivo):
+    """
+    Importa um arquivo XML de CT-e OS
+    """
+    try:
+        with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
+            xml_content = arquivo.read()
+        
+        resultado = importar_cteos(grupo, cnpj, xml_content)
+        return resultado
+    except Exception as e:
+        return f'Erro ao ler arquivo: {e}'
+
+# Exemplo de uso
+resultado = importar_arquivo_xml(
+    grupo='meugrupo',
+    cnpj='08187168000160',
+    caminho_arquivo='cteos_autorizado.xml'
+)
+print(resultado)
+```
+
+### **PHP**
+
+```php
+<?php
+function importarCTeOS($grupo, $cnpj, $xmlContent) {
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa";
+    
+    $data = http_build_query([
+        'Grupo' => $grupo,
+        'CNPJ' => $cnpj,
+        'Arquivo' => $xmlContent,
+        'Encode' => 'True'
+    ]);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/x-www-form-urlencoded',
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI='
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode == 200) {
+        return $response;
+    } else {
+        return "Erro HTTP: {$httpCode} - {$response}";
+    }
+}
+
+function importarArquivoXML($grupo, $cnpj, $caminhoArquivo) {
+    try {
+        $xmlContent = file_get_contents($caminhoArquivo);
+        if ($xmlContent === false) {
+            return "Erro ao ler arquivo: {$caminhoArquivo}";
+        }
+        
+        return importarCTeOS($grupo, $cnpj, $xmlContent);
+    } catch (Exception $e) {
+        return "Erro ao processar arquivo: " . $e->getMessage();
+    }
+}
+
+// Exemplo de uso
+$resultado = importarArquivoXML(
+    'meugrupo',
+    '08187168000160',
+    'cteos_autorizado.xml'
+);
+echo $resultado;
+?>
+```
+
+### **JavaScript/Fetch**
+
+```javascript
+async function importarCTeOS(grupo, cnpj, xmlContent) {
+    const url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/importa";
+    
+    const formData = new FormData();
+    formData.append('Grupo', grupo);
+    formData.append('CNPJ', cnpj);
+    formData.append('Arquivo', xmlContent);
+    formData.append('Encode', 'True');
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+            },
+            body: formData
+        });
+        
+        if (response.ok) {
+            return await response.text();
+        } else {
+            return `Erro HTTP: ${response.status} - ${response.statusText}`;
+        }
+    } catch (error) {
+        return `Erro de conexão: ${error.message}`;
+    }
+}
+
+// Exemplo de uso com arquivo
+async function importarArquivoXML(grupo, cnpj, arquivo) {
+    try {
+        const xmlContent = await arquivo.text();
+        return await importarCTeOS(grupo, cnpj, xmlContent);
+    } catch (error) {
+        return `Erro ao ler arquivo: ${error.message}`;
+    }
+}
+
+// Exemplo de uso
+const inputArquivo = document.getElementById('arquivoXML');
+inputArquivo.addEventListener('change', async (event) => {
+    const arquivo = event.target.files[0];
+    if (arquivo) {
+        const resultado = await importarArquivoXML('meugrupo', '08187168000160', arquivo);
+        console.log(resultado);
+    }
+});
+```
+
+## Cenários de Uso
+
+### **1. Importação em Lote**
+
+```python
+import os
+import time
+
+def importar_lote_cteos(grupo, cnpj, diretorio):
+    """
+    Importa todos os XMLs de um diretório
+    """
+    resultados = {}
+    
+    for arquivo in os.listdir(diretorio):
+        if arquivo.endswith('.xml'):
+            caminho_completo = os.path.join(diretorio, arquivo)
+            
+            try:
+                resultado = importar_arquivo_xml(grupo, cnpj, caminho_completo)
+                resultados[arquivo] = resultado
+                
+                print(f"Importado: {arquivo} - {resultado}")
+                time.sleep(1)  # Evitar sobrecarga
+                
+            except Exception as e:
+                resultados[arquivo] = f"Erro: {e}"
+                print(f"Erro ao importar {arquivo}: {e}")
+    
+    return resultados
+
+# Exemplo de uso
+resultados = importar_lote_cteos(
+    grupo='meugrupo',
+    cnpj='08187168000160',
+    diretorio='./cteos_para_importar/'
+)
+
+# Relatório de importação
+for arquivo, resultado in resultados.items():
+    status = "✅ Sucesso" if "OK" in resultado else "❌ Erro"
+    print(f"{status} - {arquivo}: {resultado}")
+```
+
+### **2. Validação Antes da Importação**
+
+```python
+import xml.etree.ElementTree as ET
+
+def validar_xml_cteos(xml_content):
+    """
+    Valida se o XML está bem formado antes da importação
+    """
+    try:
+        # Verificar se é XML válido
+        root = ET.fromstring(xml_content)
+        
+        # Verificar se é um CT-e OS
+        if root.tag.endswith('CTeOS'):
+            return True, "XML válido"
+        else:
+            return False, "Não é um CT-e OS válido"
+            
+    except ET.ParseError as e:
+        return False, f"XML mal formado: {e}"
+    except Exception as e:
+        return False, f"Erro de validação: {e}"
+
+def importar_com_validacao(grupo, cnpj, xml_content):
+    """
+    Importa CT-e OS com validação prévia
+    """
+    # Validar XML
+    valido, mensagem = validar_xml_cteos(xml_content)
+    
+    if not valido:
+        return f"Validação falhou: {mensagem}"
+    
+    # Importar se válido
+    return importar_cteos(grupo, cnpj, xml_content)
+```
+
+## Tratamento de Erros
+
+### Erros Comuns
+
+- **"documento não contém exatamente um nó raiz"** - XML mal formado
+- **"XML inválido"** - Estrutura incorreta
+- **"CT-e OS duplicado"** - Documento já existe no sistema
+- **"CNPJ não encontrado"** - CNPJ não está ativo no grupo
+- **"Sem permissão"** - Usuário não tem permissões adequadas
+
+### Validações
+
+1. Verificar se o XML está bem formado
+2. Confirmar se é um CT-e OS válido
+3. Validar se o CNPJ está ativo no grupo
+4. Verificar se o usuário tem permissões adequadas
+5. Confirmar se o CT-e OS não está duplicado
+
+## Observações Importantes
+
+1. **XML Autorizado**: Apenas XMLs autorizados pela SEFAZ podem ser importados
+2. **Permissões**: É necessário ter permissões de administrador no grupo
+3. **Duplicação**: O sistema verifica se o CT-e OS já existe
+4. **Validação**: O XML é validado antes da importação
+5. **Encode**: O parâmetro `Encode=True` é obrigatório
+6. **Tamanho**: XMLs muito grandes podem demorar para processar
+
+## Boas Práticas
+
+1. **Validar XML** antes da importação
+2. **Implementar retry** em caso de falhas
+3. **Monitorar logs** de importação
+4. **Usar importação em lote** para múltiplos arquivos
+5. **Verificar permissões** antes de importar
+6. **Manter backup** dos XMLs originais
+
+## Casos de Uso Específicos
+
+### **1. Migração de Sistema Legado**
+- Objetivo: Transferir CT-e OS para novo sistema
+- Ação: Importar XMLs autorizados
+- Resultado: Base consolidada
+
+### **2. Recuperação de Falha**
+- Objetivo: Restaurar CT-e OS perdidos
+- Ação: Importar XMLs de backup
+- Resultado: Sistema restaurado
+
+### **3. Sincronização de Ambientes**
+- Objetivo: Manter ambientes sincronizados
+- Ação: Importar CT-e OS de produção para homologação
+- Resultado: Ambientes alinhados
+
+### **4. Integração com Parceiros**
+- Objetivo: Receber CT-e OS de terceiros
+- Ação: Importar XMLs autorizados
+- Resultado: Base atualizada

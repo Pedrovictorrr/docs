@@ -1,0 +1,210 @@
+---
+title: Configurações CT-e OS via MODO
+description: Documentação da rota MODO para configurações e consultas do CT-e OS no Manager EDoc
+---
+
+# Configurações CT-e OS via MODO
+
+A rota **MODO** é utilizada para verificar as configurações de um CNPJ ou realizar a alteração de alguma das informações do mesmo.
+
+Podemos executar comandos para consultar as configurações, informações sobre os certificados e alterar propriedades de configuração.
+
+A maioria dos comandos e propriedades também se aplicam aos clientes que utilizam o Manager SaaS.
+
+## Comandos Disponíveis
+
+| Campo | Valor | Descrição | Exemplo |
+|-------|-------|-----------|---------|
+| `GetConfig` | `1` | Retorna o arquivo de configurações do CNPJ | `GetConfig=1` ou `GetConfig` |
+| `GetVencimentoCertificado` | `1` | Retorna a data e hora do vencimento do certificado configurado no CNPJ | `GetVencimentoCertificado=1` ou `GetVencimentoCertificado` |
+| `GetCertificados` | `1` | Retorna o nome de todos os certificados instalados na máquina onde o Manager EDoc está sendo executado.<br/>**Atenção!** Somente para Manager EDoc | `GetCertificados=1` ou `GetCertificados` |
+
+## Seções de Configuração
+
+Os campos disponíveis para configuração estão divididos em seções para melhor organização:
+
+- **MANAGEREDOC** - Configurações gerais do Manager
+- **CTEOS** - Configurações específicas do CT-e OS
+- **DACTE** - Configurações de impressão
+- **MAIL** - Configurações de e-mail
+- **NOTASEGURA** - Configurações do PlugStorage
+
+## Seção MANAGEREDOC
+
+### Propriedades Disponíveis
+
+| Campo | Descrição | Valor |
+|-------|-----------|-------|
+| `FieldDelimiter` | Delimitador de campos | Por padrão `\|` |
+| `LineDelimiter` | Delimitador de linha | Por padrão delimitador de quebra de linha do Windows ("Enter") |
+| `AutoEmail` | Envio de e-mail automático ao final da autorização da CT-e OS | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `AutoImprimir` | Impressão do Dacte ao final da autorização do CT-e OS | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `AutoXmlDestinatario` | Geração do XML do CT-e OS | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `RemoveCaracterXml` | Remove caracteres especiais do XML do CT-e OS antes da assinatura | `1` - Habilita ou `0` - Desabilita |
+| `Modo` | Modo de envio do CT-e OS | `NORMAL`, `FSDA`, `SVCRS`, `SVCSP` ou `EPEC` |
+| `NomeSecaoManager` | Indica o nome da seção no arquivo .ini onde estão as configurações do EDoc | Por padrão nome da seção é `MANAGEREDOC` |
+| `NumeroAutomatico` | Numeração automática do CT-e OS | Por padrão `1`<br/>`1` - Habilita ou `0` - Desabilita |
+| `QtdeCopias` | Quantidade de cópias do Dacte a serem impressas | Por padrão `1` |
+| `ServerDelay` | Tempo de espera antes de executar a comunicação com o servidor da SEFAZ | Por padrão `5000` (em milissegundos) |
+| `TimeOut` | Tempo máximo de espera da resposta de uma requisição feita a SEFAZ | Por padrão `60000` (em milissegundos)<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `QtdeTentativas` | Quantidade máxima de tentativas do envio do CT-e OS | Por padrão `10` |
+| `ToleranciaStandBy` | Tolerância do número de requisições para o WebService que resultaram em falha | Por padrão `10` |
+| `TempoStandBy` | Tempo em que o Manager EDoc permanecerá em StandBy | Por padrão `300` (em segundos)<br/>Valor mínimo `60` |
+| `NumeracaoDescartada` | Reutilização da numeração das notas descartadas | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `TimerResolvePendencias` | Tempo em segundos para início do resolve automático | Por padrão `0` |
+| `EnviarEmailEvento` | Envia o e-mail dos eventos vinculados ao CT-e OS | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `EnviarNotaAutomaticamente` | Envia automaticamente o CT-e OS para o Plug Storage logo após a autorização | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `UsaLineDelimiter` | Habilita ou desabilita o uso de delimitador de linha | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `AutoimprimirCCe` | Impressão da carta de correção logo após autorização | Por padrão `0`<br/>`1` - Habilita ou `0` - Desabilita |
+| `Serie` | Série de numeração cadastrada no CNPJ do Emitente | Valor da série (Inteiro) |
+| `NumeroInicial` ou `NumInicialNF` | Número inicial da série | Valor do número inicial (Inteiro)<br/>**Atenção!** Para alterar o número inicial de uma determinada série, deve ser utilizada na rota os campos `serie` e `numeroinicial` em conjunto |
+| `UseSecureBlackBox` | Envio de email pelo UseSecureBlackBox | `TRUE` ou `FALSE`<br/>**Atenção!** Por padrão `FALSE`, habilitar para `TRUE` somente quando o cliente tiver problemas de autenticação de email |
+| `DiretorioDaCTeOS` | Diretório onde está localizado o layout de impressão do CT-e OS | Por padrão na pasta de instalação<br/>Exemplo: `C:\Program Files (x86)\Manager eDoc\Plugins\ManagerCTeOS\Files\Templates\3.00a\DACTE` |
+| `ImpressoraPadrao` | Indica a impressora padrão para a impressão do DACTE do CT-e OS | Por padrão a impressora definida como padrão do Windows |
+| `ModoImpressao` | Indica a forma de impressão do DACTE do CT-e OS | Por padrão `"PDF"`<br/>`Impressora`: Imprime na impressora configurada<br/>`PDF`: Gera o DACTE em arquivo .pdf<br/>`Ambos`: Imprime na impressora configurada e gera o arquivo .pdf |
+| `ControleStandBy` | Indica a forma como o Manager EDoc vai controlar a entrada em StandBy | Por padrão `"CNPJ"` (Atualmente só existe essa forma de controle de standby) |
+| `CancelamentoEvento` | Se utiliza Cancelamento por Evento | Por padrão `1`<br/>`1` - Habilita ou `0` - Desabilita |
+
+## Seção CTEOS
+
+### Propriedades Disponíveis
+
+| Campo | Descrição | Valor |
+|-------|-----------|-------|
+| `UF` | Unidade Federativa (Estado) do Emitente | - |
+| `Repositorio` | Define o tipo do certificado que será utilizado | `MEMORY_STORE`, `LOCAL_MACHINE_STORE`, `CURRENT_USER_STORE`, `ACTIVE_DIRECTORY_USER_STORE` ou `SMART_CARD_USER_STORE` |
+| `NomeCertificado` | Nome do Emitente para qual foi emitido o certificado | - |
+| `PinCode` | Senha do Certificado A3 | Ex: `Senha123` |
+| `ArquivoServidoresHom` | Configurar onde encontra-se o arquivo `cteosServidoresHom.ini` | `cteosServidoresHom.ini` |
+| `ArquivoServidoresProd` | Configurar onde encontra-se o arquivo `cteosServidoresProd.ini` | `cteosServidoresProd.ini` |
+| `ModoOperacao` | Modo de envio do CT-e OS | `NORMAL`, `FSDA`, `SVCRS`, `SVCSP` ou `EPEC` |
+| `DiretorioLog` | Diretório onde serão criados os arquivos de log | `"Plugins\ManagerCTeOS\Files\Log"` |
+| `Ambiente` | Ambiente onde será realizado o envio | `1` - Produção<br/>`2` - Homologação |
+| `VersaoManual` | Versão dos schemas da Sefaz | `3.00`, `3.00a` ou `4.00` |
+| `MaxSizeFileEnvio` | Limite para o tamanho de arquivo que será enviado | `500` |
+| `DiretorioXmlTomadorServico` | Diretório onde os XMLs autorizados serão gerados | `"Plugins\ManagerCTeOS\Files\XmlTomadorServico"` |
+| `DiretorioEsquemas` | Diretório dos Esquemas XML | `"Plugins\ManagerCTeOS\Files\Esquemas"` |
+| `DiretorioTemplates` | Diretório dos Templates que serão utilizados na geração dos arquivos XML | `"Plugins\ManagerCTeOS\Files\Templates"` |
+| `AnexarDactePDF` | Ao enviar o XML de distribuição para o Tomador de serviço | Por padrão `1`<br/>`1` - Habilita ou `0` - Desabilita |
+| `Proxy` | Propriedade que permite colocar o endereço do Proxy para conectar a internet | IP do proxy |
+| `Usuario` | Nome do usuário do proxy | -<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `Senha` | Senha do usuário do proxy | -<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `ValidarEsquema` ou `ValidarAntesDoEnvio` | Propriedade que permite ativar ou desativar a validação de esquema antes do envio | `1` - Habilita ou `0` - Desabilita |
+| `ConexaoSegura` | Para quando o servidor utilizar conexão segura onde é exigido o certificado digital | - |
+| `TimeOut` | Tempo de espera de resposta do WebService (valor em milissegundos) | `60000`<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `IgnoreInvalidCertificates` | Ignora mensagens de erro sobre certificados inválidos | - |
+| `HttpLibs` | Indica se o componente irá utilizar os recursos do Windows ou recursos internos | `wininet`: a comunicação é feita com recursos do Windows<br/>`sbb`: a comunicação é feita com recursos do próprio componente<br/>Padrão: `wininet,sbb` |
+
+## Seção DACTE
+
+### Propriedades Disponíveis
+
+| Campo | Descrição | Valor |
+|-------|-----------|-------|
+| `FraseContingencia` | Indica a frase que será impressa no DACTE quando o CT-e OS for emitida em modo de Contingência | Exemplo: `"DACTE em contingência - Impresso em decorrência de problemas técnicos."` |
+| `FraseHomologacao` | Indica a frase que será impressa no DACTE quando o CT-e OS for emitida em Ambiente de Homologação | Exemplo: `"SEM VALOR FISCAL"` |
+| `ModeloRetrato` | Aponta para o diretório onde está o arquivo RTM com Layout de impressão em Retrato | Exemplo: `"Plugins\ManagerCTeOS\Files\Templates\3.00a\DACTE\retratoCteOS.rtm"` |
+| `ModeloPaisagem` | Aponta para o diretório onde está o arquivo RTM com Layout de impressão em Paisagem | Exemplo: `"Plugins\ManagerCTeOS\Files\Templates\3.00a\DACTE\paisagemCTeOs.rtm"` |
+| `LogotipoEmitente` | Propriedade onde permite-se configurar o Logo do Emitente no DACTE | Por padrão vazio<br/>Exemplos: `C:\logo.png` ou `C:\logo.jpeg` |
+| `ModeloRTMCCe` | Aponta para o diretório onde está o arquivo RTM com Layout de impressão da carta de correção | Exemplo: `"\Templates\cce\Impressao\modeloCCe.rtm"` |
+
+## Seção MAIL
+
+### Propriedades Disponíveis
+
+| Campo | Descrição | Valor |
+|-------|-----------|-------|
+| `Servidor` | Endereço do servidor de envio de email (SMTP/SMTPS) | `smtp.gmail.com` |
+| `EmailRemetente` | Email para o qual será enviada o CT-e OS | `teste@tecnospeed.com.br` |
+| `Assunto` | Assunto do e-mail | `Você recebeu um Conhecimento de Transporte eletrônico` |
+| `Mensagem` | Corpo da mensagem que será enviada por e-mail | `Os arquivos referentes ao Conhecimento de Transporte eletrônico foram anexados a este email.` |
+| `AssuntoCancelamento` | Assunto do e-mail do evento de cancelamento | `Olá, em anexo está o XML do cancelamento do seu CT-e OS.` |
+| `MensagemCancelamento` | Corpo da mensagem do evento de cancelamento que será enviada por e-mail | `Olá, em anexo XML do evento de cancelamento do seu CT-e OS.` |
+| `Usuario` | Usuário de autenticação do servidor de e-mail | `usuario@exemplo.com`<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `Senha` | Senha do E-mail | `123mudar`<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `TimeOut` | Tempo de espera de envio de E-mail (Milissegundos) | `60000`<br/>**Atenção!** Existe campo com mesmo nome em outra seção |
+| `EmailDestinatario` | Email para o qual será enviada o CT-e OS | `destinatario@exemplo.com` |
+| `CCo` | Email para o qual a mensagem será enviada em cópia oculta | `cco@exemplo.com` |
+| `CC` | Email para o qual a mensagem será enviada em cópia | `cc@exemplo.com` |
+| `Autenticacao` | Propriedade booleana que deve ser ativada quando o servidor de e-mail exigir autenticação | `True` ou `False` |
+| `Porta` | Porta de conexão com o servidor de SMTP/SMTPS necessária para envio de e-mail | `587` |
+| `ConteudoHtml` | Define o formato do texto do corpo do e-mail | `0` - Indica que o corpo da mensagem não contém um conteúdo HTML<br/>`1` - Indica que o corpo da mensagem contém um conteúdo HTML |
+| `QtdeTentativasEmail` | Quantidade máxima de tentativas de envio do e-mail em caso de falha | `5` |
+| `TipoTLS` | Tipo de protocolo TLS utilizado no envio de e-mail | Por padrão `REQUIRETLS`<br/>Valores possíveis: `REQUIRETLS`, `IMPLICITTLS`, `EXPLICITTLS` |
+| `AssuntoDestinatario` | Assunto do e-mail destinatário | - |
+| `MensagemDestinatario` | Corpo da mensagem que será enviada por e-mail | - |
+| `Provedor` | Provedor de e-mail | `gmail` |
+
+## Seção NOTASEGURA
+
+### Propriedades Disponíveis
+
+| Campo | Descrição | Valor |
+|-------|-----------|-------|
+| `NotaSeguraServidor` | Endereço do servidor PlugStorage | - |
+| `NotaSeguraLogin` | Login do usuário no PlugStorage | - |
+| `NotaSeguraSenha` | Senha do usuário no PlugStorage | - |
+| `NotaSeguraToken` | Token do usuário no PlugStorage | - |
+
+## Endpoint
+
+### GET
+
+```http
+GET http://localhost:8081/ManagerAPIWeb/cteos/modo
+```
+
+### Headers
+
+| Nome | Descrição | Exemplo |
+|------|-----------|---------|
+| `Authorization` | Este usuário e senha são os seus dados para logar como administrador em um grupo do EDoc | `Basic dGVzdGU6MTIzbXVkYXI=` |
+
+### Query Parameters
+
+| Nome | Descrição |
+|------|-----------|
+| `Grupo` | Nome do grupo |
+| `CNPJ` | CNPJ do emitente do CT-e OS cadastrado no Manager EDoc, apenas números |
+| `Secao` | **Opcional** - `MANAGEREDOC`, `CTEOS` ou `MAIL`<br/>Informar a seção principalmente ao alterar campos com mesmo nome em seções diferentes, como `Usuario`, `Senha` e `Timeout` |
+| `Comando ou Campo` | Valor do comando desejado, exemplo: `GetVencimentoCertificado=1` |
+
+### Exemplo de Uso
+
+Para alterar campos únicos não é necessário informar a seção:
+
+```http
+GET http://localhost:8081/ManagerAPIWeb/cteos/modo?grupo=edoc&cnpj=08187168000160&Senha=123mudar
+```
+
+Para alterar campos com mesmo nome em seções diferentes:
+
+```http
+GET http://localhost:8081/ManagerAPIWeb/cteos/modo?grupo=edoc&cnpj=08187168000160&secao=MAIL&Senha=123mudar
+```
+
+## Respostas
+
+### Exemplo de Retorno com Campos
+
+```text
+OK, Operação realizada com sucesso
+```
+
+### Exemplo de Retorno com Comandos
+
+```text
+03/05/2022 13:34:00
+```
+
+## Observações Importantes
+
+1. **Campos Duplicados**: Alguns campos como `Usuario`, `Senha` e `Timeout` existem em múltiplas seções. Para alterar um campo específico, sempre informe a seção correspondente.
+
+2. **Valores Booleanos**: A maioria dos campos de habilitação/desabilitação usa `1` para habilitar e `0` para desabilitar.
+
+3. **Certificados**: O comando `GetCertificados` só funciona no Manager EDoc local, não no SaaS.
+
+4. **Timeouts**: Existem campos `Timeout` em múltiplas seções (MANAGEREDOC, CTEOS, MAIL). Sempre especifique a seção ao alterar um deles.
+
+5. **Configurações de Impressão**: O `ModoImpressao` permite escolher entre impressora, PDF ou ambos simultaneamente.

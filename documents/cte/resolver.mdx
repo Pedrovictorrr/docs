@@ -1,0 +1,367 @@
+---
+title: Resolver um Conhecimento OS
+description: Documentação da rota para resolução de status de CT-e OS pendentes na SEFAZ
+---
+
+# Resolver um Conhecimento OS
+
+A rota **resolve** será utilizada nos casos onde a SEFAZ está passando por instabilidades. Imagine a seguinte situação: enviamos um CT-e OS para a SEFAZ, porém o servidor deles estava muito lento e não nos trouxe a resposta do envio. Ou seja, o SaaS não tem a situação oficial dele, se ele está autorizado ou rejeitado.
+
+## Endpoint
+
+### POST
+
+```http
+POST https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve
+```
+
+## Headers
+
+| Nome | Descrição | Exemplo |
+|------|-----------|---------|
+| `Content-Type` | Indica o tipo de arquivo | `application/x-www-form-urlencoded` |
+| `Authorization` | Este usuário e senha são os seus dados para logar como administrador em um grupo do SaaS | `Basic YWRtaW46MTIzbXVkYXI=` |
+
+## Body Parameters
+
+| Nome | Descrição |
+|------|-----------|
+| `Grupo` | Nome do grupo |
+| `CNPJ` | CNPJ do emitente da CT-e OS, apenas números |
+| `ChaveNota` | Chave da CT-e OS (44 dígitos) |
+
+## Exemplos de Uso
+
+### Exemplo 1: Resolver CT-e OS Pendente
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=meugrupo&CNPJ=08187168000160&ChaveNota=41120308187168000160558630000211211000000019"
+```
+
+### Exemplo 2: Resolver Múltiplos CT-e OS
+
+```bash
+# CT-e OS 1
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=meugrupo&CNPJ=08187168000160&ChaveNota=41120308187168000160558630000211211000000019"
+
+# CT-e OS 2
+curl -X POST "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic YWRtaW46MTIzbXVkYXI=" \
+  -d "Grupo=meugrupo&CNPJ=08187168000160&ChaveNota=41120308187168000160558630000211211000000020"
+```
+
+## Respostas
+
+### Exemplo de Retorno com Sucesso
+
+```text
+"Número do lote", "Chave do CTe-OS", "cStat (Código de status do retorno da Sefaz)", "Mensagem da Sefaz"
+
+00000001,41120308187168000160558630000211211000000019,100,Autorizado o uso do CTe-OS
+```
+
+**Campos da resposta:**
+- **Número do lote**: `00000001`
+- **Chave do CT-e OS**: `41120308187168000160558630000211211000000019`
+- **cStat**: `100`
+- **Mensagem**: `Autorizado o uso do CTe-OS`
+
+### Exemplo de Retorno com Erro
+
+```text
+"Palavra Exception", "Classe da Exception", "Mensagem de Exception"
+EXCEPTION, EspdManNFeCheckParamsException, Erro ao montar notas - Formato: t não é aceito
+```
+
+## Códigos de Status (cStat)
+
+### Códigos de Sucesso
+- **100**: Autorizado o uso do CT-e OS
+- **101**: Cancelamento de CT-e OS homologado
+- **102**: Inutilização de faixa homologado
+- **103**: Inutilização de faixa autorizado
+- **104**: Lote recebido com sucesso
+- **105**: Lote em processamento
+
+### Códigos de Rejeição Comuns
+- **110**: CT-e OS duplicado
+- **111**: CT-e OS não localizado
+- **112**: CT-e OS não autorizado
+- **113**: CT-e OS cancelado
+- **114**: CT-e OS denegado
+
+## Casos de Uso
+
+### 1. **Instabilidade da SEFAZ**
+- Servidor lento
+- Timeout de conexão
+- Falha na comunicação
+
+### 2. **CT-e OS em Processamento**
+- Status pendente
+- Sem resposta da SEFAZ
+- Lote em análise
+
+### 3. **Verificação de Status**
+- Confirmar autorização
+- Verificar rejeição
+- Atualizar situação
+
+### 4. **Recuperação de Falhas**
+- Reconexão automática
+- Retry de consulta
+- Sincronização de status
+
+## Fluxo de Resolução
+
+```
+CT-e OS Enviado para SEFAZ
+           ↓
+    Sem Resposta/Timeout
+           ↓
+    Status Pendente no SaaS
+           ↓
+    Executar Rota Resolve
+           ↓
+    Consultar SEFAZ
+           ↓
+    Atualizar Status
+           ↓
+    CT-e OS Resolvido
+```
+
+## Parâmetros Obrigatórios
+
+1. **`Grupo`** - Nome do grupo configurado no SaaS
+2. **`CNPJ`** - CNPJ vinculado ao grupo (apenas números)
+3. **`ChaveNota`** - Chave de acesso do CT-e OS (44 dígitos)
+
+## Exemplos de Implementação
+
+### **Python**
+
+```python
+import requests
+
+def resolver_cteos(grupo, cnpj, chave_nota):
+    """
+    Resolve o status de um CT-e OS pendente na SEFAZ
+    """
+    url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve"
+    
+    data = {
+        'Grupo': grupo,
+        'CNPJ': cnpj,
+        'ChaveNota': chave_nota
+    }
+    
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+    }
+    
+    response = requests.post(url, data=data, headers=headers)
+    
+    if response.status_code == 200:
+        return response.text
+    else:
+        return f'Erro HTTP: {response.status_code} - {response.text}'
+
+# Exemplo de uso
+resultado = resolver_cteos(
+    grupo='meugrupo',
+    cnpj='08187168000160',
+    chave_nota='41120308187168000160558630000211211000000019'
+)
+print(resultado)
+```
+
+### **PHP**
+
+```php
+<?php
+function resolverCTeOS($grupo, $cnpj, $chaveNota) {
+    $url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve";
+    
+    $data = http_build_query([
+        'Grupo' => $grupo,
+        'CNPJ' => $cnpj,
+        'ChaveNota' => $chaveNota
+    ]);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/x-www-form-urlencoded',
+        'Authorization: Basic YWRtaW46MTIzbXVkYXI='
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode == 200) {
+        return $response;
+    } else {
+        return "Erro HTTP: {$httpCode} - {$response}";
+    }
+}
+
+// Exemplo de uso
+$resultado = resolverCTeOS(
+    'meugrupo',
+    '08187168000160',
+    '41120308187168000160558630000211211000000019'
+);
+echo $resultado;
+?>
+```
+
+### **JavaScript/Fetch**
+
+```javascript
+async function resolverCTeOS(grupo, cnpj, chaveNota) {
+    const url = "https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/resolve";
+    
+    const formData = new FormData();
+    formData.append('Grupo', grupo);
+    formData.append('CNPJ', cnpj);
+    formData.append('ChaveNota', chaveNota);
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Basic YWRtaW46MTIzbXVkYXI='
+            },
+            body: formData
+        });
+        
+        if (response.ok) {
+            return await response.text();
+        } else {
+            return `Erro HTTP: ${response.status} - ${response.statusText}`;
+        }
+    } catch (error) {
+        return `Erro de conexão: ${error.message}`;
+    }
+}
+
+// Exemplo de uso
+resolverCTeOS('meugrupo', '08187168000160', '41120308187168000160558630000211211000000019')
+    .then(resultado => console.log(resultado))
+    .catch(erro => console.error(erro));
+```
+
+## Cenários de Uso
+
+### **1. Sistema de Retry Automático**
+```python
+import time
+
+def resolver_com_retry(grupo, cnpj, chave_nota, max_tentativas=3):
+    """
+    Tenta resolver o CT-e OS com retry automático
+    """
+    for tentativa in range(max_tentativas):
+        try:
+            resultado = resolver_cteos(grupo, cnpj, chave_nota)
+            
+            # Verificar se foi resolvido com sucesso
+            if '100' in resultado or '101' in resultado:
+                return resultado
+            
+            # Aguardar antes da próxima tentativa
+            if tentativa < max_tentativas - 1:
+                time.sleep(5 * (tentativa + 1))  # Backoff exponencial
+                
+        except Exception as e:
+            print(f"Tentativa {tentativa + 1} falhou: {e}")
+    
+    return "Falha após todas as tentativas"
+```
+
+### **2. Resolução em Lote**
+```python
+def resolver_lote_cteos(grupo, cnpj, chaves):
+    """
+    Resolve múltiplos CT-e OS em lote
+    """
+    resultados = {}
+    
+    for chave in chaves:
+        try:
+            resultado = resolver_cteos(grupo, cnpj, chave)
+            resultados[chave] = resultado
+            time.sleep(1)  # Evitar sobrecarga
+        except Exception as e:
+            resultados[chave] = f"Erro: {e}"
+    
+    return resultados
+```
+
+## Observações Importantes
+
+1. **Uso Responsável**: Use apenas quando necessário, não para consultas rotineiras
+2. **Rate Limiting**: Evite múltiplas requisições simultâneas
+3. **Timeout**: A SEFAZ pode demorar para responder
+4. **Status**: Verifique se o CT-e OS realmente precisa ser resolvido
+5. **Logs**: Mantenha registro das resoluções realizadas
+
+## Tratamento de Erros
+
+### Erros Comuns
+
+- **"Formato: t não é aceito"** - Verificar se o CT-e OS existe
+- **"CT-e OS não encontrado"** - Verificar se a chave está correta
+- **"CNPJ não vinculado ao grupo"** - Verificar permissões
+- **"Sem permissão"** - Verificar credenciais de administrador
+
+### Validações
+
+1. Verificar se o CT-e OS existe no sistema
+2. Confirmar se o CNPJ está ativo no grupo
+3. Validar se o usuário tem permissões adequadas
+4. Verificar se a chave tem 44 dígitos
+5. Confirmar se o CT-e OS realmente precisa ser resolvido
+
+## Boas Práticas
+
+1. **Implementar retry** com backoff exponencial
+2. **Monitorar logs** de resolução
+3. **Evitar resoluções desnecessárias**
+4. **Usar em lote** quando possível
+5. **Implementar timeout** adequado
+6. **Tratar erros** de forma robusta
+
+## Casos de Uso Específicos
+
+### **1. CT-e OS em Processamento**
+- Status: "Em processamento"
+- Ação: Executar resolve
+- Resultado: Atualizar status
+
+### **2. CT-e OS sem Resposta**
+- Status: "Pendente"
+- Ação: Executar resolve
+- Resultado: Obter status oficial
+
+### **3. Falha de Comunicação**
+- Erro: Timeout de conexão
+- Ação: Executar resolve
+- Resultado: Recuperar status
+
+### **4. Sincronização de Status**
+- Objetivo: Atualizar base local
+- Ação: Resolver CT-e OS pendentes
+- Resultado: Base sincronizada

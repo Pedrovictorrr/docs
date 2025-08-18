@@ -287,24 +287,22 @@ Accept: application/vnd.managersaas.v1+json
 
 | Linguagem | Repositório | Status |
 |-----------|-------------|--------|
-| **JavaScript** | `@managersaas/js-sdk` | ✅ Disponível |
-| **Python** | `managersaas-python` | ✅ Disponível |
-| **PHP** | `managersaas-php` | 🚧 Em desenvolvimento |
-| **Java** | `managersaas-java` | 📋 Planejado |
+| **PHP/Laravel** | `managersaas-php` | ✅ Disponível |
 
 ### **🔧 Exemplo de Uso com SDK**
 
-```javascript
-import { ManagerSaaS } from '@managersaas/js-sdk';
+```php
+<?php
+use ManagerSaas\ManagerSaasClient;
 
-const client = new ManagerSaaS({
-  apiKey: 'sua_api_key',
-  environment: 'production'
-});
+$client = new ManagerSaasClient([
+    'api_key' => 'sua_api_key',
+    'environment' => 'production'
+]);
 
-const cte = await client.cte.create({
-  // dados do CT-e
-});
+$cte = $client->cte->create([
+    // dados do CT-e
+]);
 ```
 
 ## Testes e Sandbox
