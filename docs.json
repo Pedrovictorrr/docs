@@ -58,6 +58,13 @@
               ]
             },
             {
+              "group": "Configuração",
+              "pages": [
+                "documents/cte/autenticacao",
+                "documents/cte/configuracao-modo"
+              ]
+            },
+            {
               "group": "Utilitários",
               "pages": [
                 "documents/cte/importar",
@@ -66,8 +73,7 @@
                 "documents/cte/obter-xml",
                 "documents/cte/imprimir",
                 "documents/cte/prever-dacte",
-                "documents/cte/resolver",
-                "documents/cte/configuracao-modo"
+                "documents/cte/resolver"
               ]
             }
           ]

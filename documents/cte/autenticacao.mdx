@@ -1,0 +1,711 @@
+---
+title: 'Autenticação e Certificados'
+description: 'Configuração de autenticação e certificados digitais para emissão de CT-e'
+---
+
+# Autenticação e Certificados
+
+## Visão Geral
+
+A API de CT-e utiliza autenticação baseada em **API Keys** e **certificados digitais** para garantir a segurança e autenticidade das transações. Este documento explica como configurar e utilizar ambos os métodos de autenticação.
+
+## Autenticação por API Key
+
+### O que é API Key?
+
+A **API Key** é um token único que identifica sua conta e autoriza o acesso aos endpoints da API. É a forma mais simples de autenticação para integrações.
+
+### Como obter seu Token de Autenticação
+
+Para obter o token de autenticação, você precisa fazer uma requisição para o endpoint de autenticação:
+
+**Endpoint:** `https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token`
+
+**Método:** `POST`
+
+**Headers:**
+```http
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "email": "seu_email@exemplo.com",
+  "senha": "sua_senha"
+}
+```
+
+**Exemplo de requisição:**
+
+<CodeGroup>
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "seu_email@exemplo.com",
+    "senha": "sua_senha"
+  }'
+```
+
+```php
+<?php
+$url = 'https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token';
+$data = [
+    'email' => 'seu_email@exemplo.com',
+    'senha' => 'sua_senha'
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$token = json_decode($response, true);
+?>
+```
+
+```javascript
+const response = await fetch('https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        email: 'seu_email@exemplo.com',
+        senha: 'sua_senha'
+    })
+});
+
+const token = await response.json();
+```
+
+```python
+import requests
+
+url = 'https://managersaas.tecnospeed.com.br:1337/api/v1/software-house/token'
+data = {
+    'email': 'seu_email@exemplo.com',
+    'senha': 'sua_senha'
+}
+
+response = requests.post(url, json=data)
+token = response.json()
+```
+
+</CodeGroup>
+
+**Resposta esperada:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_in": 3600,
+  "token_type": "Bearer"
+}
+```
+
+### Uso do Token de Autenticação
+
+O token JWT obtido deve ser incluído no cabeçalho de todas as requisições subsequentes:
+
+```http
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+```
+
+**⚠️ Importante:** O token tem validade limitada (geralmente 1 hora). Você precisará renová-lo periodicamente fazendo uma nova requisição de autenticação.
+
+**Exemplo em diferentes linguagens:**
+
+<CodeGroup>
+
+```bash
+curl -X POST "https://api.managersaas.com/cte/emission" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"dados": "..."}'
+```
+
+```php
+<?php
+$headers = [
+    'Authorization: Bearer ' . $jwtToken,
+    'Content-Type: application/json'
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+// ... resto da configuração
+?>
+```
+
+```javascript
+const response = await fetch('https://api.managersaas.com/cte/emission', {
+    method: 'POST',
+    headers: {
+        'Authorization': `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+});
+```
+
+```python
+import requests
+
+headers = {
+    'Authorization': f'Bearer {jwt_token}',
+    'Content-Type': 'application/json'
+}
+
+response = requests.post(
+    'https://api.managersaas.com.br/cte/emission',
+    headers=headers,
+    json=data
+)
+```
+
+</CodeGroup>
+
+### Segurança do Token JWT
+
+<CardGroup cols={2}>
+  <Card
+    title="Mantenha Seguro"
+    icon="lock"
+  >
+    Nunca compartilhe seu token ou o inclua em código público
+  </Card>
+  <Card
+    title="Validade Limitada"
+    icon="clock"
+  >
+    Tokens expiram automaticamente (geralmente em 1 hora)
+  </Card>
+  <Card
+    title="Renovação Automática"
+    icon="refresh-cw"
+  >
+    Implemente renovação automática antes da expiração
+  </Card>
+  <Card
+    title="Transmissão Segura"
+    icon="shield"
+  >
+    Sempre use HTTPS para transmissão de credenciais
+  </Card>
+</CardGroup>
+
+## Certificados Digitais
+
+### O que são Certificados Digitais?
+
+Os **certificados digitais** são arquivos eletrônicos que garantem a autenticidade e integridade das transações com a SEFAZ. Eles são obrigatórios para emissão de CT-e e devem ser válidos e não revogados.
+
+### Tipos de Certificados Suportados
+
+#### **Certificado A1**
+- Arquivo `.pfx` ou `.p12`
+- Senha de proteção obrigatória
+- Validade de 1 ano
+- Mais comum para integrações
+
+#### **Certificado A3**
+- Token ou cartão físico
+- Requer driver específico
+- Validade de 3 anos
+- Maior segurança
+
+### Estrutura do Certificado
+
+```json
+{
+  "tipo": "A1",
+  "arquivo": "certificado.pfx",
+  "senha": "senha123",
+  "validade": "2025-12-31",
+  "cnpj": "12.345.678/0001-90",
+  "emissor": "ICP-Brasil"
+}
+```
+
+### Configuração do Certificado
+
+#### **1. Upload do Certificado**
+
+```http
+POST /api/v1/certificado/upload
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: multipart/form-data
+
+file: [arquivo .pfx ou .p12]
+password: senha_do_certificado
+description: "Certificado principal da empresa"
+```
+
+**Exemplo de requisição:**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/upload" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -F "file=@certificado.pfx" \
+  -F "password=senha123" \
+  -F "description=Certificado principal da empresa"
+```
+
+#### **2. Validação do Certificado**
+
+A API valida automaticamente:
+- Formato do arquivo
+- Senha de proteção
+- Validade temporal
+- Status na ICP-Brasil
+- CNPJ do proprietário
+
+#### **3. Ativação do Certificado**
+
+```http
+POST /api/v1/certificado/activate
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "certificate_id": "cert_123456",
+  "environment": "production"
+}
+```
+
+**Exemplo de requisição:**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/activate" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "certificate_id": "cert_123456",
+    "environment": "production"
+  }'
+```
+
+### Uso em Requisições
+
+Para operações que requerem certificado digital, inclua o ID do certificado:
+
+```json
+{
+  "certificate_id": "cert_123456",
+  "dados_cte": {
+    "emitente": {
+      "cnpj": "12.345.678/0001-90",
+      "nome": "Empresa LTDA"
+    },
+    "tomador": {
+      "cnpj": "98.765.432/0001-10",
+      "nome": "Cliente LTDA"
+    }
+  }
+}
+```
+
+## Ambientes de Teste e Produção
+
+### **Ambiente de Teste (Sandbox)**
+- Certificados de teste aceitos
+- Validações básicas
+- Sem transmissão para SEFAZ
+- Ideal para desenvolvimento
+
+### **Ambiente de Produção**
+- Certificados válidos obrigatórios
+- Validações completas
+- Transmissão real para SEFAZ
+- Para uso em produção
+
+### Configuração do Ambiente
+
+```http
+POST /api/v1/ambiente/configure
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "environment": "production",
+  "certificate_id": "cert_123456",
+  "sefaz_uf": "SP"
+}
+```
+
+**Exemplo de requisição:**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/ambiente/configure" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "environment": "production",
+    "certificate_id": "cert_123456",
+    "sefaz_uf": "SP"
+  }'
+```
+
+## Validação e Testes
+
+### **Teste de Certificado**
+
+```http
+POST /api/v1/certificado/test
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "certificate_id": "cert_123456",
+  "operation": "cte_emission"
+}
+```
+
+**Exemplo de requisição:**
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/test" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "certificate_id": "cert_123456",
+    "operation": "cte_emission"
+  }'
+```
+
+### **Listar Certificados Cadastrados**
+
+```http
+GET /api/v1/certificado
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Exemplo de requisição:**
+
+<CodeGroup>
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+```php
+<?php
+$url = 'https://managersaas.tecnospeed.com.br:1337/api/v1/certificado';
+$headers = [
+    'Authorization: Bearer ' . $jwtToken,
+    'Content-Type: application/json',
+    'Accept: application/json'
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_GET, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$certificados = json_decode($response, true);
+?>
+```
+
+```javascript
+const response = await fetch('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado', {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+});
+
+const certificados = await response.json();
+```
+
+```python
+import requests
+
+headers = {
+    'Authorization': f'Bearer {jwt_token}',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+}
+
+response = requests.get(
+    'https://managersaas.tecnospeed.com.br:1337/api/v1/certificado',
+    headers=headers
+)
+
+certificados = response.json()
+```
+
+</CodeGroup>
+
+**Resposta esperada:**
+```json
+[
+  {
+    "id": "cert_123456",
+    "nome": "Certificado Principal",
+    "cnpj": "12.345.678/0001-90",
+    "validade": "2025-12-31",
+    "tipo": "A1",
+    "status": "ativo",
+    "ambiente": "production"
+  },
+  {
+    "id": "cert_789012",
+    "nome": "Certificado de Teste",
+    "cnpj": "12.345.678/0001-90",
+    "validade": "2024-06-30",
+    "tipo": "A1",
+    "status": "ativo",
+    "ambiente": "sandbox"
+  }
+]
+```
+
+### **Verificação de Status**
+
+### **Logs de Validação**
+
+```http
+GET /api/v1/certificado/logs
+Authorization: Bearer YOUR_JWT_TOKEN
+Query: ?certificate_id=cert_123456&date=2024-01-01
+```
+
+**Exemplo de requisição:**
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/logs?certificate_id=cert_123456&date=2024-01-01" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+## Tratamento de Erros
+
+### **Erros de Autenticação**
+
+| Código | Descrição | Solução |
+|--------|-----------|---------|
+| `401` | Token inválido ou expirado | Faça nova requisição de autenticação |
+| `403` | Acesso negado | Verifique as permissões da conta |
+| `429` | Rate limit excedido | Aguarde ou use conta com maior limite |
+| `400` | Credenciais inválidas | Verifique email e senha |
+| `500` | Erro interno do servidor | Tente novamente ou contate suporte |
+
+### **Erros de Certificado**
+
+| Código | Descrição | Solução |
+|--------|-----------|---------|
+| `CERT_001` | Certificado expirado | Renove o certificado |
+| `CERT_002` | Senha incorreta | Verifique a senha do arquivo |
+| `CERT_003` | Formato inválido | Use arquivo .pfx ou .p12 |
+| `CERT_004` | Certificado revogado | Entre em contato com a ICP-Brasil |
+
+## Exemplos Práticos
+
+### **Configuração Completa**
+
+```php
+<?php
+class CTEApi {
+    private $email;
+    private $senha;
+    private $token;
+    private $certificateId;
+    private $baseUrl = 'https://managersaas.tecnospeed.com.br:1337';
+    
+    public function __construct($email, $senha, $certificateId = null) {
+        $this->email = $email;
+        $this->senha = $senha;
+        $this->certificateId = $certificateId;
+    }
+    
+    private function authenticate() {
+        $url = $this->baseUrl . '/api/v1/software-house/token';
+        $data = [
+            'email' => $this->email,
+            'senha' => $this->senha
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        $result = json_decode($response, true);
+        
+        if (isset($result['token'])) {
+            $this->token = $result['token'];
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public function emitirCTe($dados) {
+        // Autentica se não tiver token
+        if (!$this->token) {
+            if (!$this->authenticate()) {
+                throw new Exception('Falha na autenticação');
+            }
+        }
+        
+        $headers = [
+            'Authorization: Bearer ' . $this->token,
+            'Content-Type: application/json'
+        ];
+        
+        $payload = [
+            'certificate_id' => $this->certificateId,
+            'dados_cte' => $dados
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->baseUrl . '/api/v1/cte/emission');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+    
+    public function renovarToken() {
+        $this->token = null;
+        return $this->authenticate();
+    }
+    
+    public function listarCertificados() {
+        if (!$this->token) {
+            if (!$this->authenticate()) {
+                throw new Exception('Falha na autenticação');
+            }
+        }
+        
+        $url = $this->baseUrl . '/api/v1/certificado';
+        $headers = [
+            'Authorization: Bearer ' . $this->token,
+            'Content-Type: application/json',
+            'Accept: application/json'
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+    
+    public function testarCertificado($certificateId, $operation = 'cte_emission') {
+        if (!$this->token) {
+            if (!$this->authenticate()) {
+                throw new Exception('Falha na autenticação');
+            }
+        }
+        
+        $url = $this->baseUrl . '/api/v1/certificado/test';
+        $headers = [
+            'Authorization: Bearer ' . $this->token,
+            'Content-Type: application/json'
+        ];
+        
+        $data = [
+            'certificate_id' => $certificateId,
+            'operation' => $operation
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+}
+
+// Uso
+$api = new CTEApi('seu_email@exemplo.com', 'sua_senha', 'cert_123456');
+
+// Listar certificados disponíveis
+$certificados = $api->listarCertificados();
+
+// Testar certificado
+$teste = $api->testarCertificado('cert_123456');
+
+// Emitir CT-e
+$resultado = $api->emitirCTe($dadosCTe);
+?>
+```
+
+### **Verificação de Certificado**
+
+```javascript
+async function verificarCertificado(certificateId) {
+    try {
+        const response = await fetch(`/api/certificates/status/${certificateId}`, {
+            headers: {
+                'Authorization': `Bearer ${apiKey}`
+            }
+        });
+        
+        const status = await response.json();
+        
+        if (status.valid) {
+            console.log('Certificado válido até:', status.expiry_date);
+        } else {
+            console.error('Certificado inválido:', status.reason);
+        }
+    } catch (error) {
+        console.error('Erro ao verificar certificado:', error);
+    }
+}
+```
+
+## Próximos Passos
+
+1. **Prepare suas credenciais** (email e senha)
+2. **Faça upload do certificado** digital
+3. **Liste e verifique** os certificados disponíveis
+4. **Teste a autenticação** em ambiente sandbox
+5. **Configure o ambiente** de produção
+6. **Implemente a integração** com sua aplicação
+7. **Configure renovação automática** de tokens
+8. **Monitore o status** dos certificados
+
+## Suporte
+
+Para dúvidas sobre autenticação e certificados:
+
+- **Email**: suporte@managersaas.com
+- **Documentação**: [docs.managersaas.com](https://docs.managersaas.com)
+- **Status**: [status.managersaas.com](https://status.managersaas.com) 
