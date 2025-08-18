@@ -1,0 +1,239 @@
+---
+title: "Enviar CT-e OS"
+description: "Rota para enviar um Conhecimento de Transporte Eletrônico de Serviço (CT-e OS) para a Sefaz"
+---
+
+# Enviar CT-e OS
+
+A rota **enviar** é utilizada para enviar um CT-e OS para a Sefaz. A comunicação é **síncrona**, portanto o retorno da requisição será a resposta do SaaS indicando se o conhecimento de transporte foi autorizado ou rejeitado.
+
+## Endpoint
+
+```http
+POST https://managersaas.tecnospeed.com.br:8081/ManagerAPIWeb/cteos/envia
+```
+
+## Headers
+
+| Nome | Descrição | Exemplo |
+|------|-----------|---------|
+| `Content-Type` | Indica o tipo de arquivo | `application/x-www-form-urlencoded` |
+| `Authorization` | Usuário e senha para autenticação como administrador do grupo SaaS | `Basic YWRtaW46MTIzbXVkYXI=` |
+
+## Body
+
+| Nome | Descrição |
+|------|-----------|
+| `Grupo` | Nome do grupo |
+| `CNPJ` | CNPJ do emitente da CT-e OS (apenas números) |
+| `Arquivo` | Conteúdo do TX2 ou XML |
+
+## Exemplo de TX2
+
+```txt
+formato=tx2
+incluirCTeOS
+cUF_6=41
+cCT_7=06021956
+CFOP_8=5352
+natOp_9=Aquisicao
+mod_10=67
+serie_11=2
+nCT_12=489
+dhEmi_13=2018-05-01T10:01:01-03:00
+tpImp_14=1
+tpEmis_15=1
+cDV_16=8
+tpAmb_17=2
+tpCTe_18=0
+procEmi_19=0
+verProc_20=3.00
+cMunEnv_21=4105805
+xMunEnv_22=COLOMBO
+UFEnv_23=PR
+modal_24=01
+tpServ_25=7
+indIEToma_26=1
+cMunIni_27=4105805
+xMunIni_28=COLOMBO
+UFIni_29=PR
+cMunFim_30=4105805
+xMunFim_31=COLOMBO
+UFFim_32=PR
+dhCont_35=
+xJust_36=
+xCaracAd_38=
+xCaracSer_39=
+xEmi_40=
+xObs_41=
+CNPJ_49=11111111111111
+IE_50=9049880224
+IEST_51=
+xNome_52=Nome LTDA
+xFant_53=Nome LTDA
+xLgr_55=Rua dos Programadores
+nro_56=12
+xCpl_57=
+xBairro_58=Centro
+cMun_59=4105805
+xMun_60=COLOMBO
+CEP_61=89233198
+UF_62=PR
+fone_63=
+CNPJ_65=11111111111111
+CPF_66=
+IE_67=9049880224
+xNome_68=Fulano
+xFant_69=Fantasia Fulano
+fone_70=
+xLgr_72=Rua dos Programadores
+nro_73=123
+xCpl_74=Nenhum
+xBairro_75=Centro
+cMun_76=4105805
+xMun_77=COLOMBO
+CEP_78=89233198
+UF_79=PR
+cPais_80=1058
+xPais_81=BRASIL
+email_82=fabianopassianoto@gmail.com
+vTPrest_84=1
+vRec_85=1
+CST_92=00
+vBC_93=1
+pICMS_94=7
+vICMS_95=0.07
+CST_97=
+CST_99=
+pRedBC_100=
+vBC_101=
+pICMS_102=
+vICMS_103=
+vCred_104=
+CST_106=
+pRedBCOutraUF_107=
+vBCOutraUF_108=
+pICMSOutraUF_109=
+vICMSOutraUF_110=
+CST_112=
+indSN_113=
+vTotTrib_114=
+infAdFisco_115=
+vBCUFFim_117=
+pFCPUFFim_118=
+pICMSUFFim_119=
+pICMSInter_120=
+pICMSInterPart_121=
+vFCPUFFim_122=
+vICMSUFFim_123=
+vICMSUFIni_124=
+vPIS_126=
+vCOFINS_127=
+vIR_128=
+vINSS_129=0.10
+vCSLL_130=
+xDescServ_133=Tranporte de Passageiros
+qCarga_135=30
+versaoModal_147=3.00
+chCte_150=
+refCteAnu_151=
+refNFe_153=
+CNPJ_155=
+CPF_156=
+mod_157=
+serie_158=
+subserie_159=
+nro_160=
+valor_161=
+dEmi_162=
+refCte_163=
+chCTe_165=
+chCte_167=
+dEmi_168=
+versao_3=3.00
+Id_4=
+versao_1=3.00
+salvarCTeOS
+incluirinfPercurso
+UFPer_34=
+salvarinfPercurso
+incluirObsCont
+xTexto_44=
+xCampo_43=
+salvarObsCont
+incluirObsFisco
+xTexto_47=
+xCampo_46=
+salvarObsFisco
+incluirComp
+xNome_87=
+vComp_88=
+salvarComp
+incluirinfDocRef
+nDoc_137=
+serie_138=
+subserie_139=
+dEmi_140=
+vDoc_141=
+salvarinfDocRef
+incluirseg
+respSeg_143=
+xSeg_144=
+nApol_145=
+salvarseg
+incluirautXML
+CNPJ_170=
+CPF_171=
+salvarautXML
+IncluirRodoos
+TAF_2=000000001232
+placa_5=AAA1234
+RENAVAM_6=
+CPF_8=
+CNPJ_9=
+TAF_10=
+NroRegEstadual_11=
+xNome_12=
+IE_13=
+UF_14=
+tpProp_15=
+UF_16=PR
+SalvarRodoos
+```
+
+## Retorno
+
+### Sucesso
+
+Retorna uma string com os seguintes campos separados por vírgula:
+
+1. **Número do lote**
+2. **Chave do CT-e OS**
+3. **cStat** (Código de status do retorno da Sefaz)
+4. **Mensagem da Sefaz**
+
+**Exemplo:**
+```
+12345678,42120605793827000113574580000000031123456786,100,Autorizado o uso do CT-e OS
+```
+
+### Erro
+
+Retorna uma string com os seguintes campos separados por vírgula:
+
+1. **Palavra Exception**
+2. **Classe da Exception**
+3. **Mensagem de Exception**
+
+**Exemplo:**
+```
+EXCEPTION,EspdManCTeOSAssinarException,Problema ao assinar Nota(s). Exception: Falha ao Validar Lote para Envio. Erro: EspdSchemaValidationException O arquivo contém 1 ou mais erros no de validação de esquema '5.00' viola a restrição pattern de '3.00'. Falha da analise do atributo 'versao' com valor '5.00'
+```
+
+## Observações
+
+- A comunicação é **síncrona**
+- O retorno indica imediatamente se o CT-e OS foi autorizado ou rejeitado
+- O formato TX2 deve seguir exatamente a estrutura especificada
+- A versão deve ser compatível com o esquema de validação (ex: 3.00)
+- Todos os campos obrigatórios devem ser preenchidos conforme a legislação vigente
