@@ -1,8 +1,8 @@
 {
     "$schema": "https://mintlify.com/docs.json",
     "theme": "mint",
-    "name": "Manager SaaS API",
-    "description": "API completa para emissão de documentos fiscais eletrônicos",
+    "name": "Manager SaaS API - CT-e",
+    "description": "API completa para emissão de Conhecimento de Transporte Eletrônico (CT-e)",
     "colors": {
       "primary": "#16A34A",
       "light": "#07C983",
@@ -18,8 +18,7 @@
               "group": "Primeiros passos",
               "pages": [
                 "index",
-                "quickstart",
-                "authentication"
+                "quickstart"
               ]
             },
             {
@@ -33,51 +32,42 @@
           ]
         },
         {
-          "tab": "Documentos Fiscais",
+          "tab": "CT-e",
           "groups": [
             {
-              "group": "NF-e",
+              "group": "Visão Geral",
               "pages": [
-                "documents/nfe/overview",
-                "documents/nfe/emission",
-                "documents/nfe/cancellation"
+                "documents/cte/overview"
               ]
             },
             {
-              "group": "NFC-e",
+              "group": "Emissão",
               "pages": [
-                "documents/nfce/overview",
-                "documents/nfce/emission"
-              ]
-            },
-            {
-              "group": "CT-e",
-              "pages": [
-                "documents/cte/overview",
                 "documents/cte/emission",
                 "documents/cte/os-emission"
               ]
             },
             {
-              "group": "MDF-e",
+              "group": "Operações",
               "pages": [
-                "documents/mdfe/overview",
-                "documents/mdfe/emission"
+                "documents/cte/consulta",
+                "documents/cte/enviar",
+                "documents/cte/enviar-cce",
+                "documents/cte/descartar",
+                "documents/cte/inutilizar"
               ]
             },
             {
-              "group": "CF-e",
+              "group": "Utilitários",
               "pages": [
-                "documents/cfe/overview",
-                "documents/cfe/sat",
-                "documents/cfe/mfe"
-              ]
-            },
-            {
-              "group": "GNRE",
-              "pages": [
-                "documents/gnre/overview",
-                "documents/gnre/emission"
+                "documents/cte/importar",
+                "documents/cte/exportar-v2",
+                "documents/cte/converter-tx2-xml",
+                "documents/cte/obter-xml",
+                "documents/cte/imprimir",
+                "documents/cte/prever-dacte",
+                "documents/cte/resolver",
+                "documents/cte/configuracao-modo"
               ]
             }
           ]
