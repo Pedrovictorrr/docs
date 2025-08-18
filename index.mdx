@@ -1,99 +1,161 @@
 ---
-title: 'Manager SaaS API'
-description: 'API completa para emissão de documentos fiscais eletrônicos no Brasil'
+title: 'Manager SaaS API - CT-e'
+description: 'API completa para emissão de Conhecimento de Transporte Eletrônico (CT-e) no Brasil'
 ---
 
-# Manager SaaS API
+# Manager SaaS API - CT-e
 
-O **Manager SaaS** é uma solução completa em nuvem para gerenciar e executar todos os processos de emissão de documentos fiscais eletrônicos no Brasil.
+O **Manager SaaS** é uma solução completa em nuvem para gerenciar e executar todos os processos de emissão de **Conhecimento de Transporte Eletrônico (CT-e)** no Brasil.
 
-## O que é o Manager SaaS?
+## O que é o Manager SaaS CT-e?
 
-O Manager SaaS é uma API robusta que automatiza todo o processo de emissão fiscal, desde a geração do XML até a impressão do documento auxiliar. Nossa solução elimina a complexidade de implementar e manter sistemas fiscais, permitindo que você foque no seu negócio.
+O Manager SaaS CT-e é uma API robusta que automatiza todo o processo de emissão de CT-e, desde a geração do XML até a impressão do DACTE (Documento Auxiliar do Conhecimento de Transporte Eletrônico). Nossa solução elimina a complexidade de implementar e manter sistemas fiscais para transporte, permitindo que você foque no seu negócio.
 
-## Documentos Suportados
+## Funcionalidades CT-e
 
 <CardGroup cols={2}>
   <Card
-    title="NF-e"
-    href="/documents/nfe/overview"
-    icon="file-text"
+    title="Emissão"
+    href="/documents/cte/emission"
+    icon="file-plus"
   >
-    Nota Fiscal Eletrônica - documento principal para operações comerciais
+    Emissão completa de CT-e com validação automática e transmissão para SEFAZ
   </Card>
   <Card
-    title="NFC-e"
-    href="/documents/nfce/overview"
-    icon="receipt"
+    title="Ordem de Serviço"
+    href="/documents/cte/os-emission"
+    icon="clipboard-list"
   >
-    Nota Fiscal de Consumidor Eletrônica - para vendas ao consumidor final
+    Emissão de CT-e de Ordem de Serviço para prestadores de serviços de transporte
   </Card>
   <Card
-    title="CT-e"
-    href="/documents/cte/overview"
-    icon="truck"
+    title="Consulta e Status"
+    href="/documents/cte/consulta"
+    icon="search"
   >
-    Conhecimento de Transporte Eletrônico - para operações de transporte
+    Consulta de status e informações detalhadas de CT-e emitidos
   </Card>
   <Card
-    title="MDF-e"
-    href="/documents/mdfe/overview"
-    icon="package"
+    title="Cancelamento"
+    href="/documents/cte/inutilizar"
+    icon="x-circle"
   >
-    Manifesto Eletrônico de Documentos Fiscais - para transportes
+    Cancelamento e inutilização de CT-e conforme legislação vigente
   </Card>
   <Card
-    title="CF-e"
-    href="/documents/cfe/overview"
-    icon="credit-card"
+    title="Carta de Correção"
+    href="/documents/cte/enviar-cce"
+    icon="edit-3"
   >
-    Cupom Fiscal Eletrônico - SAT e MFE
+    Envio de Carta de Correção Eletrônica para correções permitidas
   </Card>
   <Card
-    title="GNRE"
-    href="/documents/gnre/overview"
-    icon="file-check"
+    title="Descarte"
+    href="/documents/cte/descartar"
+    icon="trash-2"
   >
-    Guia Nacional de Recolhimento de Tributos Estaduais
+    Descarte de CT-e com justificativa e controle de auditoria
+  </Card>
+</CardGroup>
+
+## Utilitários e Ferramentas
+
+<CardGroup cols={2}>
+  <Card
+    title="Importação/Exportação"
+    href="/documents/cte/importar"
+    icon="download"
+  >
+    Importe e exporte CT-e em diversos formatos para integração com sistemas
+  </Card>
+  <Card
+    title="Conversão TX2"
+    href="/documents/cte/converter-tx2-xml"
+    icon="refresh-cw"
+  >
+    Converta arquivos TX2 para XML conforme especificações da SEFAZ
+  </Card>
+  <Card
+    title="Prévia DACTE"
+    href="/documents/cte/prever-dacte"
+    icon="eye"
+  >
+    Visualize o DACTE antes da emissão para validação
+  </Card>
+  <Card
+    title="Impressão"
+    href="/documents/cte/imprimir"
+    icon="printer"
+  >
+    Impressão de DACTE e outros documentos relacionados
   </Card>
 </CardGroup>
 
 ## Como Funciona
 
 ### 1. **API REST**
-Comunique-se diretamente com nossa API através de requisições HTTPS para emissão, cancelamento e consulta de documentos.
+Comunique-se diretamente com nossa API através de requisições HTTPS para emissão, cancelamento e consulta de CT-e.
 
 ### 2. **Monitorador de Pastas**
-Alternativamente, utilize nosso sistema de monitoramento de pastas para troca de arquivos, ideal para integrações batch.
+Alternativamente, utilize nosso sistema de monitoramento de pastas para troca de arquivos, ideal para integrações batch de transporte.
 
 ### 3. **Processamento Automático**
 Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
-- Validação dos dados
+- Validação dos dados de transporte
 - Geração do XML conforme especificações da SEFAZ
 - Transmissão para a SEFAZ
 - Processamento da resposta
-- Geração do documento auxiliar
+- Geração do DACTE
 
-## Vantagens
+## Vantagens para Transporte
 
 <CardGroup cols={3}>
   <Card
     title="Simplicidade"
     icon="zap"
   >
-    API intuitiva e bem documentada para rápida integração
+    API intuitiva e bem documentada para rápida integração com sistemas de transporte
   </Card>
   <Card
     title="Confiabilidade"
     icon="shield-check"
   >
-    Infraestrutura robusta com 99.9% de disponibilidade
+    Infraestrutura robusta com 99.9% de disponibilidade para operações críticas
   </Card>
   <Card
     title="Conformidade"
     icon="check-circle"
   >
-    Sempre atualizado com as últimas legislações fiscais
+    Sempre atualizado com as últimas legislações fiscais de transporte
+  </Card>
+</CardGroup>
+
+## Casos de Uso
+
+<CardGroup cols={2}>
+  <Card
+    title="Transportadoras"
+    icon="truck"
+  >
+    Emissão em massa de CT-e para operações de frete e transporte de cargas
+  </Card>
+  <Card
+    title="E-commerce"
+    icon="shopping-cart"
+  >
+    Integração automática para emissão de CT-e em vendas online
+  </Card>
+  <Card
+    title="ERP/Logística"
+    icon="database"
+  >
+    Sistema integrado para gestão completa de documentos de transporte
+  </Card>
+  <Card
+    title="Prestadores de Serviço"
+    icon="users"
+  >
+    Emissão de CT-e para serviços de transporte e logística
   </Card>
 </CardGroup>
 
@@ -105,20 +167,20 @@ Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
     href="/quickstart"
     icon="rocket"
   >
-    Configure sua primeira integração em minutos
+    Configure sua primeira integração de CT-e em minutos
   </Card>
   <Card
     title="Documentação da API"
     href="/api/endpoints/emission"
     icon="code"
   >
-    Explore todos os endpoints disponíveis
+    Explore todos os endpoints disponíveis para CT-e
   </Card>
 </CardGroup>
 
 ## Suporte
 
-Precisa de ajuda? Nossa equipe está sempre disponível para auxiliar:
+Precisa de ajuda com CT-e? Nossa equipe especializada está sempre disponível:
 
 - 📧 **Email**: suporte@managersaas.com
 - 📚 **Documentação**: docs.managersaas.com
@@ -126,5 +188,5 @@ Precisa de ajuda? Nossa equipe está sempre disponível para auxiliar:
 
 ---
 
-*Manager SaaS - Simplificando a gestão fiscal do seu negócio*
+*Manager SaaS CT-e - Simplificando a gestão fiscal de transporte do seu negócio*
 
