@@ -41,13 +41,6 @@
               ]
             },
             {
-              "group": "Emissão",
-              "pages": [
-                "documents/cte/emission",
-                "documents/cte/os-emission"
-              ]
-            },
-            {
               "group": "Operações",
               "pages": [
                 "documents/cte/consulta",
