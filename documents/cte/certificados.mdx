@@ -1,0 +1,581 @@
+---
+title: 'Gerenciamento de Certificados Digitais'
+description: 'Como cadastrar, consultar e deletar certificados digitais via API Manager SaaS'
+---
+
+# Gerenciamento de Certificados Digitais
+
+## Visão Geral
+
+É possível realizar o cadastro, consulta e exclusão de certificados digitais via API. O certificado deve ser no formato A1, padrão ICP-Brasil.
+
+**⚠️ Importante:** Todos os endpoints exigem o Token da Software House da API de Administração. Para obter o Token, siga as instruções da documentação de [Autenticação e Certificados](./autenticacao.mdx).
+
+## Endpoints Disponíveis
+
+| Operação | Método | Endpoint | Descrição |
+|----------|--------|----------|-----------|
+| Cadastrar | `POST` | `/api/v1/certificado` | Upload de novo certificado |
+| Listar Todos | `GET` | `/api/v1/certificado` | Consultar todos os certificados |
+| Consultar | `GET` | `/api/v1/certificado/{handle}` | Consultar certificado específico |
+| Deletar | `DELETE` | `/api/v1/certificado/{handle}` | Excluir certificado |
+
+## Cadastro de Certificado Digital
+
+### Endpoint
+```http
+POST https://managersaas.tecnospeed.com.br:1337/api/v1/certificado
+```
+
+### Parâmetros (form-data)
+
+| Nome | Descrição | Obrigatório |
+|------|-----------|-------------|
+| `token` | Token de SH da API de Administração | ✅ |
+| `certificadobinario` | Arquivo binário .PFX ou .P12 do certificado digital | ✅ |
+| `certificatePassword` | Senha de instalação do certificado digital | ✅ |
+| `emailCertificate` | E-mail para notificação de vencimento do certificado | ✅ |
+
+### Exemplo de Requisição
+
+<CodeGroup>
+
+```bash
+curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado" \
+  -F "token=YOUR_TOKEN_HERE" \
+  -F "certificadobinario=@certificado.pfx" \
+  -F "certificatePassword=senha123" \
+  -F "emailCertificate=admin@empresa.com.br"
+```
+
+```php
+<?php
+// Usando cURL nativo
+$url = 'https://managersaas.tecnospeed.com.br:1337/api/v1/certificado';
+$token = 'YOUR_TOKEN_HERE';
+
+$postData = [
+    'token' => $token,
+    'certificadobinario' => new CURLFile('certificado.pfx'),
+    'certificatePassword' => 'senha123',
+    'emailCertificate' => 'admin@empresa.com.br'
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$resultado = json_decode($response, true);
+?>
+```
+
+```php
+<?php
+// Usando Guzzle HTTP Client
+use GuzzleHttp\Client;
+
+$client = new Client();
+$response = $client->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado', [
+    'multipart' => [
+        [
+            'name' => 'token',
+            'contents' => 'YOUR_TOKEN_HERE'
+        ],
+        [
+            'name' => 'certificadobinario',
+            'contents' => fopen('certificado.pfx', 'r'),
+            'filename' => 'certificado.pfx'
+        ],
+        [
+            'name' => 'certificatePassword',
+            'contents' => 'senha123'
+        ],
+        [
+            'name' => 'emailCertificate',
+            'contents' => 'admin@empresa.com.br'
+        ]
+    ]
+]);
+
+$resultado = json_decode($response->getBody(), true);
+?>
+```
+
+</CodeGroup>
+
+### Resposta de Sucesso
+
+```json
+{
+    "mensagem": "Certificado cadastrado com sucesso",
+    "dados": {
+        "handle": 778638,
+        "certificatename": "CN=TECNOSPEED NEGOCIOS LTDA:12342609000177, OU=Certificado PP A1, O=ICP-Brasil, C=BR, S=PR, L=Maringa, E=, SE=1d 2c 34 56 78 9b ef 9c",
+        "senha": "senhaDeInstalaçãoDoCertificado",
+        "vencimento": "2024-02-03T16:49:00.000Z"
+    }
+}
+```
+
+### Campos da Resposta
+
+| Campo | Descrição |
+|-------|-----------|
+| `handle` | ID único do certificado para operações futuras |
+| `certificatename` | Nome completo do certificado (DN - Distinguished Name) |
+| `senha` | Senha de instalação confirmada |
+| `vencimento` | Data de vencimento do certificado |
+
+## Consultar Todos os Certificados
+
+### Endpoint
+```http
+GET https://managersaas.tecnospeed.com.br:1337/api/v1/certificado
+```
+
+### Parâmetros (form-data)
+
+| Nome | Descrição | Obrigatório |
+|------|-----------|-------------|
+| `token` | Token de SH da API de Administração | ✅ |
+
+### Exemplo de Requisição
+
+<CodeGroup>
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado" \
+  -F "token=YOUR_TOKEN_HERE"
+```
+
+```php
+<?php
+// Usando cURL nativo
+$url = 'https://managersaas.tecnospeed.com.br:1337/api/v1/certificado';
+$token = 'YOUR_TOKEN_HERE';
+
+$postData = ['token' => $token];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$resultado = json_decode($response, true);
+?>
+```
+
+```php
+<?php
+// Usando Guzzle HTTP Client
+use GuzzleHttp\Client;
+
+$client = new Client();
+$response = $client->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado', [
+    'form_params' => [
+        'token' => 'YOUR_TOKEN_HERE'
+    ]
+]);
+
+$resultado = json_decode($response->getBody(), true);
+?>
+```
+
+</CodeGroup>
+
+### Resposta de Sucesso
+
+```json
+{
+    "mensagem": "Registros retornados com sucesso",
+    "dados": [
+        {
+            "certificatename": "CN=TECNOSPEED NEGOCIOS LTDA:12342609000177, OU=Certificado PP A1, O=ICP-Brasil, C=BR, S=PR, L=Maringa, E=, SE=1d 2c 34 56 78 9b ef 9c",
+            "cnpjsoftwarehouse": "12342609000123",
+            "emailcertificate": "teste@teste.com.br",
+            "validatedate": "2023-11-21T16:40:00.000Z",
+            "aliasCertificate": "TESTES",
+            "handleCertificate": 777042,
+            "leftDays": 71
+        },
+        {
+            "certificatename": "CN=TECNOSPEED LTDA:12342609000123, OU=Certificado PP A1, O=ICP-Brasil, C=BR, S=PR, L=Maringa, E=, SE=1d 2c 34 56 78 9b ef 9c",
+            "cnpjsoftwarehouse": "12342609000123",
+            "emailcertificate": "teste@tecnospeed.com.br",
+            "validatedate": "2024-07-19T13:14:00.000Z",
+            "aliasCertificate": "Teste Certificado 2",
+            "handleCertificate": 777002,
+            "leftDays": 312
+        }
+    ],
+    "total": 2
+}
+```
+
+### Campos da Resposta
+
+| Campo | Descrição |
+|-------|-----------|
+| `certificatename` | Nome completo do certificado |
+| `cnpjsoftwarehouse` | CNPJ da Software House |
+| `emailcertificate` | E-mail para notificações |
+| `validatedate` | Data de validação do certificado |
+| `aliasCertificate` | Apelido/nome amigável do certificado |
+| `handleCertificate` | ID único do certificado |
+| `leftDays` | Dias restantes até o vencimento |
+| `total` | Total de certificados retornados |
+
+## Consultar Certificado Específico
+
+### Endpoint
+```http
+GET https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/{handle}
+```
+
+### Parâmetros
+
+| Nome | Descrição | Obrigatório |
+|------|-----------|-------------|
+| `handle` | ID do certificado (path parameter) | ✅ |
+| `token` | Token de SH da API de Administração (form-data) | ✅ |
+
+### Exemplo de Requisição
+
+<CodeGroup>
+
+```bash
+curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/777042" \
+  -F "token=YOUR_TOKEN_HERE"
+```
+
+```php
+<?php
+// Usando cURL nativo
+$handle = 777042;
+$url = "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/{$handle}";
+$token = 'YOUR_TOKEN_HERE';
+
+$postData = ['token' => $token];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$resultado = json_decode($response, true);
+?>
+```
+
+```php
+<?php
+// Usando Guzzle HTTP Client
+use GuzzleHttp\Client;
+
+$client = new Client();
+$handle = 777042;
+$response = $client->post("https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/{$handle}", [
+    'form_params' => [
+        'token' => 'YOUR_TOKEN_HERE'
+    ]
+]);
+
+$resultado = json_decode($response->getBody(), true);
+?>
+```
+
+</CodeGroup>
+
+### Resposta de Sucesso
+
+```json
+{
+    "mensagem": "Registro retornado com sucesso",
+    "dados": {
+        "aliasCertificate": "TESTES",
+        "certificatename": "CN=TECNOSPEED NEGOCIOS LTDA:12342609000177, OU=Certificado PP A1, O=ICP-Brasil, C=BR, S=PR, L=Maringa, E=, SE=1d 2c 34 56 78 9b ef 9c",
+        "emailcertificate": "teste@teste.com.br",
+        "handleCertificate": 777042,
+        "leftDays": 71,
+        "validatedate": "2023-11-21T16:40:00.000Z",
+        "cnpjsoftwarehouse": "12342609000177",
+        "senha": "senhaDeInstalaçãoDoCertificado"
+    }
+}
+```
+
+## Deletar Certificado
+
+### Endpoint
+```http
+DELETE https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/{handle}
+```
+
+### Parâmetros
+
+| Nome | Descrição | Obrigatório |
+|------|-----------|-------------|
+| `handle` | ID do certificado (path parameter) | ✅ |
+| `token` | Token de SH da API de Administração (form-data) | ✅ |
+
+### Exemplo de Requisição
+
+<CodeGroup>
+
+```bash
+curl -X DELETE "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/777042" \
+  -F "token=YOUR_TOKEN_HERE"
+```
+
+```php
+<?php
+// Usando cURL nativo
+$handle = 777042;
+$url = "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/{$handle}";
+$token = 'YOUR_TOKEN_HERE';
+
+$postData = ['token' => $token];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$resultado = json_decode($response, true);
+?>
+```
+
+```php
+<?php
+// Usando Guzzle HTTP Client
+use GuzzleHttp\Client;
+
+$client = new Client();
+$handle = 777042;
+$response = $client->delete("https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/{$handle}", [
+    'form_params' => [
+        'token' => 'YOUR_TOKEN_HERE'
+    ]
+]);
+
+$resultado = json_decode($response->getBody(), true);
+?>
+```
+
+</CodeGroup>
+
+### Resposta de Sucesso
+
+```json
+{
+    "mensagem": "Registro excluído com sucesso"
+}
+```
+
+## Classe PHP Completa
+
+```php
+<?php
+class CertificadoManager {
+    private $baseUrl = 'https://managersaas.tecnospeed.com.br:1337';
+    private $token;
+    
+    public function __construct($token) {
+        $this->token = $token;
+    }
+    
+    /**
+     * Cadastrar novo certificado digital
+     */
+    public function cadastrar($arquivo, $senha, $email) {
+        $url = $this->baseUrl . '/api/v1/certificado';
+        
+        $postData = [
+            'token' => $this->token,
+            'certificadobinario' => new CURLFile($arquivo),
+            'certificatePassword' => $senha,
+            'emailCertificate' => $email
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+    
+    /**
+     * Listar todos os certificados
+     */
+    public function listarTodos() {
+        $url = $this->baseUrl . '/api/v1/certificado';
+        
+        $postData = ['token' => $this->token];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+    
+    /**
+     * Consultar certificado específico
+     */
+    public function consultar($handle) {
+        $url = $this->baseUrl . "/api/v1/certificado/{$handle}";
+        
+        $postData = ['token' => $this->token];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+    
+    /**
+     * Deletar certificado
+     */
+    public function deletar($handle) {
+        $url = $this->baseUrl . "/api/v1/certificado/{$handle}";
+        
+        $postData = ['token' => $this->token];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return json_decode($response, true);
+    }
+    
+    /**
+     * Verificar certificados próximos do vencimento
+     */
+    public function verificarVencimento($diasLimite = 30) {
+        $certificados = $this->listarTodos();
+        
+        if (!isset($certificados['dados'])) {
+            return [];
+        }
+        
+        $proximosVencimento = [];
+        
+        foreach ($certificados['dados'] as $cert) {
+            if ($cert['leftDays'] <= $diasLimite) {
+                $proximosVencimento[] = $cert;
+            }
+        }
+        
+        return $proximosVencimento;
+    }
+}
+
+// Exemplo de uso
+$manager = new CertificadoManager('YOUR_TOKEN_HERE');
+
+// Cadastrar certificado
+$resultado = $manager->cadastrar('certificado.pfx', 'senha123', 'admin@empresa.com.br');
+
+// Listar todos
+$todos = $manager->listarTodos();
+
+// Consultar específico
+$cert = $manager->consultar(777042);
+
+// Deletar
+$delete = $manager->deletar(777042);
+
+// Verificar vencimento
+$proximosVencimento = $manager->verificarVencimento(30);
+?>
+```
+
+## Tratamento de Erros
+
+### Códigos de Erro Comuns
+
+| Código | Descrição | Solução |
+|--------|-----------|---------|
+| `400` | Parâmetros inválidos | Verifique se todos os campos obrigatórios foram preenchidos |
+| `401` | Token inválido | Renove o token de autenticação |
+| `403` | Acesso negado | Verifique as permissões da conta |
+| `404` | Certificado não encontrado | Verifique se o handle está correto |
+| `500` | Erro interno do servidor | Tente novamente ou contate suporte |
+
+### Exemplo de Tratamento de Erro
+
+```php
+<?php
+try {
+    $resultado = $manager->cadastrar('certificado.pfx', 'senha123', 'admin@empresa.com.br');
+    
+    if (isset($resultado['mensagem']) && strpos($resultado['mensagem'], 'sucesso') !== false) {
+        echo "Certificado cadastrado com sucesso! Handle: " . $resultado['dados']['handle'];
+    } else {
+        echo "Erro ao cadastrar certificado: " . ($resultado['mensagem'] ?? 'Erro desconhecido');
+    }
+} catch (Exception $e) {
+    echo "Exceção: " . $e->getMessage();
+}
+?>
+```
+
+## Collection Postman
+
+Para facilitar os testes, utilize a collection oficial do Postman:
+
+[Collection de Exemplo do Postman](https://api.postman.com/collections/23505788-c9503bd1-b80f-4f94-9050-ea9a6c4d8cab?access_key=PMAT-01HA2PMQQ361C1H9SZJXGD1RCC)
+
+## Próximos Passos
+
+1. **Obtenha o token** de autenticação da API de Administração
+2. **Teste o cadastro** de um certificado em ambiente de desenvolvimento
+3. **Implemente a consulta** para verificar certificados existentes
+4. **Configure notificações** de vencimento via e-mail
+5. **Implemente rotinas** de verificação automática de vencimento
+6. **Configure backup** dos certificados antes de exclusão
+
+## Suporte
+
+Para dúvidas sobre gerenciamento de certificados:
+
+- **Email**: suporte@managersaas.com
+- **Documentação**: [docs.managersaas.com](https://docs.managersaas.com)
+- **Status**: [status.managersaas.com](https://status.managersaas.com) 

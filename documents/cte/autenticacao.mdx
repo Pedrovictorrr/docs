@@ -1,13 +1,13 @@
 ---
-title: 'Autenticação e Certificados'
-description: 'Configuração de autenticação e certificados digitais para emissão de CT-e'
+title: 'Autenticação por API Key'
+description: 'Configuração de autenticação por API Key para emissão de CT-e'
 ---
 
-# Autenticação e Certificados
+# Autenticação por API Key
 
 ## Visão Geral
 
-A API de CT-e utiliza autenticação baseada em **API Keys** e **certificados digitais** para garantir a segurança e autenticidade das transações. Este documento explica como configurar e utilizar ambos os métodos de autenticação.
+A API de CT-e utiliza autenticação baseada em **API Keys** para garantir a segurança e autenticidade das transações. Este documento explica como configurar e utilizar este método de autenticação.
 
 ## Autenticação por API Key
 
@@ -248,519 +248,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   </Card>
 </CardGroup>
 
-## Certificados Digitais
-
-### O que são Certificados Digitais?
-
-Os **certificados digitais** são arquivos eletrônicos que garantem a autenticidade e integridade das transações com a SEFAZ. Eles são obrigatórios para emissão de CT-e e devem ser válidos e não revogados.
-
-### Tipos de Certificados Suportados
-
-#### **Certificado A1**
-- Arquivo `.pfx` ou `.p12`
-- Senha de proteção obrigatória
-- Validade de 1 ano
-- Mais comum para integrações
-
-#### **Certificado A3**
-- Token ou cartão físico
-- Requer driver específico
-- Validade de 3 anos
-- Maior segurança
-
-### Estrutura do Certificado
-
-```json
-{
-  "tipo": "A1",
-  "arquivo": "certificado.pfx",
-  "senha": "senha123",
-  "validade": "2025-12-31",
-  "cnpj": "12.345.678/0001-90",
-  "emissor": "ICP-Brasil"
-}
-```
-
-### Configuração do Certificado
-
-#### **1. Upload do Certificado**
-
-```http
-POST /api/v1/certificado/upload
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: multipart/form-data
-
-file: [arquivo .pfx ou .p12]
-password: senha_do_certificado
-description: "Certificado principal da empresa"
-```
-
-**Exemplo de requisição:**
-
-<CodeGroup>
-
-```php
-<?php
-// Usando Laravel HTTP Client
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\UploadedFile;
-
-$response = Http::withHeaders([
-    'Authorization' => 'Bearer ' . $jwtToken
-])->attach('file', file_get_contents('certificado.pfx'), 'certificado.pfx', [
-    'Content-Type' => 'application/x-pkcs12'
-])->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/upload', [
-    'password' => 'senha123',
-    'description' => 'Certificado principal da empresa'
-]);
-
-$resultado = $response->json();
-?>
-```
-
-```php
-<?php
-// Usando Guzzle HTTP Client
-use GuzzleHttp\Client;
-
-$client = new Client();
-$response = $client->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/upload', [
-    'headers' => [
-        'Authorization' => 'Bearer ' . $jwtToken
-    ],
-    'multipart' => [
-        [
-            'name' => 'file',
-            'contents' => fopen('certificado.pfx', 'r'),
-            'filename' => 'certificado.pfx'
-        ],
-        [
-            'name' => 'password',
-            'contents' => 'senha123'
-        ],
-        [
-            'name' => 'description',
-            'contents' => 'Certificado principal da empresa'
-        ]
-    ]
-]);
-
-$resultado = json_decode($response->getBody(), true);
-?>
-```
-
-```bash
-curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/upload" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -F "file=@certificado.pfx" \
-  -F "password=senha123" \
-  -F "description=Certificado principal da empresa"
-```
-
-</CodeGroup>
-
-#### **2. Validação do Certificado**
-
-A API valida automaticamente:
-- Formato do arquivo
-- Senha de proteção
-- Validade temporal
-- Status na ICP-Brasil
-- CNPJ do proprietário
-
-#### **3. Ativação do Certificado**
-
-```http
-POST /api/v1/certificado/activate
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
-
-{
-  "certificate_id": "cert_123456",
-  "environment": "production"
-}
-```
-
-**Exemplo de requisição:**
-
-<CodeGroup>
-
-```php
-<?php
-// Usando Laravel HTTP Client
-use Illuminate\Support\Facades\Http;
-
-$response = Http::withHeaders([
-    'Authorization' => 'Bearer ' . $jwtToken,
-    'Content-Type' => 'application/json'
-])->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/activate', [
-    'certificate_id' => 'cert_123456',
-    'environment' => 'production'
-]);
-
-$resultado = $response->json();
-?>
-```
-
-```php
-<?php
-// Usando Guzzle HTTP Client
-use GuzzleHttp\Client;
-
-$client = new Client();
-$response = $client->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/activate', [
-    'headers' => [
-        'Authorization' => 'Bearer ' . $jwtToken,
-        'Content-Type' => 'application/json'
-    ],
-    'json' => [
-        'certificate_id' => 'cert_123456',
-        'environment' => 'production'
-    ]
-]);
-
-$resultado = json_decode($response->getBody(), true);
-?>
-```
-
-```bash
-curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/activate" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "certificate_id": "cert_123456",
-    "environment": "application/json"
-  }'
-```
-
-</CodeGroup>
-
-### Uso em Requisições
-
-Para operações que requerem certificado digital, inclua o ID do certificado:
-
-```json
-{
-  "certificate_id": "cert_123456",
-  "dados_cte": {
-    "emitente": {
-      "cnpj": "12.345.678/0001-90",
-      "nome": "Empresa LTDA"
-    },
-    "tomador": {
-      "cnpj": "98.765.432/0001-10",
-      "nome": "Cliente LTDA"
-    }
-  }
-}
-```
-
-## Ambientes de Teste e Produção
-
-### **Ambiente de Teste (Sandbox)**
-- Certificados de teste aceitos
-- Validações básicas
-- Sem transmissão para SEFAZ
-- Ideal para desenvolvimento
-
-### **Ambiente de Produção**
-- Certificados válidos obrigatórios
-- Validações completas
-- Transmissão real para SEFAZ
-- Para uso em produção
-
-### Configuração do Ambiente
-
-```http
-POST /api/v1/ambiente/configure
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
-
-{
-  "environment": "production",
-  "certificate_id": "cert_123456",
-  "sefaz_uf": "SP"
-}
-```
-
-**Exemplo de requisição:**
-
-<CodeGroup>
-
-```php
-<?php
-// Usando Laravel HTTP Client
-use Illuminate\Support\Facades\Http;
-
-$response = Http::withHeaders([
-    'Authorization' => 'Bearer ' . $jwtToken,
-    'Content-Type' => 'application/json'
-])->post('https://managersaas.tecnospeed.com.br:1337/api/v1/ambiente/configure', [
-    'environment' => 'production',
-    'certificate_id' => 'cert_123456',
-    'sefaz_uf' => 'SP'
-]);
-
-$resultado = $response->json();
-?>
-```
-
-```php
-<?php
-// Usando Guzzle HTTP Client
-use GuzzleHttp\Client;
-
-$client = new Client();
-$response = $client->post('https://managersaas.tecnospeed.com.br:1337/api/v1/ambiente/configure', [
-    'headers' => [
-        'Authorization' => 'Bearer ' . $jwtToken,
-        'Content-Type' => 'application/json'
-    ],
-    'json' => [
-        'environment' => 'production',
-        'certificate_id' => 'cert_123456',
-        'sefaz_uf' => 'SP'
-    ]
-]);
-
-$resultado = json_decode($response->getBody(), true);
-?>
-```
-
-```bash
-curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/ambiente/configure" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "environment": "production",
-    "certificate_id": "cert_123456",
-    "sefaz_uf": "SP"
-  }'
-```
-
-</CodeGroup>
-
-## Validação e Testes
-
-### **Teste de Certificado**
-
-```http
-POST /api/v1/certificado/test
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
-
-{
-  "certificate_id": "cert_123456",
-  "operation": "cte_emission"
-}
-```
-
-**Exemplo de requisição:**
-
-<CodeGroup>
-
-```php
-<?php
-// Usando Laravel HTTP Client
-use Illuminate\Support\Facades\Http;
-
-$response = Http::withHeaders([
-    'Authorization' => 'Bearer ' . $jwtToken,
-    'Content-Type' => 'application/json'
-])->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/test', [
-    'certificate_id' => 'cert_123456',
-    'operation' => 'cte_emission'
-]);
-
-$resultado = $response->json();
-?>
-```
-
-```php
-<?php
-// Usando Guzzle HTTP Client
-use GuzzleHttp\Client;
-
-$client = new Client();
-$response = $client->post('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/test', [
-    'headers' => [
-        'Authorization' => 'Bearer ' . $jwtToken,
-        'Content-Type' => 'application/json'
-    ],
-    'json' => [
-        'certificate_id' => 'cert_123456',
-        'operation' => 'cte_emission'
-    ]
-]);
-
-$resultado = json_decode($response->getBody(), true);
-?>
-```
-
-```bash
-curl -X POST "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/test" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "certificate_id": "cert_123456",
-    "operation": "cte_emission"
-  }'
-```
-
-</CodeGroup>
-
-### **Listar Certificados Cadastrados**
-
-```http
-GET /api/v1/certificado
-Authorization: Bearer YOUR_JWT_TOKEN
-```
-
-**Exemplo de requisição:**
-
-<CodeGroup>
-
-```php
-<?php
-// Usando Laravel HTTP Client
-use Illuminate\Support\Facades\Http;
-
-$response = Http::withHeaders([
-    'Authorization' => 'Bearer ' . $jwtToken,
-    'Content-Type' => 'application/json',
-    'Accept' => 'application/json'
-])->get('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado');
-
-$certificados = $response->json();
-?>
-```
-
-```php
-<?php
-// Usando Guzzle HTTP Client
-use GuzzleHttp\Client;
-
-$client = new Client();
-$response = $client->get('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado', [
-    'headers' => [
-        'Authorization' => 'Bearer ' . $jwtToken,
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json'
-    ]
-]);
-
-$certificados = json_decode($response->getBody(), true);
-?>
-```
-
-```php
-<?php
-// Usando cURL nativo
-$url = 'https://managersaas.tecnospeed.com.br:1337/api/v1/certificado';
-$headers = [
-    'Authorization: Bearer ' . $jwtToken,
-    'Content-Type: application/json',
-    'Accept: application/json'
-];
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-$certificados = json_decode($response, true);
-?>
-```
-
-</CodeGroup>
-
-**Resposta esperada:**
-```json
-[
-  {
-    "id": "cert_123456",
-    "nome": "Certificado Principal",
-    "cnpj": "12.345.678/0001-90",
-    "validade": "2025-12-31",
-    "tipo": "A1",
-    "status": "ativo",
-    "ambiente": "production"
-  },
-  {
-    "id": "cert_789012",
-    "nome": "Certificado de Teste",
-    "cnpj": "12.345.678/0001-90",
-    "validade": "2024-06-30",
-    "tipo": "A1",
-    "status": "ativo",
-    "ambiente": "sandbox"
-  }
-]
-```
-
-### **Verificação de Status**
-
-### **Logs de Validação**
-
-```http
-GET /api/v1/certificado/logs
-Authorization: Bearer YOUR_JWT_TOKEN
-Query: ?certificate_id=cert_123456&date=2024-01-01
-```
-
-**Exemplo de requisição:**
-
-<CodeGroup>
-
-```php
-<?php
-// Usando Laravel HTTP Client
-use Illuminate\Support\Facades\Http;
-
-$response = Http::withHeaders([
-    'Authorization' => 'Bearer ' . $jwtToken,
-    'Content-Type' => 'application/json'
-])->get('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/logs', [
-    'certificate_id' => 'cert_123456',
-    'date' => '2024-01-01'
-]);
-
-$logs = $response->json();
-?>
-```
-
-```php
-<?php
-// Usando Guzzle HTTP Client
-use GuzzleHttp\Client;
-
-$client = new Client();
-$response = $client->get('https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/logs', [
-    'headers' => [
-        'Authorization' => 'Bearer ' . $jwtToken,
-        'Content-Type' => 'application/json'
-    ],
-    'query' => [
-        'certificate_id' => 'cert_123456',
-        'date' => '2024-01-01'
-    ]
-]);
-
-$logs = json_decode($response->getBody(), true);
-?>
-```
-
-```bash
-curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/logs?certificate_id=cert_123456&date=2024-01-01" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json"
-```
-
-</CodeGroup>
-
 ## Tratamento de Erros
 
 ### **Erros de Autenticação**
@@ -773,15 +260,6 @@ curl -X GET "https://managersaas.tecnospeed.com.br:1337/api/v1/certificado/logs?
 | `400` | Credenciais inválidas | Verifique email, senha e parâmetros gerar/api |
 | `500` | Erro interno do servidor | Tente novamente ou contate suporte |
 
-### **Erros de Certificado**
-
-| Código | Descrição | Solução |
-|--------|-----------|---------|
-| `CERT_001` | Certificado expirado | Renove o certificado |
-| `CERT_002` | Senha incorreta | Verifique a senha do arquivo |
-| `CERT_003` | Formato inválido | Use arquivo .pfx ou .p12 |
-| `CERT_004` | Certificado revogado | Entre em contato com a ICP-Brasil |
-
 ## Exemplos Práticos
 
 ### **Configuração Completa**
@@ -792,13 +270,11 @@ class CTEApi {
     private $email;
     private $senha;
     private $token;
-    private $certificateId;
     private $baseUrl = 'https://managersaas.tecnospeed.com.br:1337';
     
-    public function __construct($email, $senha, $certificateId = null) {
+    public function __construct($email, $senha) {
         $this->email = $email;
         $this->senha = $senha;
-        $this->certificateId = $certificateId;
     }
     
     private function authenticate() {
@@ -844,7 +320,6 @@ class CTEApi {
         ];
         
         $payload = [
-            'certificate_id' => $this->certificateId,
             'dados_cte' => $dados
         ];
         
@@ -865,117 +340,27 @@ class CTEApi {
         $this->token = null;
         return $this->authenticate();
     }
-    
-    public function listarCertificados() {
-        if (!$this->token) {
-            if (!$this->authenticate()) {
-                throw new Exception('Falha na autenticação');
-            }
-        }
-        
-        $url = $this->baseUrl . '/api/v1/certificado';
-        $headers = [
-            'Authorization: Bearer ' . $this->token,
-            'Content-Type: application/json',
-            'Accept: application/json'
-        ];
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        $response = curl_exec($ch);
-        curl_close($ch);
-        
-        return json_decode($response, true);
-    }
-    
-    public function testarCertificado($certificateId, $operation = 'cte_emission') {
-        if (!$this->token) {
-            if (!$this->authenticate()) {
-                throw new Exception('Falha na autenticação');
-            }
-        }
-        
-        $url = $this->baseUrl . '/api/v1/certificado/test';
-        $headers = [
-            'Authorization: Bearer ' . $this->token,
-            'Content-Type: application/json'
-        ];
-        
-        $data = [
-            'certificate_id' => $certificateId,
-            'operation' => $operation
-        ];
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        $response = curl_exec($ch);
-        curl_close($ch);
-        
-        return json_decode($response, true);
-    }
 }
 
 // Uso
-$api = new CTEApi('seu_email@exemplo.com', 'sua_senha', 'cert_123456');
-
-// Listar certificados disponíveis
-$certificados = $api->listarCertificados();
-
-// Testar certificado
-$teste = $api->testarCertificado('cert_123456');
+$api = new CTEApi('seu_email@exemplo.com', 'sua_senha');
 
 // Emitir CT-e
 $resultado = $api->emitirCTe($dadosCTe);
 ?>
 ```
 
-### **Verificação de Certificado**
-
-```javascript
-async function verificarCertificado(certificateId) {
-    try {
-        const response = await fetch(`/api/certificates/status/${certificateId}`, {
-            headers: {
-                'Authorization': `Bearer ${apiKey}`
-            }
-        });
-        
-        const status = await response.json();
-        
-        if (status.valid) {
-            console.log('Certificado válido até:', status.expiry_date);
-        } else {
-            console.error('Certificado inválido:', status.reason);
-        }
-    } catch (error) {
-        console.error('Erro ao verificar certificado:', error);
-    }
-}
-```
-
 ## Próximos Passos
 
 1. **Prepare suas credenciais** (email e senha da Software House)
 2. **Configure os parâmetros** de autenticação (gerar=1, api=0)
-3. **Faça upload do certificado** digital
-4. **Liste e verifique** os certificados disponíveis
-5. **Teste a autenticação** em ambiente sandbox
-6. **Configure o ambiente** de produção
-7. **Implemente a integração** com sua aplicação
-8. **Configure renovação automática** de tokens (a cada 2.5 horas)
-9. **Monitore o status** dos certificados
+3. **Teste a autenticação** em ambiente sandbox
+4. **Implemente a integração** com sua aplicação
+5. **Configure renovação automática** de tokens (a cada 2.5 horas)
 
 ## Suporte
 
-Para dúvidas sobre autenticação e certificados:
+Para dúvidas sobre autenticação:
 
 - **Email**: suporte@managersaas.com
 - **Documentação**: [docs.managersaas.com](https://docs.managersaas.com)
