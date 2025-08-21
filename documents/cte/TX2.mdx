@@ -1,0 +1,112 @@
+# 📑 Documentação TX2 – CTeOS
+
+## 🔹 Cabeçalho
+
+| Campo                | Código TX2     | Descrição                                    | Obrigatório | Exemplo                     |
+| -------------------- | -------------- | -------------------------------------------- | ----------- | --------------------------- |
+| Formato              | `formato`      | Define o formato do arquivo                  | ✅           | `tx2`                       |
+| Inclusão             | `incluirCTeOS` | Início da inclusão de um CTeOS               | ✅           | `incluirCTeOS`              |
+| Código UF            | `cUF_6`        | Código IBGE da UF de emissão                 | ✅           | `42` (SC)                   |
+| Código Numérico      | `cCT_7`        | Código numérico que compõe a chave de acesso | ✅           | `47496332`                  |
+| CFOP                 | `CFOP_8`       | Código Fiscal de Operações e Prestações      | ✅           | `5932`                      |
+| Natureza da Operação | `natOp_9`      | Descrição da operação                        | ✅           | `Prestação de serviço...`   |
+| Modelo               | `mod_10`       | Modelo do documento                          | ✅           | `67` (CTeOS)                |
+| Série                | `serie_11`     | Série do documento                           | ✅           | `001`                       |
+| Número               | `nCT_12`       | Número do documento                          | ✅           | `000000002`                 |
+| Data/Hora Emissão    | `dhEmi_13`     | Data e hora de emissão                       | ✅           | `2025-08-21T18:06:02-03:00` |
+| Tipo Impressão       | `tpImp_14`     | Tipo de impressão do DACTE                   | ✅           | `1` (Retrato)               |
+| Tipo Emissão         | `tpEmis_15`    | Normal, contingência, etc.                   | ✅           | `1` (Normal)                |
+| Dígito Verificador   | `cDV_16`       | DV da chave                                  | ✅           | `1`                         |
+| Ambiente             | `tpAmb_17`     | 1=Produção, 2=Homologação                    | ✅           | `1`                         |
+| Tipo CTe             | `tpCTe_18`     | 0=Normal, 1=Complementar, etc.               | ✅           | `0`                         |
+| Processo Emissor     | `procEmi_19`   | Origem do software emissor                   | ✅           | `0`                         |
+| Versão Proc          | `verProc_20`   | Versão do software emissor                   | ✅           | `4.00`                      |
+
+---
+
+## 🔹 Local de Emissão e Serviço
+
+| Campo                | Código TX2                             | Descrição                          | Obrigatório | Exemplo                             |
+| -------------------- | -------------------------------------- | ---------------------------------- | ----------- | ----------------------------------- |
+| Município de Emissão | `cMunEnv_21`, `xMunEnv_22`, `UFEnv_23` | Local onde o documento foi emitido | ✅           | `4202404 / Blumenau / SC`           |
+| Modal                | `modal_24`                             | Tipo de transporte                 | ✅           | `01` (Rodoviário)                   |
+| Tipo Serviço         | `tpServ_25`                            | Serviço contratado                 | ✅           | `7` (Passageiros)                   |
+| Indicador IE Tomador | `indIEToma_26`                         | Se o tomador possui IE             | ✅           | `1`                                 |
+| Município Início     | `cMunIni_27`, `xMunIni_28`, `UFIni_29` | Local de início da prestação       | ✅           | `3525904 / Jundiaí / SP`            |
+| Município Fim        | `cMunFim_30`, `xMunFim_31`, `UFFim_32` | Local de fim da prestação          | ✅           | `3550308 / São Paulo / SP`          |
+| Observações          | `xObs_41`                              | Informações complementares         | ❌           | `Serviço de fretamento eventual...` |
+
+---
+
+## 🔹 Emitente (Prestador do Serviço)
+
+| Campo         | Código TX2                                   | Descrição                         | Obrigatório | Exemplo                                             |
+| ------------- | -------------------------------------------- | --------------------------------- | ----------- | --------------------------------------------------- |
+| CNPJ          | `CNPJ_49`                                    | Identificação da empresa emissora | ✅           | `01274689000105`                                    |
+| IE            | `IE_50`                                      | Inscrição Estadual                | ✅           | `712030582117`                                      |
+| CRT           | `CRT_1573`                                   | Regime Tributário                 | ✅           | `1`                                                 |
+| Razão Social  | `xNome_52`                                   | Nome empresarial                  | ✅           | `Viação Mimo Ltda`                                  |
+| Nome Fantasia | `xFant_53`                                   | Nome fantasia                     | ✅           | `Viação Mimo`                                       |
+| Endereço      | `xLgr_55`, `nro_56`, `xCpl_57`, `xBairro_58` | Endereço completo                 | ✅           | `Rua Pernambuco, 349, casa da mamae, Itoupava Seca` |
+| Município     | `cMun_59`, `xMun_60`, `UF_62`                | Município e UF                    | ✅           | `4202404 / Blumenau / SC`                           |
+| CEP           | `CEP_61`                                     | Código postal                     | ✅           | `89030050`                                          |
+| Telefone      | `fone_63`                                    | Contato                           | ❌           | `11971400280`                                       |
+
+---
+
+## 🔹 Tomador do Serviço
+
+| Campo        | Código TX2                                   | Descrição                | Obrigatório | Exemplo                                                |
+| ------------ | -------------------------------------------- | ------------------------ | ----------- | ------------------------------------------------------ |
+| CNPJ/CPF     | `CNPJ_65`, `CPF_66`                          | Identificação do tomador | ✅           | `19073578000287`                                       |
+| IE           | `IE_67`                                      | Inscrição Estadual       | ✅/❌         | `ISENTO`                                               |
+| Razão Social | `xNome_68`                                   | Nome empresarial         | ✅           | `EGIZ EMPREENDIMENTOS EDUCACIONAIS LTDA`               |
+| Endereço     | `xLgr_72`, `nro_73`, `xCpl_74`, `xBairro_75` | Endereço completo        | ✅           | `Duque de Caxias, S/N, COLEGIO SER, PARQUE CENTENÁRIO` |
+| Município    | `cMun_76`, `xMun_77`, `UF_79`                | Município e UF           | ✅           | `3525904 / Jundiaí / SP`                               |
+| CEP          | `CEP_78`                                     | Código postal            | ✅           | `13214000`                                             |
+| País         | `cPais_80`, `xPais_81`                       | Código e nome do país    | ✅           | `1058 / BRASIL`                                        |
+| E-mail       | `email_82`                                   | Contato eletrônico       | ❌           | `cobranca@colegioserjundiai.com.br`                    |
+
+---
+
+## 🔹 Valores e Tributos
+
+| Campo                 | Código TX2                                                     | Descrição                      | Obrigatório | Exemplo                     |
+| --------------------- | -------------------------------------------------------------- | ------------------------------ | ----------- | --------------------------- |
+| Valor Total Prestação | `vTPrest_84`                                                   | Valor da prestação             | ✅           | `2340.00`                   |
+| Valor a Receber       | `vRec_85`                                                      | Valor líquido                  | ✅           | `2340.00`                   |
+| ICMS CST              | `CST_92`                                                       | Situação tributária ICMS       | ✅           | `00`                        |
+| Base Cálculo ICMS     | `vBC_93`                                                       | Base de cálculo                | ✅           | `2340.00`                   |
+| Alíquota ICMS         | `pICMS_94`                                                     | Percentual                     | ✅           | `1.00`                      |
+| Valor ICMS            | `vICMS_95`                                                     | Valor calculado                | ✅           | `23.40`                     |
+| Tributos Federais     | `vPIS_126`, `vCOFINS_127`, `vIR_128`, `vINSS_129`, `vCSLL_130` | Tributos federais              | ❌           | `0.00`                      |
+| Descrição Serviço     | `xDescServ_133`                                                | Texto livre                    | ✅           | `Transporte de Passageiros` |
+| Quantidade            | `qCarga_135`                                                   | Quantidade de viagens/unidades | ✅           | `1`                         |
+
+---
+
+## 🔹 Versões e Finalização
+
+| Campo         | Código TX2             | Descrição              | Obrigatório | Exemplo                  |
+| ------------- | ---------------------- | ---------------------- | ----------- | ------------------------ |
+| Versão Modal  | `versaoModal_147`      | Schema modal           | ✅           | `4.00`                   |
+| Versão Geral  | `versao_1`, `versao_3` | Versão geral do schema | ✅           | `4.00`                   |
+| Identificador | `Id_4`                 | ID do documento        | ✅           | *gerado automaticamente* |
+| Finalização   | `salvarCTeOS`          | Fecha o bloco do CTeOS | ✅           | `salvarCTeOS`            |
+
+---
+
+## 🔹 Modal Rodoviário (RodoOS)
+
+| Campo            | Código TX2        | Descrição                     | Obrigatório | Exemplo                     |
+| ---------------- | ----------------- | ----------------------------- | ----------- | --------------------------- |
+| Início           | `IncluirRodoos`   | Início do bloco rodoviário    | ✅           | `IncluirRodoos`             |
+| TAF              | `TAF_2`           | Código de autorização         | ✅/❌         | `402628`                    |
+| Placa            | `placa_5`         | Placa do veículo              | ✅           | `AAA1234`                   |
+| RENAVAM          | `RENAVAM_6`       | Registro nacional do veículo  | ❌           | `123456789`                 |
+| UF Veículo       | `UF_16`           | Estado de registro            | ✅           | `SC`                        |
+| Tipo Fretamento  | `tpFretamento_17` | 1=Eventual, 2=Contínuo        | ✅           | `1`                         |
+| Data/Hora Viagem | `dhViagem_18`     | Data/hora de início da viagem | ✅           | `2023-10-21T07:00:00-03:00` |
+| Finalização      | `SalvarRodoos`    | Fecha o bloco rodoviário      | ✅           | `SalvarRodoos`              |
+
+---

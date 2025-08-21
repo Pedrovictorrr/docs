@@ -40,6 +40,7 @@
             "pages": [
               "documents/cte/consulta",
               "documents/cte/enviar",
+              "documents/cte/TX2",
               "documents/cte/enviar-cce",
               "documents/cte/descartar",
               "documents/cte/inutilizar"
