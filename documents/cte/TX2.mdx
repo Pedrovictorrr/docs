@@ -1,112 +1,530 @@
 # 📑 Documentação TX2 – CTeOS
 
-## 🔹 Cabeçalho
+## 🔹 Visão Geral
 
-| Campo                | Código TX2     | Descrição                                    | Obrigatório | Exemplo                     |
-| -------------------- | -------------- | -------------------------------------------- | ----------- | --------------------------- |
-| Formato              | `formato`      | Define o formato do arquivo                  | ✅           | `tx2`                       |
-| Inclusão             | `incluirCTeOS` | Início da inclusão de um CTeOS               | ✅           | `incluirCTeOS`              |
-| Código UF            | `cUF_6`        | Código IBGE da UF de emissão                 | ✅           | `42` (SC)                   |
-| Código Numérico      | `cCT_7`        | Código numérico que compõe a chave de acesso | ✅           | `47496332`                  |
-| CFOP                 | `CFOP_8`       | Código Fiscal de Operações e Prestações      | ✅           | `5932`                      |
-| Natureza da Operação | `natOp_9`      | Descrição da operação                        | ✅           | `Prestação de serviço...`   |
-| Modelo               | `mod_10`       | Modelo do documento                          | ✅           | `67` (CTeOS)                |
-| Série                | `serie_11`     | Série do documento                           | ✅           | `001`                       |
-| Número               | `nCT_12`       | Número do documento                          | ✅           | `000000002`                 |
-| Data/Hora Emissão    | `dhEmi_13`     | Data e hora de emissão                       | ✅           | `2025-08-21T18:06:02-03:00` |
-| Tipo Impressão       | `tpImp_14`     | Tipo de impressão do DACTE                   | ✅           | `1` (Retrato)               |
-| Tipo Emissão         | `tpEmis_15`    | Normal, contingência, etc.                   | ✅           | `1` (Normal)                |
-| Dígito Verificador   | `cDV_16`       | DV da chave                                  | ✅           | `1`                         |
-| Ambiente             | `tpAmb_17`     | 1=Produção, 2=Homologação                    | ✅           | `1`                         |
-| Tipo CTe             | `tpCTe_18`     | 0=Normal, 1=Complementar, etc.               | ✅           | `0`                         |
-| Processo Emissor     | `procEmi_19`   | Origem do software emissor                   | ✅           | `0`                         |
-| Versão Proc          | `verProc_20`   | Versão do software emissor                   | ✅           | `4.00`                      |
+O formato TX2 é utilizado para integração com sistemas de emissão de CTeOS (Conhecimento de Transporte Eletrônico - Outros Serviços). Este documento apresenta o dicionário de dados completo com todos os campos necessários para a geração correta dos arquivos de integração.
 
----
+## 🔹 Estrutura do Dicionário de Dados
 
-## 🔹 Local de Emissão e Serviço
+O dicionário de dados é uma tabela com os campos e informações sobre cada campo. Cada coluna tem uma função específica:
 
-| Campo                | Código TX2                             | Descrição                          | Obrigatório | Exemplo                             |
-| -------------------- | -------------------------------------- | ---------------------------------- | ----------- | ----------------------------------- |
-| Município de Emissão | `cMunEnv_21`, `xMunEnv_22`, `UFEnv_23` | Local onde o documento foi emitido | ✅           | `4202404 / Blumenau / SC`           |
-| Modal                | `modal_24`                             | Tipo de transporte                 | ✅           | `01` (Rodoviário)                   |
-| Tipo Serviço         | `tpServ_25`                            | Serviço contratado                 | ✅           | `7` (Passageiros)                   |
-| Indicador IE Tomador | `indIEToma_26`                         | Se o tomador possui IE             | ✅           | `1`                                 |
-| Município Início     | `cMunIni_27`, `xMunIni_28`, `UFIni_29` | Local de início da prestação       | ✅           | `3525904 / Jundiaí / SP`            |
-| Município Fim        | `cMunFim_30`, `xMunFim_31`, `UFFim_32` | Local de fim da prestação          | ✅           | `3550308 / São Paulo / SP`          |
-| Observações          | `xObs_41`                              | Informações complementares         | ❌           | `Serviço de fretamento eventual...` |
+| Coluna | Função |
+|--------|--------|
+| **TAG** | Mostra o campo exato que deve ser utilizado no arquivo de integração |
+| **Descrição** | Enumera as características próprias de cada campo |
+| **Ocorrência** | Indica a obrigatoriedade do campo (formato X-Y, onde X é a quantidade mínima e Y é a máxima) |
+| **Tamanho** | Limita a quantidade de caracteres de cada campo |
+| **Observação** | Mostra informações adicionais que podem auxiliar no preenchimento |
+
+### 📋 Convenções de Ocorrência
+- **0-1**: Campo opcional, pode aparecer no máximo uma vez
+- **1-1**: Campo obrigatório, deve aparecer exatamente uma vez
+- **1-N**: Campo obrigatório, pode ocorrer quantas vezes for necessário
+- **0-N**: Campo opcional, pode ocorrer quantas vezes for necessário
+
+### 📏 Convenções de Tamanho
+- **X-Y**: Mínimo X e máximo Y caracteres
+- **X**: Exatamente X caracteres
+- **XvY**: X casas antes da vírgula, vírgula, Y casas depois (para números decimais)
 
 ---
 
-## 🔹 Emitente (Prestador do Serviço)
+## 🔹 Estrutura Básica e Comandos
 
-| Campo         | Código TX2                                   | Descrição                         | Obrigatório | Exemplo                                             |
-| ------------- | -------------------------------------------- | --------------------------------- | ----------- | --------------------------------------------------- |
-| CNPJ          | `CNPJ_49`                                    | Identificação da empresa emissora | ✅           | `01274689000105`                                    |
-| IE            | `IE_50`                                      | Inscrição Estadual                | ✅           | `712030582117`                                      |
-| CRT           | `CRT_1573`                                   | Regime Tributário                 | ✅           | `1`                                                 |
-| Razão Social  | `xNome_52`                                   | Nome empresarial                  | ✅           | `Viação Mimo Ltda`                                  |
-| Nome Fantasia | `xFant_53`                                   | Nome fantasia                     | ✅           | `Viação Mimo`                                       |
-| Endereço      | `xLgr_55`, `nro_56`, `xCpl_57`, `xBairro_58` | Endereço completo                 | ✅           | `Rua Pernambuco, 349, casa da mamae, Itoupava Seca` |
-| Município     | `cMun_59`, `xMun_60`, `UF_62`                | Município e UF                    | ✅           | `4202404 / Blumenau / SC`                           |
-| CEP           | `CEP_61`                                     | Código postal                     | ✅           | `89030050`                                          |
-| Telefone      | `fone_63`                                    | Contato                           | ❌           | `11971400280`                                       |
+### Iniciando e Finalizando Arquivos
+Para indicar o início e fim dos dados do conhecimento de transporte, utilize:
+- **INCLUIR**: No início da inclusão dos campos
+- **SALVAR**: No final da inclusão dos campos
+
+### Grupos Repetitivos
+Para grupos que podem se repetir, utilize:
+- **INCLUIR + Nome do Grupo**: No início do grupo
+- **SALVAR + Nome do Grupo**: No final do grupo
 
 ---
 
-## 🔹 Tomador do Serviço
+## 🔹 Dicionário de Dados Completo
 
-| Campo        | Código TX2                                   | Descrição                | Obrigatório | Exemplo                                                |
-| ------------ | -------------------------------------------- | ------------------------ | ----------- | ------------------------------------------------------ |
-| CNPJ/CPF     | `CNPJ_65`, `CPF_66`                          | Identificação do tomador | ✅           | `19073578000287`                                       |
-| IE           | `IE_67`                                      | Inscrição Estadual       | ✅/❌         | `ISENTO`                                               |
-| Razão Social | `xNome_68`                                   | Nome empresarial         | ✅           | `EGIZ EMPREENDIMENTOS EDUCACIONAIS LTDA`               |
-| Endereço     | `xLgr_72`, `nro_73`, `xCpl_74`, `xBairro_75` | Endereço completo        | ✅           | `Duque de Caxias, S/N, COLEGIO SER, PARQUE CENTENÁRIO` |
-| Município    | `cMun_76`, `xMun_77`, `UF_79`                | Município e UF           | ✅           | `3525904 / Jundiaí / SP`                               |
-| CEP          | `CEP_78`                                     | Código postal            | ✅           | `13214000`                                             |
-| País         | `cPais_80`, `xPais_81`                       | Código e nome do país    | ✅           | `1058 / BRASIL`                                        |
-| E-mail       | `email_82`                                   | Contato eletrônico       | ❌           | `cobranca@colegioserjundiai.com.br`                    |
+### 📋 Estrutura Genérica
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `versao_1` | Versão do leiaute | 1-1 | - | Ex: "4.00" |
+| `infCTe` | Informações do CT-e Outros Serviços | 1-1 | - | - |
+| `versao_3` | Versão do leiaute | 1-1 | - | Ex: "4.00" |
+| `id_4` | Identificador da tag a ser assinada | 1-1 | 47 | Informar a chave de acesso do CT-e OS precedida do literal "CTe" |
+
+### 🆔 Identificação do CT-e
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `cUF_6` | Código da UF do emitente do CT-e | 1-1 | 2 | Utilizar a Tabela do IBGE |
+| `cCT_7` | Código numérico que compõe a Chave de Acesso | 1-1 | 8 | Número aleatório gerado pelo emitente |
+| `CFOP_8` | Código Fiscal de Operações e Prestações | 1-1 | 4 | - |
+| `natOp_9` | Natureza da Operação | 1-1 | 1-60 | - |
+| `mod_10` | Modelo do documento fiscal | 1-1 | 2 | Utilizar código 67 para CT-e OS |
+| `serie_11` | Série do CT-e OS | 1-1 | 1-3 | Preencher com "0" no caso de série única |
+| `nCT_12` | Número do CT-e OS | 1-1 | 1-9 | - |
+| `dhEmi_13` | Data e hora de emissão do CT-e OS | 1-1 | 21 | Formato AAAA-MM-DDTHH:MM:DD TZD |
+| `tpImp_14` | Formato de impressão do DACTE OS | 1-1 | 1 | 1=Retrato, 2=Paisagem |
+| `tpEmis_15` | Forma de emissão do CT-e OS | 1-1 | 1 | 1=Normal, 5=Contingência FSDA, 7=SVC-RS, 8=SVC-SP |
+| `cDV_16` | Dígito Verificador da chave de acesso | 1-1 | 1 | Calculado com algoritmo módulo 11 |
+| `tpAmb_17` | Tipo do Ambiente | 1-1 | 1 | 1=Produção, 2=Homologação |
+| `tpCTe_18` | Tipo do CT-e OS | 1-1 | 1 | 0=Normal, 1=Complementar, 3=Substituição |
+| `procEmi_19` | Identificador do processo de emissão | 1-1 | 1 | 0=Aplicativo do contribuinte, 3=Aplicativo do Fisco |
+| `verProc_20` | Versão do processo de emissão | 1-1 | 1-20 | Versão do aplicativo emissor |
+
+### 📍 Local de Emissão e Serviço
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `cMunEnv_21` | Código do Município de envio | 1-1 | 7 | Utilizar tabela IBGE, 9999999 para exterior |
+| `xMunEnv_22` | Nome do Município de envio | 1-1 | 2-60 | PAIS/Município para operações com exterior |
+| `UFEnv_23` | Sigla da UF de envio | 1-1 | 2 | 'EX' para operações com exterior |
+| `modal_24` | Modal do CT-e OS | 1-1 | 2 | 01=Rodoviário |
+| `tpServ_25` | Tipo do Serviço | 1-1 | 1 | 6=Transporte de Pessoas, 7=Transporte de Valores, 8=Excesso de Bagagem |
+| `indIEToma_26` | Indicador da IE do tomador | 1-1 | 1 | 1=Contribuinte ICMS, 2=Isento, 9=Não Contribuinte |
+| `cMunIni_27` | Código do Município de início da prestação | 0-1 | 7 | Utilizar tabela IBGE, 9999999 para exterior |
+| `xMunIni_28` | Nome do município de início | 0-1 | 2-60 | 'EXTERIOR' para operações com exterior |
+| `UFIni_29` | UF do início da prestação | 0-1 | 2 | 'EX' para operações com exterior |
+| `cMunFim_30` | Código do Município de término | 0-1 | 7 | Utilizar tabela IBGE, 9999999 para exterior |
+| `xMunFim_31` | Nome do município de término | 0-1 | 2-60 | 'EXTERIOR' para operações com exterior |
+| `UFFim_32` | UF do término da prestação | 0-1 | 2 | 'EX' para operações com exterior |
+
+### 🚛 Informações do Percurso
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `UFPer_34` | Sigla das UFs do percurso | 1-1 | 2 | Não repetir UFs de início e fim |
+| `dhCont_35` | Data e Hora da entrada em contingência | 1-1 | 21 | Formato AAAAMM-DDTHH:MM:SS |
+| `xJust_36` | Justificativa da entrada em contingência | 1-1 | 15-256 | - |
+
+### 🏛️ Compras Governamentais (NT 2025.001)
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `tpEnteGov_1541` | Tipo de Ente | 1-1 | 1 | 1=União, 2=Estados, 3=DF, 4=Municípios |
+| `pRedutor_1542` | Percentual de redução de alíquota | 1-1 | 3v2-4 | Conforme LC 214/25 |
+
+### 📝 Dados Complementares
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `xCaracAd_38` | Característica adicional do transporte | 0-1 | 1-15 | REENTREGA, DEVOLUÇÃO, REFATURAMENTO, etc |
+| `xCaracSer_39` | Característica adicional do serviço | 0-1 | 1-30 | ENTREGA EXPRESSA, LOGÍSTICA REVERSA, etc |
+| `xEmi_40` | Funcionário emissor do CT-e OS | 0-1 | 1-20 | - |
+| `xObs_41` | Observações Gerais | 0-1 | 1-2000 | - |
+
+### 📋 Campos de Uso Livre
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `xCampo_43` | Identificação do campo | 1-1 | 1-20 | - |
+| `xTexto_44` | Conteúdo do campo | 1-1 | 1-160 | - |
+| `xCampo_46` | Identificação do campo (Fisco) | 1-1 | 1-20 | - |
+| `xTexto_47` | Conteúdo do campo (Fisco) | 1-1 | 1-160 | - |
+
+### 🏢 Emitente (Prestador do Serviço)
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CNPJ_49` | CNPJ do emitente | 1-1 | 14 | Informar zeros não significativos |
+| `IE_50` | Inscrição Estadual do emitente | 1-1 | 14 | - |
+| `IEST_51` | IE do Substituto Tributário | 0-1 | 14 | - |
+| `xNome_52` | Razão social ou Nome do emitente | 1-1 | 2-60 | - |
+| `xFant_53` | Nome fantasia | 0-1 | 2-60 | - |
+
+#### 📍 Endereço do Emitente
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `xLgr_55` | Logradouro | 1-1 | 2-60 | - |
+| `nro_56` | Número | 1-1 | 1-60 | - |
+| `xCpl_57` | Complemento | 0-1 | 1-60 | - |
+| `xBairro_58` | Bairro | 1-1 | 2-60 | - |
+| `cMun_59` | Código do município | 1-1 | 7 | Utilizar tabela IBGE |
+| `xMun_60` | Nome do município | 1-1 | 2-60 | - |
+| `CEP_61` | CEP | 0-1 | 8 | Informar zeros não significativos |
+| `UF_62` | Sigla da UF | 1-1 | 2 | - |
+| `fone_63` | Telefone | 0-1 | 6-14 | - |
+| `CRT_1573` | Código de Regime Tributário | 1-1 | 1 | 1=Simples Nacional, 2=Simples excesso, 3=Regime Normal |
+
+### 👤 Tomador do Serviço
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CNPJ_65` | Número do CNPJ | 1-1 | 14 | Zeros para empresa não estabelecida no Brasil |
+| `CPF_66` | Número do CPF | 1-1 | 11 | Informar zeros não significativos |
+| `IE_67` | Inscrição Estadual | 0-1 | 14 | IE do remetente ou ISENTO |
+| `xNome_68` | Razão social ou nome do tomador | 1-1 | 2-60 | - |
+| `xFant_69` | Nome fantasia | 0-1 | 2-60 | - |
+| `fone_70` | Telefone | 0-1 | 6-14 | - |
+
+#### 📍 Endereço do Tomador
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `xLgr_72` | Logradouro | 1-1 | 2-255 | - |
+| `nro_73` | Número | 1-1 | 1-60 | - |
+| `xCpl_74` | Complemento | 0-1 | 1-60 | - |
+| `xBairro_75` | Bairro | 1-1 | 2-60 | - |
+| `cMun_76` | Código do município | 1-1 | 7 | Utilizar tabela IBGE, 9999999 para exterior |
+| `xMun_77` | Nome do município | 1-1 | 2-60 | 'EXTERIOR' para operações com exterior |
+| `CEP_78` | CEP | 0-1 | 8 | Informar zeros não significativos |
+| `UF_79` | Sigla da UF | 1-1 | 2 | 'EX' para operações com exterior |
+| `cPais_80` | Código do país | 0-1 | 1-4 | Utilizar tabela BACEN |
+| `xPais_81` | Nome do país | 0-1 | 2-60 | - |
+| `email_82` | Endereço de e-mail | 0-1 | 1-60 | - |
+
+### 💰 Valores da Prestação
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `vTPrest_84` | Valor Total da prestação | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vRec_85` | Valor a Receber | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+#### 🔧 Componentes da Prestação
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `xNome_87` | Nome do componente | 1-1 | 1-15 | FRETE PESO, FRETE VALOR, SEC/CAT, etc |
+| `vComp_88` | Valor do componente | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+### 🏛️ Impostos
+
+#### 💸 ICMS
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_92` | Classificação tributária | 1-1 | 2 | 00=tributação normal ICMS |
+| `vBC_93` | Valor da BC do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `pICMS_94` | Alíquota do ICMS | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vICMS_95` | Valor do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+#### 💰 ICMS com Redução de BC
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_175` | Classificação tributária | 1-1 | 2 | 20=tributação com BC reduzida |
+| `pRedBC_176` | Percentual de redução da BC | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vBC_177` | Valor da BC do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `pICMS_178` | Alíquota do ICMS | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vICMS_179` | Valor do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vICMSDeson_174` | Valor do ICMS de desoneração | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `cBenef_180` | Código de Benefício Fiscal na UF | 0-1 | 10 | - |
+
+#### 🚫 ICMS Isento/Não Tributado/Diferido
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_97` | Classificação Tributária | 1-1 | 2 | 40=isenção, 41=não tributada, 51=diferido |
+| `vICMSDeson_181` | Valor do ICMS de desoneração | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `cBenef_182` | Código de Benefício Fiscal na UF | 0-1 | 10 | - |
+
+#### 🔄 ICMS Outros
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_99` | Classificação tributária | 1-1 | 2 | 90=ICMS outros |
+| `pRedBC_100` | Percentual de redução da BC | 0-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vBC_101` | Valor da BC do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `pICMS_102` | Alíquota do ICMS | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `VICMS_103` | Valor do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vCred_104` | Valor do Crédito outorgado/Presumido | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vICMSDeson_183` | Valor do ICMS de desoneração | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `cBenef_184` | Código de Benefício Fiscal na UF | 0-1 | 10 | - |
+
+#### 🌍 ICMS Outra UF
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_106` | Classificação Tributária | 1-1 | 2 | 90=ICMS Outra UF |
+| `pRedBCOutraUF_107` | Percentual de redução da BC | 0-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vBCOutraUF_108` | Valor da BC do ICMS | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `pICMSOutraUF_109` | Alíquota do ICMS | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vICMSOutraUF_110` | Valor do ICMS devido outra UF | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vICMSDeson_185` | Valor do ICMS de desoneração | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `cBenef_186` | Código de Benefício Fiscal na UF | 0-1 | 10 | - |
+
+#### 🏢 Simples Nacional
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_112` | Classificação Tributária | 1-1 | 2 | 90=ICMS Simples Nacional |
+| `indSN_113` | Indica se é Simples Nacional | 1-1 | 1 | 1=Sim |
+| `vTotTrib_114` | Valor Total dos Tributos | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `infAdFisco_115` | Informações adicionais de interesse do Fisco | 0-1 | 1-2000 | Norma referenciada, informações complementares |
+
+#### 🎯 ICMS UF Fim (Partilha)
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `vBCUFFim_117` | Valor da BC do ICMS na UF de término | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `pFCPUFFim_118` | Percentual do ICMS relativo ao FCP | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `pICMSUFFim_119` | Alíquota interna da UF de término | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `pICMSInter_120` | Alíquota interestadual das UFs envolvidas | 1-1 | 3,2 | 5 posições (3 inteiras + 2 decimais) |
+| `vFCPUFFim_122` | Valor do ICMS relativo ao FCP | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vICMSUFFim_123` | Valor do ICMS de partilha para UF de término | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vICMSUFIni_124` | Valor do ICMS de partilha para UF de início | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+### 🏛️ Tributos Federais
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `vPIS_126` | Valor do PIS | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vCOFINS_127` | Valor COFINS | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vIR_128` | Valor de Imposto de Renda | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vINSS_129` | Valor do INSS | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vCSLL_130` | Valor do CSLL | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+### 🆕 IBS/CBS (NT 2025.001 - Reforma Tributária)
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CST_1501` | Código da Situação Tributária do IBS/CBS | 1-1 | 3 | - |
+| `cClassTrib_1502` | Código da Classificação Tributária do IBS/CBS | 1-1 | 6 | - |
+| `vBC_1503` | Valor da Base de cálculo comum a IBS/CBS | 1-1 | 13,2 | - |
+| `vIBS_1550` | Valor do IBS (soma de vIBSUF e vIBSMun) | 1-1 | 13,2 | - |
+
+#### 🏛️ IBS/CBS de Competência das UFs
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `pIBSUF_1504` | Alíquota do IBS Estadual | 1-1 | 3,2/3,4 | - |
+| `pDif_1505` | Percentual de diferimento | 1-1 | 3,2/3,4 | - |
+| `vDif_1506` | Valor do diferimento | 1-1 | 13,2 | - |
+| `vDevTrib_1507` | Valor do tributo devolvido | 1-1 | 13,2 | - |
+| `pRedAliq_1508` | Percentual da redução de Alíquota | 1-1 | 3,2/3,4 | - |
+| `pAliqEfet_1509` | Alíquota efetiva do IBS da UF | 1-1 | 3,2/3,4 | - |
+| `vIBSUF_1510` | Valor do IBS de competência da UF | 1-1 | 13,2 | - |
+
+#### 🏘️ IBS/CBS de Competência do Município
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `pIBSMun_1511` | Alíquota do IBS Municipal | 1-1 | 3,2/3,4 | - |
+| `pDif_1512` | Percentual de diferimento | 1-1 | 3,2/3,4 | - |
+| `vDif_1513` | Valor do diferimento | 1-1 | 13,2 | - |
+| `vDevTrib_1514` | Valor do tributo devolvido | 1-1 | 13,2 | - |
+| `pRedAliq_1515` | Percentual da redução de Alíquota | 1-1 | 3,2/3,4 | - |
+| `pAliqEfet_1516` | Alíquota efetiva do IBS do município | 1-1 | 3,2/3,4 | - |
+| `vIBSMun_1517` | Valor do IBS de competência do município | 1-1 | 13,2 | - |
+
+#### 🏛️ CBS (Contribuição sobre Bens e Serviços)
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `pCBS_1518` | Alíquota da CBS | 1-1 | 3,2/3,4 | - |
+| `pDif_1519` | Percentual de diferimento | 1-1 | 3,2/3,4 | - |
+| `vDif_1520` | Valor do diferimento | 1-1 | 13,2 | - |
+| `vDevTrib_1521` | Valor da CBS devolvida | 1-1 | 13,2 | - |
+| `pRedAliq_1522` | Percentual da redução de Alíquota | 1-1 | 3,2/3,4 | - |
+| `pAliqEfet_1523` | Alíquota efetiva da CBS | 1-1 | 3,2/3,4 | - |
+| `vCBS_1524` | Valor da CBS | 1-1 | 13,2 | - |
+
+### 📋 Informações do Serviço
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `xDescServ_133` | Descrição do Serviço prestado | 1-1 | 1-30 | - |
+| `qCarga_135` | Quantidade | 1-1 | 11,4 | 15 posições (11 inteiras + 4 decimais) |
+
+### 📄 Documentos Referenciados
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `nDoc_137` | Número | 1-1 | 1-20 | - |
+| `serie_138` | Série | 0-1 | 1-3 | - |
+| `subserie_139` | Subsérie | 0-1 | 1-3 | - |
+| `dEmi_140` | Data de Emissão | 1-1 | 10 | Formato AAAA-MM-DD |
+| `vDoc_141` | Valor Transportado | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+### 🛡️ Seguro da Carga
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `respSeg_143` | Responsável pelo seguro | 1-1 | 1 | 4=Emitente, 5=Tomador |
+| `xSeg_144` | Nome da Seguradora | 0-1 | 1-30 | - |
+| `nApol_145` | Número da Apólice | 0-1 | 1-20 | Obrigatório pela lei 11.442/07 (RCTRC) |
+
+### 🚛 Informações do Modal
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `versaoModal_147` | Versão do leiaute específico para o Modal | 1-1 | 4 | - |
+
+### 🔄 CT-e de Substituição
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `chCTe_150` | Chave de acesso do CT-e OS a ser substituído | 1-1 | 44 | - |
+
+### 📋 CT-e Complementado
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `chCTe_165` | Chave do CT-e OS complementado | 1-1 | 44 | - |
+
+### 👥 Autorizados para Download
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CNPJ_170` | CNPJ do autorizado | 1-1 | 14 | Informar zeros não significativos |
+| `CPF_171` | CPF do autorizado | 1-1 | 11 | Informar zeros não significativos |
+
+### 💳 Dados da Cobrança
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `nFat_300` | Número da fatura | 0-1 | 1-60 | - |
+| `vOrig_301` | Valor original da fatura | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vDesc_302` | Valor do desconto da fatura | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `vLiq_303` | Valor líquido da fatura | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+### 📦 GTV-e Relacionadas
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `chCTe_541` | Chave de acesso da GTVe | 1-1 | 44 | - |
+| `tpComp_542` | Tipo do Componente | 1-1 | 1 | 1=Custódia, 2=Embarque, 3=Tempo espera, 4=Malote, 5=Ad Valorem, 6=Outros |
+| `vComp_543` | Valor do componente | 1-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+| `xComp_544` | Nome do componente | 0-1 | 0-15 | Apenas para tipo "Outros" |
+
+### 📄 Duplicatas
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `nDup_304` | Número da duplicata | 0-1 | 1-60 | - |
+| `dVenc_305` | Data de Vencimento | 0-1 | 10 | Formato AAAA-MM-DD |
+| `vDup_306` | Valor da duplicata | 0-1 | 13,2 | 15 posições (13 inteiras + 2 decimais) |
+
+### 👨‍💻 Responsável Técnico
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CNPJ_471` | CNPJ da pessoa jurídica desenvolvedora | 1-1 | 14 | - |
+| `xContato_472` | Nome da pessoa a ser contatada | 1-1 | 14 | - |
+| `email_473` | E-mail para contato | 1-1 | 14 | - |
+| `fone_474` | Telefone para contato | 1-1 | 14 | DDD + número |
+| `idCSRT_475` | Identificador do código de segurança | 1-1 | 14 | - |
+| `hashCSRT_476` | Hash do token do código de segurança | 1-1 | 14 | SHA-1 + base64 do token CSRT + chave de acesso |
 
 ---
 
-## 🔹 Valores e Tributos
+## 🚛 Modal Rodoviário (RodoOS)
 
-| Campo                 | Código TX2                                                     | Descrição                      | Obrigatório | Exemplo                     |
-| --------------------- | -------------------------------------------------------------- | ------------------------------ | ----------- | --------------------------- |
-| Valor Total Prestação | `vTPrest_84`                                                   | Valor da prestação             | ✅           | `2340.00`                   |
-| Valor a Receber       | `vRec_85`                                                      | Valor líquido                  | ✅           | `2340.00`                   |
-| ICMS CST              | `CST_92`                                                       | Situação tributária ICMS       | ✅           | `00`                        |
-| Base Cálculo ICMS     | `vBC_93`                                                       | Base de cálculo                | ✅           | `2340.00`                   |
-| Alíquota ICMS         | `pICMS_94`                                                     | Percentual                     | ✅           | `1.00`                      |
-| Valor ICMS            | `vICMS_95`                                                     | Valor calculado                | ✅           | `23.40`                     |
-| Tributos Federais     | `vPIS_126`, `vCOFINS_127`, `vIR_128`, `vINSS_129`, `vCSLL_130` | Tributos federais              | ❌           | `0.00`                      |
-| Descrição Serviço     | `xDescServ_133`                                                | Texto livre                    | ✅           | `Transporte de Passageiros` |
-| Quantidade            | `qCarga_135`                                                   | Quantidade de viagens/unidades | ✅           | `1`                         |
+### 📋 Informações Gerais
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `TAF_2` | Termo de Autorização de Fretamento | 1-1 | 12 | Resolução ANTT nº 4.777/2015 |
+| `NroRegEstadual_3` | Número do Registro Estadual | 1-1 | 25 | Registro junto à Administração Estadual |
+
+### 🚗 Dados do Veículo
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `placa_5` | Placa do veículo | 1-1 | 4 | - |
+| `RENAVAM_6` | RENAVAM do veículo | 0-1 | 9-11 | - |
+
+### 👤 Proprietários do Veículo
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `CPF_8` | Número do CPF | 1-1 | 11 | Informar zeros não significativos |
+| `CNPJ_9` | Número do CNPJ | 1-1 | 14 | Informar zeros não significativos |
+| `TAF_10` | Termo de Autorização de Fretamento | 1-1 | 12 | Resolução ANTT nº 4.777/2015 |
+| `NroRegEstadual_11` | Número do Registro Estadual | 1-1 | 25 | Registro obrigatório junto à ANTT |
+| `xNome_12` | Razão Social ou Nome do proprietário | 1-1 | 2-60 | - |
+| `IE_13` | Inscrição Estadual | 1-1 | 0-14 | - |
+| `UF_14` | UF | 1-1 | 2 | - |
+| `tpProp_15` | Tipo Proprietário | 1-1 | 1 | 0=TAC Agregado, 1=TAC Independente, 2=Outros |
+| `UF_16` | UF em que veículo está licenciado | 1-1 | 2 | Sigla da UF de licenciamento |
+
+### 🚌 Dados do Fretamento
+
+| TAG | Descrição | Ocorrência | Tamanho | Observação |
+|-----|-----------|------------|---------|------------|
+| `tpFretamento_17` | Tipo do Fretamento de Pessoas | 1-1 | 2 | 1=Eventual, 2=Contínuo |
+| `dhViagem_18` | Data e hora da viagem | 0-1 | 2 | Formato TMZ completo, apenas para fretamento eventual |
+
+---
+
+## 🔹 Comandos de Estrutura
+
+### 📝 Comandos Principais
+- `INCLUIR` - Início da inclusão de dados
+- `SALVAR` - Finalização da inclusão de dados
+- `INCLUIR + NomeGrupo` - Início de grupo específico
+- `SALVAR + NomeGrupo` - Finalização de grupo específico
+
+### 🔄 Grupos Repetitivos
+- `INCLUIRINFCTECOMP` - Início de CT-e complementado
+- `SALVARINFCTECOMP` - Finalização de CT-e complementado
+- `INCLUIRINFGTVE` - Início de informações GTV-e
+- `SALVARINFGTVE` - Finalização de informações GTV-e
+- `INCLUIR_INFGTVE_COMP` - Início de componente GTV-e
+- `SALVAR_INFGTVE_COMP` - Finalização de componente GTV-e
 
 ---
 
-## 🔹 Versões e Finalização
+## 🔹 Exemplo de Estrutura TX2
 
-| Campo         | Código TX2             | Descrição              | Obrigatório | Exemplo                  |
-| ------------- | ---------------------- | ---------------------- | ----------- | ------------------------ |
-| Versão Modal  | `versaoModal_147`      | Schema modal           | ✅           | `4.00`                   |
-| Versão Geral  | `versao_1`, `versao_3` | Versão geral do schema | ✅           | `4.00`                   |
-| Identificador | `Id_4`                 | ID do documento        | ✅           | *gerado automaticamente* |
-| Finalização   | `salvarCTeOS`          | Fecha o bloco do CTeOS | ✅           | `salvarCTeOS`            |
+```txt
+INCLUIR
+versao_1|4.00
+infCTe
+versao_3|4.00
+id_4|CTe4202404749633200012345678901234567890123456
+ide
+cUF_6|42
+cCT_7|47496332
+CFOP_8|5932
+natOp_9|Prestação de serviço de transporte
+mod_10|67
+serie_11|001
+nCT_12|000000002
+dhEmi_13|2025-08-21T18:06:02-03:00
+tpImp_14|1
+tpEmis_15|1
+cDV_16|1
+tpAmb_17|1
+tpCTe_18|0
+procEmi_19|0
+verProc_20|4.00
+cMunEnv_21|4202404
+xMunEnv_22|Blumenau
+UFEnv_23|SC
+modal_24|01
+tpServ_25|7
+indIEToma_26|1
+cMunIni_27|3525904
+xMunIni_28|Jundiaí
+UFIni_29|SP
+cMunFim_30|3550308
+xMunFim_31|São Paulo
+UFFim_32|SP
+xObs_41|Serviço de fretamento eventual
+SALVAR
+```
 
 ---
 
-## 🔹 Modal Rodoviário (RodoOS)
+## 🔹 Observações Importantes
 
-| Campo            | Código TX2        | Descrição                     | Obrigatório | Exemplo                     |
-| ---------------- | ----------------- | ----------------------------- | ----------- | --------------------------- |
-| Início           | `IncluirRodoos`   | Início do bloco rodoviário    | ✅           | `IncluirRodoos`             |
-| TAF              | `TAF_2`           | Código de autorização         | ✅/❌         | `402628`                    |
-| Placa            | `placa_5`         | Placa do veículo              | ✅           | `AAA1234`                   |
-| RENAVAM          | `RENAVAM_6`       | Registro nacional do veículo  | ❌           | `123456789`                 |
-| UF Veículo       | `UF_16`           | Estado de registro            | ✅           | `SC`                        |
-| Tipo Fretamento  | `tpFretamento_17` | 1=Eventual, 2=Contínuo        | ✅           | `1`                         |
-| Data/Hora Viagem | `dhViagem_18`     | Data/hora de início da viagem | ✅           | `2023-10-21T07:00:00-03:00` |
-| Finalização      | `SalvarRodoos`    | Fecha o bloco rodoviário      | ✅           | `SalvarRodoos`              |
+1. **Formatação de Datas**: Utilizar formato ISO 8601 para campos de data/hora
+2. **Valores Monetários**: Sempre utilizar 2 casas decimais
+3. **CNPJ/CPF**: Informar zeros não significativos à esquerda
+4. **Códigos IBGE**: Consultar tabelas oficiais para códigos de municípios e UFs
+5. **Versões**: Manter compatibilidade com versões do schema XML
+6. **Campos Opcionais**: Preencher apenas quando aplicável
+7. **Validações**: Verificar regras de negócio antes da emissão
 
 ---
+
+## 🔹 Recursos Adicionais
+
+- **Tabelas de Apoio**: IBGE, BACEN, códigos de benefícios fiscais
+- **Documentação Técnica**: Esquemas XML, notas técnicas
+- **Validações**: Regras de negócio e validações técnicas
+- **Suporte**: Contato com equipe técnica para dúvidas específicas
