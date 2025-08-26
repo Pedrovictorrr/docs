@@ -33,13 +33,15 @@ O dicionário de dados é uma tabela com os campos e informações sobre cada ca
 
 ### Iniciando e Finalizando Arquivos
 Para indicar o início e fim dos dados do conhecimento de transporte, utilize:
-- **INCLUIR**: No início da inclusão dos campos
-- **SALVAR**: No final da inclusão dos campos
+- **`incluirCTeOS`**: No início da inclusão dos campos
+- **`salvarCTeOS`**: No final da inclusão dos campos
 
-### Grupos Repetitivos
-Para grupos que podem se repetir, utilize:
-- **INCLUIR + Nome do Grupo**: No início do grupo
-- **SALVAR + Nome do Grupo**: No final do grupo
+### Grupos Específicos
+Para grupos específicos como modal rodoviário, utilize:
+- **`IncluirRodoos`**: No início do modal rodoviário
+- **`SalvarRodoos`**: No final do modal rodoviário
+- **`incluirCTeComp`**: No início de CT-e complementado
+- **`salvarCTeComp`**: No final de CT-e complementado
 
 ---
 
@@ -453,60 +455,174 @@ Para grupos que podem se repetir, utilize:
 ## 🔹 Comandos de Estrutura
 
 ### 📝 Comandos Principais
-- `INCLUIR` - Início da inclusão de dados
-- `SALVAR` - Finalização da inclusão de dados
-- `INCLUIR + NomeGrupo` - Início de grupo específico
-- `SALVAR + NomeGrupo` - Finalização de grupo específico
+- `incluirCTeOS` - Início da inclusão de dados do CTeOS
+- `salvarCTeOS` - Finalização da inclusão de dados do CTeOS
 
-### 🔄 Grupos Repetitivos
-- `INCLUIRINFCTECOMP` - Início de CT-e complementado
-- `SALVARINFCTECOMP` - Finalização de CT-e complementado
-- `INCLUIRINFGTVE` - Início de informações GTV-e
-- `SALVARINFGTVE` - Finalização de informações GTV-e
-- `INCLUIR_INFGTVE_COMP` - Início de componente GTV-e
-- `SALVAR_INFGTVE_COMP` - Finalização de componente GTV-e
+### 🔄 Grupos Específicos
+- `IncluirRodoos` - Início do modal rodoviário
+- `SalvarRodoos` - Finalização do modal rodoviário
+- `incluirCTeComp` - Início de CT-e complementado
+- `salvarCTeComp` - Finalização de CT-e complementado
+- `incluirInfGTVe` - Início de informações GTV-e
+- `salvarInfGTVe` - Finalização de informações GTV-e
+
+### 📋 Formato dos Campos
+- **Separador**: Usar `=` entre TAG e valor (ex: `cUF_6=35`)
+- **Valores vazios**: Campos opcionais podem ficar vazios (ex: `placa_5=`)
+- **Quebras de linha**: Cada campo deve estar em uma linha separada
 
 ---
 
-## 🔹 Exemplo de Estrutura TX2
+## 🔹 Exemplo de Estrutura TX2 Válida
+
+### 📋 Exemplo Real de CTeOS
 
 ```txt
-INCLUIR
-versao_1|4.00
-infCTe
-versao_3|4.00
-id_4|CTe4202404749633200012345678901234567890123456
-ide
-cUF_6|42
-cCT_7|47496332
-CFOP_8|5932
-natOp_9|Prestação de serviço de transporte
-mod_10|67
-serie_11|001
-nCT_12|000000002
-dhEmi_13|2025-08-21T18:06:02-03:00
-tpImp_14|1
-tpEmis_15|1
-cDV_16|1
-tpAmb_17|1
-tpCTe_18|0
-procEmi_19|0
-verProc_20|4.00
-cMunEnv_21|4202404
-xMunEnv_22|Blumenau
-UFEnv_23|SC
-modal_24|01
-tpServ_25|7
-indIEToma_26|1
-cMunIni_27|3525904
-xMunIni_28|Jundiaí
-UFIni_29|SP
-cMunFim_30|3550308
-xMunFim_31|São Paulo
-UFFim_32|SP
-xObs_41|Serviço de fretamento eventual
-SALVAR
+formato=tx2
+incluirCTeOS
+cUF_6=35
+cCT_7=79022057
+CFOP_8=5932
+natOp_9=Prestação de serviço de transporte dentro do estado de SP
+mod_10=67
+serie_11=001
+nCT_12=000000002
+dhEmi_13=2025-08-25T16:19:46-03:00
+tpImp_14=1
+tpEmis_15=1
+cDV_16=0
+tpAmb_17=1
+tpCTe_18=0
+procEmi_19=0
+verProc_20=4.00
+cMunEnv_21=3550308
+xMunEnv_22=São Paulo
+UFEnv_23=SP
+modal_24=01
+tpServ_25=6
+indIEToma_26=1
+cMunIni_27=3550308
+xMunIni_28=São Paulo
+UFIni_29=SP
+cMunFim_30=3543402
+xMunFim_31=Ribeirão Preto
+UFFim_32=SP
+xObs_41=Serviço de fretamento eventual. Número do pedido: 341 - Viagem realizada em São Paulo / SP - Ribeirão Preto / SP - 14/08/2025 12:37 - VALOR APROXIMADO DOS TRIBUTOS ▶
+CNPJ_49=01274689000105
+IE_50=712030582117
+CRT_1573=1
+IEST_51=110042490114
+xNome_52=Viação Mimo Ltda
+xFant_53=Viação Mimo
+xLgr_55=Rua da Consolação
+nro_56=349
+xCpl_57=Sala 2
+xBairro_58=Centro
+cMun_59=3550308
+xMun_60=São Paulo
+CEP_61=01042000
+UF_62=SP
+fone_63=11971400280
+CNPJ_65=19073578000287
+CPF_66=
+indIEToma_26=9
+xNome_68=EGIZ EMPREENDIMENTOS EDUCACIONAIS LTDA
+xFant_69=EGIZ EMPREENDIMENTOS EDUCACIONAIS LTDA
+fone_70=
+xLgr_72=Duque de Caxias
+nro_73=S/N
+xCpl_74=COLEGIO SER
+xBairro_75=PARQUE CENTENÁRIO
+cMun_76=3525904
+xMun_77=Jundiaí
+CEP_78=13214000
+UF_79=SP
+cPais_80=1058
+xPais_81=BRASIL
+email_82=cobranca@colegioserjundiai.com.br
+vTPrest_84=2340.00
+vRec_85=2340.00
+CST_92=00
+vBC_93=2340.00
+pICMS_94=1.00
+vICMS_95=23.40
+vPIS_126=0.00
+vCOFINS_127=0.00
+vIR_128=0.00
+vINSS_129=0.00
+vCSLL_130=0.00
+xDescServ_133=Transporte de Passageiros
+qCarga_135=1
+versaoModal_147=4.00
+versao_3=4.00
+Id_4=CTe35250801274689000105670010000000021790220570
+versao_1=4.00
+salvarCTeOS
+IncluirRodoos
+NroRegEstadual_3=0000000000000000000001851
+placa_5=
+RENAVAM_6=
+tpFretamento_17=1
+dhViagem_18=2025-10-21T07:00:00-03:00
+SalvarRodoos
 ```
+
+### 🔍 **Análise do Exemplo**
+
+#### 📋 **Estrutura Básica**
+- **Formato**: `formato=tx2` - Define o tipo de arquivo
+- **Início**: `incluirCTeOS` - Comando de início
+- **Fim**: `salvarCTeOS` - Comando de finalização
+
+#### 🆔 **Identificação do CT-e**
+- **UF**: `cUF_6=35` (São Paulo)
+- **Código**: `cCT_7=79022057` (Código numérico)
+- **CFOP**: `CFOP_8=5932` (Prestação de serviço de transporte)
+- **Modelo**: `mod_10=67` (CTeOS)
+- **Série**: `serie_11=001`
+- **Número**: `nCT_12=000000002`
+- **Data/Hora**: `dhEmi_13=2025-08-25T16:19:46-03:00`
+
+#### 📍 **Local e Serviço**
+- **Modal**: `modal_24=01` (Rodoviário)
+- **Tipo Serviço**: `tpServ_25=6` (Transporte de Pessoas)
+- **Município Início**: `cMunIni_27=3550308` (São Paulo)
+- **Município Fim**: `cMunFim_30=3543402` (Ribeirão Preto)
+
+#### 🏢 **Emitente (Viação Mimo Ltda)**
+- **CNPJ**: `CNPJ_49=01274689000105`
+- **IE**: `IE_50=712030582117`
+- **Razão Social**: `xNome_52=Viação Mimo Ltda`
+- **Endereço**: Rua da Consolação, 349, Sala 2, Centro, São Paulo/SP
+
+#### 👤 **Tomador (EGIZ Empresas)**
+- **CNPJ**: `CNPJ_65=19073578000287`
+- **Razão Social**: `xNome_68=EGIZ EMPREENDIMENTOS EDUCACIONAIS LTDA`
+- **Endereço**: Duque de Caxias, S/N, COLEGIO SER, PARQUE CENTENÁRIO, Jundiaí/SP
+
+#### 💰 **Valores e Tributos**
+- **Valor Total**: `vTPrest_84=2340.00`
+- **Valor a Receber**: `vRec_85=2340.00`
+- **ICMS CST**: `CST_92=00` (Tributação normal)
+- **Base Cálculo**: `vBC_93=2340.00`
+- **Alíquota ICMS**: `pICMS_94=1.00`
+- **Valor ICMS**: `vICMS_95=23.40`
+
+#### 🚛 **Modal Rodoviário**
+- **Início**: `IncluirRodoos`
+- **Registro Estadual**: `NroRegEstadual_3=0000000000000000000001851`
+- **Tipo Fretamento**: `tpFretamento_17=1` (Eventual)
+- **Data Viagem**: `dhViagem_18=2025-10-21T07:00:00-03:00`
+- **Fim**: `SalvarRodoos`
+
+### 📝 **Observações Importantes**
+
+1. **Formato**: Usa `=` como separador (não `|`)
+2. **Comandos**: `incluirCTeOS` e `salvarCTeOS` para o documento principal
+3. **Grupos**: `IncluirRodoos` e `SalvarRodoos` para o modal rodoviário
+4. **Campos Vazios**: Alguns campos como `placa_5=` e `RENAVAM_6=` podem ficar vazios
+5. **Versões**: `versao_1=4.00`, `versao_3=4.00`, `versaoModal_147=4.00`
+6. **ID**: `Id_4=CTe35250801274689000105670010000000021790220570` (chave de acesso completa)
 
 ---
 
