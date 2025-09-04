@@ -59,6 +59,17 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "NFSe",
+        "groups": [
+          {
+            "group": "Operações",
+            "pages": [
+              "documents/NFSe/Emitir"
+            ]
+          }
+        ]
       }
     ]
   },

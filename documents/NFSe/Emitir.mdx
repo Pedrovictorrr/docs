@@ -1,0 +1,336 @@
+# Emitir NFSe
+
+## Visão Geral
+
+Nesta etapa, iremos realizar uma validação de esquema do JSON, e de algumas regras de negócio. Se tudo estiver OK, você receberá um ID para cada nota enviada, em seguida, enviaremos sua(s) nota(s) para a Prefeitura.
+
+<Warning>
+Esta rota é assíncrona. Para obter a situação de seu envio, utilize a rota `/nfse/consultar/{idNotaOrProtocol}`. Se preferir, cadastre um Webhook para sua Organização, ou para sua Empresa, para que receba notificações sempre que o processamento de uma nota for finalizado.
+</Warning>
+
+## Tomador Estrangeiro
+
+Para os municípios atendidos pelo fornecedor DSF, informe o documento estrangeiro no campo "cpfCnpj" do Tomador.
+
+## Observações Importantes
+
+<Note>
+- **IDIntegração único**: Sua aplicação deve gerar um IDIntegração único para cada nota enviada. Deste modo, mesmo que sua aplicação envie por engano duas requisições iguais, o PlugNotas irá processar somente uma delas, evitando a emissão em duplicidade.
+- **Tempo de processamento**: O tempo de processamento de uma nota pode variar de acordo com a disponibilidade do WEBSERVICE da PREFEITURA.
+- **Homologação**: Se o seu cliente nunca emitiu por WEBSERVICE, é bem provável que terá de passar por um processo de homologação/liberação junto a PREFEITURA.
+- **Limite de lote**: O tamanho máximo para um único envio (lote), é de 500 notas.
+</Note>
+
+## Endpoint
+
+```
+POST /nfse/emitir
+```
+
+## Headers
+
+| Header | Tipo | Obrigatório | Descrição |
+|--------|------|-------------|-----------|
+| x-api-key | string | ✅ | Chave de API para autenticação |
+| Content-Type | string | ✅ | application/json |
+
+## Request Body
+
+### Estrutura Principal
+
+```json
+[
+  {
+    "idIntegracao": "string",
+    "prestador": { ... },
+    "tomador": { ... },
+    "servico": [ ... ],
+    // ... outros campos
+  }
+]
+```
+
+### idIntegracao
+
+- **Tipo**: `string`
+- **Tamanho**: 1-50 caracteres
+- **Obrigatório**: ✅
+- **Descrição**: Seu identificador único para a NFSe
+
+### prestador (dadosEmpresa)
+
+**Dados da empresa emitente**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `cpfCnpj` | string | ✅ | CPF ou CNPJ da Empresa |
+| `codigoEstrangeiro` | string | ❌ | Identificação do Estrangeiro (Passaporte, etc.) |
+| `endereco` | object | ❌ | Detalhamento do endereço |
+| `email` | string | ❌ | Email da empresa |
+| `incentivadorCultural` | boolean | ❌ | É incentivador cultural? (default: false) |
+| `incentivoFiscal` | boolean | ❌ | Possuí algum tipo de incentivo fiscal? (default: false) |
+| `inscricaoEstadual` | string | ❌ | Inscrição estadual do Emitente |
+| `inscricaoMunicipal` | string | ❌ | Inscrição municipal da empresa |
+| `nomeFantasia` | string | ❌ | Nome fantasia da empresa |
+| `razaoSocial` | string | ❌ | Razão social da empresa |
+| `regimeTributario` | integer | ❌ | Regime Tributário |
+| `regimeTributarioEspecial` | integer | ❌ | Regime tributário especial |
+| `simplesNacional` | boolean | ❌ | Optante pelo simples nacional |
+| `telefone` | object | ❌ | Dados do telefone |
+| `codigoDistrito` | integer | ❌ | Código da Localidade |
+
+#### endereco
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `bairro` | string | ✅ | Nome do bairro |
+| `cep` | string | ✅ | CEP |
+| `codigoCidade` | string | ✅ | Código IBGE da cidade (9999999 para exterior) |
+| `estado` | string | ✅ | Sigla do Estado |
+| `logradouro` | string | ✅ | Logradouro |
+| `numero` | string | ✅ | Número do logradouro |
+| `tipoLogradouro` | string | ✅ | Tipo do logradouro |
+| `codigoPais` | string | ❌ | Código do pais (default: "1058") |
+| `complemento` | string | ❌ | Complemento |
+| `descricaoCidade` | string | ❌ | Nome da cidade |
+| `descricaoPais` | string | ❌ | Nome do pais (default: "Brasil") |
+| `tipoBairro` | string | ❌ | Tipo do bairro |
+
+#### Valores para tipoLogradouro
+- Alameda, Avenida, Chácara, Colônia, Condomínio, Estância, Estrada, Fazenda, Praça, Prolongamento, Rodovia, Rua, Sítio, Travessa, Vicinal, Eqnp
+
+#### Valores para tipoBairro
+- Bairro, Bosque, Chácara, Conjunto, Desmembramento, Distrito, Favela, Fazenda, Gleba, Horto, Jardim, Loteamento, Núcleo, Parque, Residencial, Sítio, Tropical, Vila, Zona, Centro, Setor
+
+#### regimeTributario
+- 0 - Nenhum
+- 1 - Simples Nacional
+- 2 - Simples Nacional - Excesso
+- 3 - Regime Normal - Lucro Presumido
+- 4 - Normal - Lucro Real
+- 5 - MEI (Microempreendedor individual)
+
+#### regimeTributarioEspecial
+- 0 - Sem Regime Tributário Especial
+- 1 - Micro Empresa Municipal
+- 2 - Estimativa
+- 3 - Sociedade de Profissionais
+- 4 - Cooperativa
+- 5 - Microempresário Individual - MEI
+- 6 - Microempresa ou Pequeno Porte - ME EPP
+- 7 - Lucro Real
+- 8 - Lucro Presumido
+- 9 - Tributação Normal
+- 10 - Simples nacional com excesso do sublimite
+- 11 - Empresa de Responsabilidade Limitada
+
+### tomador (tomadorNfse)
+
+**Dados do tomador/destinatário**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `cpfCnpj` | string | ❌ | CPF ou CNPJ do tomador |
+| `razaoSocial` | string | ❌ | Razão social do tomador |
+| `endereco` | object | ❌ | Detalhamento do endereço |
+| `email` | string | ❌ | Endereço de email do tomador |
+| `inscricaoEstadual` | string | ❌ | Inscrição estadual |
+| `inscricaoMunicipal` | string | ❌ | Inscrição municipal |
+| `nomeFantasia` | string | ❌ | Nome fantasia |
+| `orgaoPublico` | boolean | ❌ | Se o tomador é um órgão público |
+| `telefone` | object | ❌ | Dados do telefone |
+| `codigoEstrangeiro` | string | ❌ | Identificação do Estrangeiro |
+| `naoNif` | string | ❌ | Motivo para não informação do NIF |
+
+<Info>
+Para múltiplos emails do tomador, enviá-los separados por ponto e vírgula (;).
+Exemplo: `tomador1@plugnotas.com;tomador2@plugnotas.com`
+</Info>
+
+### servico
+
+**Array de serviços**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `codigo` | string | ✅ | Código de serviço (LC116) |
+| `discriminacao` | string | ✅ | Detalhamento do serviço prestado |
+| `iss` | object | ✅ | Detalhamento do ISS |
+| `valor` | object | ✅ | Valores do serviço |
+| `idIntegracao` | string | ❌ | Código externo de integração |
+| `codigoTributacao` | string | ❌ | Código tributação no Município |
+| `cnae` | string | ❌ | Código CNAE |
+| `codigoNbs` | string | ❌ | Código NBS |
+| `codigoCidadeIncidencia` | string | ❌ | Código IBGE da cidade de incidência |
+| `descricaoCidadeIncidencia` | string | ❌ | Nome da cidade de incidência |
+| `unidade` | string | ❌ | Unidade do serviço |
+| `quantidade` | number | ❌ | Quantidade dos serviços |
+
+#### iss (Detalhamento do ISS)
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `aliquota` | number | ✅ | Alíquota do ISS |
+| `tipoTributacao` | integer | ❌ | Tipo de Tributação (default: 6) |
+| `exigibilidade` | integer | ❌ | Exigibilidade do ISS (default: 1) |
+| `retido` | boolean | ❌ | Reter ISS (default: false) |
+| `valor` | number | ❌ | Valor do ISS |
+| `valorRetido` | number | ❌ | Valor ISS retido |
+| `processoSuspensao` | string | ❌ | Número do Processo de Suspensão |
+| `situacaoTributaria` | integer | ❌ | Código da Situação Tributária |
+
+##### tipoTributacao
+- 0 - Não definido
+- 1 - Isento de ISS
+- 2 - Imune
+- 3 - Não Incidência no Município
+- 4 - Não Tributável
+- 5 - Retido
+- 6 - Tributável Dentro do Município
+- 7 - Tributável Fora do Município
+- 8 - Tributável Dentro do Município pelo tomador
+
+##### exigibilidade
+- 1 - Exigível
+- 2 - Não Incidência
+- 3 - Isenção
+- 4 - Exportação
+- 5 - Imunidade
+- 6 - Suspenso por Ação Judicial
+- 7 - Suspenso por Ação Administrativa
+
+#### valor (Valores do serviço)
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `servico` | number | ✅ | Valor bruto do serviço |
+| `baseCalculo` | number | ❌ | Valor da base de cálculo |
+| `deducoes` | number | ❌ | Valor deduções |
+| `descontoCondicionado` | number | ❌ | Valor do desconto condicionado |
+| `descontoIncondicionado` | number | ❌ | Valor do desconto incondicionado |
+| `liquido` | number | ❌ | Valor líquido (calculado automaticamente) |
+| `unitario` | number | ❌ | Valor unitário do serviço |
+
+### Campos Opcionais Adicionais
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `envioPrioritario` | boolean | Prioriza o envio da NFS-e (default: false) |
+| `deducao` | array | Array de deduções |
+| `paisPrestacao` | string | Código do país (default: "1058") |
+| `cidadePrestacao` | object | Dados da cidade de prestação |
+| `descricao` | string | Descrição do RPS (usar '|' para quebra de linha) |
+| `enviarEmail` | boolean | Enviar PDF e XML por email (default: false) |
+| `idNotaSubstituida` | string | ID da nota que será substituída |
+| `informacoesComplementares` | string | Informações complementares |
+| `intermediario` | object | Dados do intermediário |
+| `rps` | object | Dados do RPS |
+| `parcelas` | array | Grupo de parcelas |
+| `despesas` | array | Grupo de despesas |
+| `copiasEmail` | array | Endereços para envio do XML e PDF (máx. 9) |
+
+## Responses
+
+### 200 OK - Sucesso
+
+```json
+{
+  "message": "string",
+  "data": {
+    // ... dados da resposta
+  },
+  "protocol": "string"
+}
+```
+
+### 400 Bad Request - Erro de Validação
+
+```json
+{
+  "error": {
+    // ... detalhes do erro
+  }
+}
+```
+
+### 401 Unauthorized - Não Autorizado
+
+```json
+{
+  "error": {
+    // ... detalhes do erro
+  }
+}
+```
+
+### 409 Conflict - Conflito
+
+```json
+{
+  "error": {
+    // ... detalhes do erro
+  }
+}
+```
+
+## Exemplo de Requisição
+
+```json
+[
+  {
+    "idIntegracao": "XXXYY999",
+    "prestador": {
+      "cpfCnpj": "08187168000160"
+    },
+    "tomador": {
+      "cpfCnpj": "99999999999999",
+      "razaoSocial": "Empresa de Teste LTDA",
+      "inscricaoMunicipal": "8214100099",
+      "email": "teste@plugnotas.com.br",
+      "endereco": {
+        "descricaoCidade": "Maringa",
+        "cep": "87020100",
+        "tipoLogradouro": "Rua",
+        "logradouro": "Barao do rio branco",
+        "tipoBairro": "Centro",
+        "codigoCidade": "4115200",
+        "complemento": "sala 01",
+        "estado": "PR",
+        "numero": "1001",
+        "bairro": "Centro"
+      }
+    },
+    "servico": [
+      {
+        "codigo": "14.10",
+        "codigoTributacao": "14.10",
+        "discriminacao": "Descrição dos serviços prestados, utilize | para quebra de linha na impressão.",
+        "cnae": "7490104",
+        "iss": {
+          "tipoTributacao": 7,
+          "exigibilidade": 1,
+          "aliquota": 3
+        },
+        "valor": {
+          "servico": 1,
+          "descontoCondicionado": 0,
+          "descontoIncondicionado": 0
+        }
+      }
+    ]
+  }
+]
+```
+
+### Detalhes do Exemplo
+
+Este exemplo demonstra:
+
+- **Prestador**: Apenas com CNPJ obrigatório
+- **Tomador**: Com endereço completo em Maringá/PR
+- **Serviço**: Código 14.10 (Consultoria em software) com:
+  - Tributação tipo 7 (Tributável Fora do Município)
+  - Exigibilidade 1 (Exigível)
+  - Alíquota de 3%
+  - CNAE 7490104
+- **Quebra de linha**: Uso do pipe (|) na discriminação para formatação de impressão
