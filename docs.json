@@ -1,14 +1,14 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Manager SaaS API - CT-e",
-  "description": "API completa para emissão de Conhecimento de Transporte Eletrônico (CT-e)",
+  "name": "Green Productivity",
+  "description": "Sistema de Gerenciamento de Operações",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
     "dark": "#15803D"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "logo/favicon.png",
   "navigation": {
     "tabs": [
       {
@@ -82,8 +82,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/logo2.png",
+    "dark": "/logo/logo_dark.png"
   },
   "navbar": {
     "links": [],
