@@ -1,43 +1,42 @@
 ---
-title: 'Manager SaaS API - CT-e'
-description: 'API completa para emissão de Conhecimento de Transporte Eletrônico (CT-e) no Brasil'
+title: 'Green Productivity - Sistema de Gestão Agrícola'
+description: 'Sistema completo para gerenciamento de operações agrícolas e produtividade no campo'
 ---
 
-# Manager SaaS API - CT-e
+# Green Productivity - Sistema de Gestão Agrícola
 
-O **Manager SaaS** é uma solução completa em nuvem para gerenciar e executar todos os processos de emissão de **Conhecimento de Transporte Eletrônico (CT-e)** no Brasil.
+O **Green Productivity** é uma solução completa para gerenciar e executar todos os processos de **operações agrícolas**, desde o planejamento até a colheita, maximizando a produtividade e sustentabilidade no campo.
 
-## O que é o Manager SaaS CT-e?
+## O que é o Green Productivity?
 
-O Manager SaaS CT-e é uma API robusta que automatiza todo o processo de emissão de CT-e, desde a geração do XML até a impressão do DACTE (Documento Auxiliar do Conhecimento de Transporte Eletrônico). Nossa solução elimina a complexidade de implementar e manter sistemas fiscais para transporte, permitindo que você foque no seu negócio.
+O Green Productivity é uma plataforma robusta que automatiza todo o processo de gestão agrícola, desde o cadastro de áreas até o acompanhamento de produtividade. Nossa solução elimina a complexidade de gerenciar operações rurais, permitindo que você foque no que mais importa: produzir com eficiência e sustentabilidade.
 
-## Tipos de CT-e Suportados
+## Módulos Principais
 
 <CardGroup cols={2}>
   <Card
-    title="CT-e Normal"
-    icon="file-text"
+    title="Gestão de Áreas"
+    icon="map"
   >
-    Para transportes de cargas entre diferentes estabelecimentos, documentando o transporte de mercadorias
+    Cadastro e controle completo de propriedades, talhões e áreas de plantio
   </Card>
   <Card
-    title="CT-e OS (Outros Serviços)"
-    href="/documents/cte/os-emission"
-    icon="clipboard-list"
+    title="Controle de Produção"
+    icon="leaf"
   >
-    Para prestação de serviços de transporte diversos como armazenagem e logística
+    Acompanhamento de culturas, variedades e ciclos produtivos
   </Card>
   <Card
-    title="CT-e Complementar"
-    icon="plus-circle"
+    title="Gestão de Equipes"
+    icon="users"
   >
-    Para complementar informações de CT-e já emitido, adicionando dados não incluídos no original
+    Organização de colaboradores, setores e equipes de trabalho
   </Card>
   <Card
-    title="CT-e Substituição"
-    icon="refresh-cw"
+    title="Atividades Rurais"
+    icon="tractor"
   >
-    Para substituir CT-e anterior em caso de correções ou alterações necessárias
+    Planejamento e execução de tarefas agrícolas e atividades de campo
   </Card>
 </CardGroup>
 
@@ -45,191 +44,138 @@ O Manager SaaS CT-e é uma API robusta que automatiza todo o processo de emissã
 
 <CardGroup cols={2}>
   <Card
-    title="Emissão"
-    href="/documents/cte/enviar"
-    icon="file-plus"
+    title="Cadastro de Propriedades"
+    href="/documents/Cadastro/Areas"
+    icon="map-pin"
   >
-    Emissão completa de CT-e com validação automática e transmissão para SEFAZ
+    Gestão completa de propriedades rurais, talhões e áreas de cultivo
   </Card>
   <Card
-    title="Ordem de Serviço"
-    href="/documents/cte/os-emission"
+    title="Gestão de Colaboradores"
+    href="/documents/Cadastro/Colaboradores"
+    icon="user-plus"
+  >
+    Cadastro e organização de funcionários e equipes de trabalho
+  </Card>
+  <Card
+    title="Controle de Produtos"
+    href="/documents/Cadastro/Produtos"
+    icon="package"
+  >
+    Catalogação de sementes, insumos, defensivos e produtos agrícolas
+  </Card>
+  <Card
+    title="Planejamento de Tarefas"
+    href="/documents/Cadastro/Tarefas"
+    icon="calendar"
+  >
+    Criação e acompanhamento de atividades e cronogramas agrícolas
+  </Card>
+  <Card
+    title="Atividades de Campo"
+    href="/documents/Cadastro/Atividades"
+    icon="activity"
+  >
+    Execução e monitoramento de operações agrícolas
+  </Card>
+  <Card
+    title="Controle de Paradas"
+    href="/documents/Cadastro/Paradas"
+    icon="pause-circle"
+  >
+    Gestão de paradas operacionais e detalhamento de ocorrências
+  </Card>
+</CardGroup>
+
+## Gestão Organizacional
+
+<CardGroup cols={2}>
+  <Card
+    title="Estrutura de Setores"
+    href="/documents/Cadastro/Setor"
+    icon="building"
+  >
+    Organização hierárquica de setores e departamentos
+  </Card>
+  <Card
+    title="Formação de Equipes"
+    href="/documents/Cadastro/Equipes"
+    icon="users"
+  >
+    Criação e gestão de equipes de trabalho especializadas
+  </Card>
+  <Card
+    title="Detalhamento de Paradas"
+    href="/documents/Cadastro/DetalhamentoDeParadas"
     icon="clipboard-list"
   >
-    Emissão de CT-e de Ordem de Serviço para prestadores de serviços de transporte
-  </Card>
-  <Card
-    title="Consulta e Status"
-    href="/documents/cte/consulta"
-    icon="search"
-  >
-    Consulta de status e informações detalhadas de CT-e emitidos
-  </Card>
-  <Card
-    title="Cancelamento"
-    href="/documents/cte/inutilizar"
-    icon="x-circle"
-  >
-    Cancelamento e inutilização de CT-e conforme legislação vigente
-  </Card>
-  <Card
-    title="Carta de Correção"
-    href="/documents/cte/enviar-cce"
-    icon="edit-3"
-  >
-    Envio de Carta de Correção Eletrônica para correções permitidas
-  </Card>
-  <Card
-    title="Descarte"
-    href="/documents/cte/descartar"
-    icon="trash-2"
-  >
-    Descarte de CT-e com justificativa e controle de auditoria
-  </Card>
-</CardGroup>
-
-## Utilitários e Ferramentas
-
-<CardGroup cols={2}>
-  <Card
-    title="Importação/Exportação"
-    href="/documents/cte/importar"
-    icon="download"
-  >
-    Importe e exporte CT-e em diversos formatos para integração com sistemas
-  </Card>
-  <Card
-    title="Conversão TX2"
-    href="/documents/cte/converter-tx2-xml"
-    icon="refresh-cw"
-  >
-    Converta arquivos TX2 para XML conforme especificações da SEFAZ
-  </Card>
-  <Card
-    title="Prévia DACTE"
-    href="/documents/cte/prever-dacte"
-    icon="eye"
-  >
-    Visualize o DACTE antes da emissão para validação
-  </Card>
-  <Card
-    title="Impressão"
-    href="/documents/cte/imprimir"
-    icon="printer"
-  >
-    Impressão de DACTE e outros documentos relacionados
-  </Card>
-  <Card
-    title="Obter XML"
-    href="/documents/cte/obter-xml"
-    icon="code"
-  >
-    Download dos arquivos XML originais da SEFAZ
-  </Card>
-  <Card
-    title="Resolver Pendências"
-    href="/documents/cte/resolver"
-    icon="check-circle"
-  >
-    Resolução automática de pendências e problemas de processamento
-  </Card>
-</CardGroup>
-
-## Configuração e Autenticação
-
-<CardGroup cols={2}>
-  <Card
-    title="Autenticação"
-    href="/documents/cte/autenticacao"
-    icon="key"
-  >
-    Configuração de autenticação por API Key para acesso seguro à API
-  </Card>
-  <Card
-    title="Configurações"
-    href="/documents/cte/configuracao-modo"
-    icon="settings"
-  >
-    Configurações avançadas para personalizar o comportamento do sistema
-  </Card>
-  <Card
-    title="Certificados"
-    href="/documents/cte/certificado"
-    icon="shield"
-  >
-    Gerenciamento de certificados digitais para assinatura eletrônica
-  </Card>
-  <Card
-    title="Exportar V2"
-    href="/documents/cte/exportar-v2"
-    icon="upload"
-  >
-    Sistema avançado de exportação de dados e relatórios
+    Análise detalhada de paradas e interrupções operacionais
   </Card>
 </CardGroup>
 
 ## Como Funciona
 
-### 1. **API REST**
-Comunique-se diretamente com nossa API através de requisições HTTPS para emissão, cancelamento e consulta de CT-e.
+### 1. **Cadastro Inicial**
+Configure sua propriedade rural com informações detalhadas sobre áreas, culturas e recursos disponíveis.
 
-### 2. **Monitorador de Pastas**
-Alternativamente, utilize nosso sistema de monitoramento de pastas para troca de arquivos, ideal para integrações batch de transporte.
+### 2. **Organização de Equipes**
+Estruture suas equipes de trabalho organizando colaboradores por setores e especialidades.
 
-### 3. **Processamento Automático**
-Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
-- Validação dos dados de transporte
-- Geração do XML conforme especificações da SEFAZ
-- Transmissão para a SEFAZ
-- Processamento da resposta
-- Geração do DACTE
+### 3. **Planejamento Operacional**
+Crie cronogramas de atividades, defina tarefas e estabeleça metas de produtividade.
 
-## Estrutura do CT-e
+### 4. **Execução e Monitoramento**
+Acompanhe em tempo real a execução das atividades e o progresso das operações no campo.
 
-### **Cabeçalho**
-- Dados do emitente (transportadora)
-- Dados do tomador (contratante)
-- Informações do documento
-- Dados fiscais
+### 5. **Análise de Resultados**
+Gere relatórios de produtividade e análises para otimizar continuamente suas operações.
 
-### **Dados de Transporte**
-- Origem e destino
-- Tipo de veículo
-- Dados do motorista
-- Rota de transporte
+## Estrutura do Sistema
 
-### **Carga**
-- Descrição das mercadorias
-- Peso e volume
-- Valor da carga
-- Impostos incidentes
+### **Cadastros Base**
+- Propriedades e áreas rurais
+- Colaboradores e organizações
+- Produtos e insumos agrícolas
+- Equipamentos e maquinários
 
-### **Serviços**
-- Valor do frete
-- Despesas acessórias
-- Seguro de transporte
-- Condições de pagamento
+### **Operações**
+- Planejamento de cultivos
+- Execução de atividades
+- Controle de aplicações
+- Monitoramento de crescimento
 
-## Vantagens para Transporte
+### **Gestão**
+- Controle de equipes
+- Alocação de recursos
+- Gestão de paradas
+- Análise de performance
+
+### **Relatórios**
+- Produtividade por área
+- Performance de equipes
+- Consumo de insumos
+- Indicadores de sustentabilidade
+
+## Vantagens para o Agronegócio
 
 <CardGroup cols={3}>
   <Card
-    title="Simplicidade"
+    title="Eficiência"
     icon="zap"
   >
-    API intuitiva e bem documentada para rápida integração com sistemas de transporte
+    Sistema intuitivo para otimizar operações agrícolas e aumentar produtividade
   </Card>
   <Card
-    title="Confiabilidade"
+    title="Sustentabilidade"
+    icon="leaf"
+  >
+    Ferramentas para gestão sustentável de recursos e práticas agrícolas
+  </Card>
+  <Card
+    title="Controle Total"
     icon="shield-check"
   >
-    Infraestrutura robusta com 99.9% de disponibilidade para operações críticas
-  </Card>
-  <Card
-    title="Conformidade"
-    icon="check-circle"
-  >
-    Sempre atualizado com as últimas legislações fiscais de transporte
+    Visibilidade completa de todas as operações e processos da propriedade
   </Card>
 </CardGroup>
 
@@ -237,45 +183,45 @@ Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
 
 <CardGroup cols={2}>
   <Card
-    title="Transportadoras"
-    icon="truck"
+    title="Fazendas de Grãos"
+    icon="wheat"
   >
-    Emissão em massa de CT-e para operações de frete e transporte de cargas
+    Gestão completa de cultivos de soja, milho, algodão e outros grãos
   </Card>
   <Card
-    title="E-commerce"
-    icon="shopping-cart"
+    title="Pecuária"
+    icon="cow"
   >
-    Integração automática para emissão de CT-e em vendas online
+    Controle de pastagens, gado e operações de pecuária
   </Card>
   <Card
-    title="ERP/Logística"
-    icon="database"
+    title="Fruticultura"
+    icon="apple"
   >
-    Sistema integrado para gestão completa de documentos de transporte
+    Gestão de pomares, colheitas e produção de frutas
   </Card>
   <Card
-    title="Prestadores de Serviço"
-    icon="users"
+    title="Agricultura Orgânica"
+    icon="sprout"
   >
-    Emissão de CT-e para serviços de transporte e logística
+    Controle especializado para produção orgânica e sustentável
   </Card>
 </CardGroup>
 
-## Status do Documento
+## Status das Operações
 
-### **Fluxo de Status**
-1. **PENDENTE**: Documento recebido
-2. **PROCESSANDO**: Em processamento
-3. **AUTORIZADO**: Documento aprovado
-4. **REJEITADO**: Documento rejeitado
-5. **CANCELADO**: Documento cancelado
+### **Fluxo de Atividades**
+1. **PLANEJADA**: Atividade programada
+2. **EM EXECUÇÃO**: Operação em andamento
+3. **CONCLUÍDA**: Atividade finalizada
+4. **PAUSADA**: Operação temporariamente interrompida
+5. **CANCELADA**: Atividade cancelada
 
-### **Consultas**
+### **Acompanhamento**
 - Status em tempo real
-- Histórico de alterações
-- Logs de processamento
-- Arquivos XML e PDF
+- Histórico de atividades
+- Logs de operações
+- Relatórios de produtividade
 
 ## Comece Agora
 
@@ -285,26 +231,26 @@ Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
     href="/quickstart"
     icon="rocket"
   >
-    Configure sua primeira integração de CT-e em minutos
+    Configure seu sistema agrícola em minutos
   </Card>
   <Card
-    title="Visão Geral CT-e"
-    href="/documents/cte/overview"
-    icon="file-text"
+    title="Cadastros Básicos"
+    href="/documents/Cadastro/Areas"
+    icon="map"
   >
-    Conheça todos os detalhes sobre Conhecimento de Transporte Eletrônico
+    Inicie com o cadastro de suas propriedades rurais
   </Card>
 </CardGroup>
 
 ## Suporte
 
-Precisa de ajuda com CT-e? Nossa equipe especializada está sempre disponível:
+Precisa de ajuda? Nossa equipe especializada em agronegócio está sempre disponível:
 
-- 📧 **Email**: suporte@managersaas.com
-- 📚 **Documentação**: docs.managersaas.com
-- 🚀 **Dashboard**: dashboard.managersaas.com
+- 📧 **Email**: suporte@greenproductivity.com
+- 📚 **Documentação**: docs.greenproductivity.com
+- 🚀 **Dashboard**: app.greenproductivity.com
 
 ---
 
-*Manager SaaS CT-e - Simplificando a gestão fiscal de transporte do seu negócio*
+*Green Productivity - Revolucionando a gestão agrícola com tecnologia e sustentabilidade*
 

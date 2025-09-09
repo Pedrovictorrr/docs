@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Green Productivity",
-  "description": "Sistema de Gerenciamento de Operações",
+  "description": "Sistema de Gerenciamento de Operações Agrícolas",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -16,7 +16,9 @@
         "groups": [
           {
             "group": "Primeiros passos",
-            "pages": []
+            "pages": [
+              "quickstart"
+            ]
           }
         ]
       },
@@ -50,31 +52,27 @@
         ]
       },
       {
-        "tab": "CT-e",
+        "tab": "Dashboard",
         "groups": [
           {
-            "group": "Visão Geral",
+            "group": "Relatórios",
             "pages": []
           },
           {
-            "group": "Configuração",
-            "pages": []
-          },
-          {
-            "group": "Operações",
-            "pages": []
-          },
-          {
-            "group": "Utilitários",
+            "group": "Indicadores",
             "pages": []
           }
         ]
       },
       {
-        "tab": "NFSe",
+        "tab": "Trabalhos",
         "groups": [
           {
-            "group": "Operações",
+            "group": "Planejamento",
+            "pages": []
+          },
+          {
+            "group": "Execução",
             "pages": []
           }
         ]
@@ -90,7 +88,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.managersaas.com"
+      "href": "https://app.greenproductivity.com"
     }
   },
   "contextual": {
@@ -107,9 +105,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/managersaas",
-      "github": "https://github.com/managersaas",
-      "linkedin": "https://linkedin.com/company/managersaas"
+      "x": "https://x.com/greenproductivity",
+      "github": "https://github.com/greenproductivity",
+      "linkedin": "https://linkedin.com/company/greenproductivity"
     }
   }
 }

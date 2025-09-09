@@ -1,11 +1,11 @@
 ---
 title: 'Integração Laravel PHP'
-description: 'Exemplos práticos de integração com o Manager SaaS usando Laravel PHP'
+description: 'Exemplos práticos de integração com o Green Productivity usando Laravel PHP'
 ---
 
-# Integração Laravel PHP - Manager SaaS
+# Integração Laravel PHP - Green Productivity
 
-Exemplos práticos de como integrar sua aplicação Laravel com a API do Manager SaaS para emissão de documentos fiscais eletrônicos.
+Exemplos práticos de como integrar sua aplicação Laravel com a API do Green Productivity para gestão de operações agrícolas.
 
 ## Configuração Inicial
 
@@ -16,8 +16,8 @@ Exemplos práticos de como integrar sua aplicação Laravel com a API do Manager
 composer require guzzlehttp/guzzle
 
 # Ou criar um novo projeto Laravel
-composer create-project laravel/laravel managersaas-integration
-cd managersaas-integration
+composer create-project laravel/laravel green-productivity-integration
+cd green-productivity-integration
 composer require guzzlehttp/guzzle
 ```
 
@@ -25,17 +25,17 @@ composer require guzzlehttp/guzzle
 
 ```php
 <?php
-// config/manager_saas.php
+// config/green_productivity.php
 
 return [
-    'api_url' => env('MANAGER_SAAS_API_URL', 'https://api.managersaas.com/v1'),
-    'token' => env('MANAGER_SAAS_TOKEN'),
-    'empresa_id' => env('MANAGER_SAAS_EMPRESA_ID'),
-    'ambiente' => env('MANAGER_SAAS_ENVIRONMENT', 'production'),
-    'timeout' => env('MANAGER_SAAS_TIMEOUT', 30),
-    'retries' => env('MANAGER_SAAS_RETRIES', 3),
-    'webhook_url' => env('MANAGER_SAAS_WEBHOOK_URL'),
-    'log_channel' => env('MANAGER_SAAS_LOG_CHANNEL', 'stack'),
+    'api_url' => env('GREEN_PRODUCTIVITY_API_URL', 'https://api.greenproductivity.com/v1'),
+    'token' => env('GREEN_PRODUCTIVITY_TOKEN'),
+    'fazenda_id' => env('GREEN_PRODUCTIVITY_FAZENDA_ID'),
+    'ambiente' => env('GREEN_PRODUCTIVITY_ENVIRONMENT', 'production'),
+    'timeout' => env('GREEN_PRODUCTIVITY_TIMEOUT', 30),
+    'retries' => env('GREEN_PRODUCTIVITY_RETRIES', 3),
+    'webhook_url' => env('GREEN_PRODUCTIVITY_WEBHOOK_URL'),
+    'log_channel' => env('GREEN_PRODUCTIVITY_LOG_CHANNEL', 'stack'),
 ];
 ```
 
@@ -43,30 +43,30 @@ return [
 
 ```bash
 # .env
-MANAGER_SAAS_API_URL=https://api.managersaas.com/v1
-MANAGER_SAAS_TOKEN=seu_token_aqui
-MANAGER_SAAS_EMPRESA_ID=seu_empresa_id
-MANAGER_SAAS_ENVIRONMENT=production
-MANAGER_SAAS_TIMEOUT=30
-MANAGER_SAAS_RETRIES=3
-MANAGER_SAAS_WEBHOOK_URL=https://seu-site.com/webhook
+GREEN_PRODUCTIVITY_API_URL=https://api.greenproductivity.com/v1
+GREEN_PRODUCTIVITY_TOKEN=seu_token_aqui
+GREEN_PRODUCTIVITY_FAZENDA_ID=sua_fazenda_id
+GREEN_PRODUCTIVITY_ENVIRONMENT=production
+GREEN_PRODUCTIVITY_TIMEOUT=30
+GREEN_PRODUCTIVITY_RETRIES=3
+GREEN_PRODUCTIVITY_WEBHOOK_URL=https://seu-site.com/webhook
 ```
 
 ## Cliente Principal
 
-### **Classe ManagerSaasClient**
+### **Classe GreenProductivityClient**
 
 ```php
 <?php
-// src/ManagerSaas/ManagerSaasClient.php
+// src/GreenProductivity/GreenProductivityClient.php
 
-namespace App\ManagerSaas;
+namespace App\GreenProductivity;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 
-class ManagerSaasClient
+class GreenProductivityClient
 {
     private Client $httpClient;
     private array $config;
@@ -81,38 +81,38 @@ class ManagerSaasClient
             'headers' => [
                 'Authorization' => 'Bearer ' . $config['token'],
                 'Content-Type' => 'application/json',
-                'User-Agent' => 'ManagerSaas-Laravel-Client/1.0'
+                'User-Agent' => 'GreenProductivity-Laravel-Client/1.0'
             ]
         ]);
     }
     
     /**
-     * Emite um CT-e OS
+     * Cadastra uma nova área
      */
-    public function emitirCTeOS(array $dados): array
+    public function cadastrarArea(array $dados): array
     {
         try {
-            $response = $this->httpClient->post('/cte/os/emitir', [
+            $response = $this->httpClient->post('/areas', [
                 'json' => $dados
             ]);
             
             $resultado = json_decode($response->getBody()->getContents(), true);
             
-            Log::channel($this->config['log_channel'])->info('CT-e OS emitido com sucesso', [
-                'numero' => $resultado['data']['numero'] ?? null,
+            Log::channel($this->config['log_channel'])->info('Área cadastrada com sucesso', [
+                'nome' => $resultado['data']['nome'] ?? null,
                 'dados' => $dados
             ]);
             
             return $resultado;
             
         } catch (RequestException $e) {
-            $this->logger->error('Erro ao emitir CT-e OS', [
+            Log::channel($this->config['log_channel'])->error('Erro ao cadastrar área', [
                 'error' => $e->getMessage(),
                 'dados' => $dados
             ]);
             
-            throw new ManagerSaasException(
-                'Erro ao emitir CT-e OS: ' . $e->getMessage(),
+            throw new GreenProductivityException(
+                'Erro ao cadastrar área: ' . $e->getMessage(),
                 $e->getCode(),
                 $e
             );
@@ -120,32 +120,32 @@ class ManagerSaasClient
     }
     
     /**
-     * Emite uma NF-e
+     * Cria uma nova tarefa agrícola
      */
-    public function emitirNFe(array $dados): array
+    public function criarTarefa(array $dados): array
     {
         try {
-            $response = $this->httpClient->post('/nfe/emitir', [
+            $response = $this->httpClient->post('/tarefas', [
                 'json' => $dados
             ]);
             
             $resultado = json_decode($response->getBody()->getContents(), true);
             
-            $this->logger->info('NF-e emitida com sucesso', [
-                'numero' => $resultado['data']['numero'] ?? null,
+            Log::channel($this->config['log_channel'])->info('Tarefa criada com sucesso', [
+                'nome' => $resultado['data']['nome'] ?? null,
                 'dados' => $dados
             ]);
             
             return $resultado;
             
         } catch (RequestException $e) {
-            $this->logger->error('Erro ao emitir NF-e', [
+            Log::channel($this->config['log_channel'])->error('Erro ao criar tarefa', [
                 'error' => $e->getMessage(),
                 'dados' => $dados
             ]);
             
-            throw new ManagerSaasException(
-                'Erro ao emitir NF-e: ' . $e->getMessage(),
+            throw new GreenProductivityException(
+                'Erro ao criar tarefa: ' . $e->getMessage(),
                 $e->getCode(),
                 $e
             );
@@ -153,24 +153,23 @@ class ManagerSaasClient
     }
     
     /**
-     * Consulta o status de um documento
+     * Consulta o status de uma atividade
      */
-    public function consultarStatus(string $tipo, string $numero): array
+    public function consultarAtividade(string $id): array
     {
         try {
-            $response = $this->httpClient->get("/{$tipo}/{$numero}/status");
+            $response = $this->httpClient->get("/atividades/{$id}");
             
             return json_decode($response->getBody()->getContents(), true);
             
         } catch (RequestException $e) {
-            $this->logger->error('Erro ao consultar status', [
-                'tipo' => $tipo,
-                'numero' => $numero,
+            Log::channel($this->config['log_channel'])->error('Erro ao consultar atividade', [
+                'id' => $id,
                 'error' => $e->getMessage()
             ]);
             
-            throw new ManagerSaasException(
-                'Erro ao consultar status: ' . $e->getMessage(),
+            throw new GreenProductivityException(
+                'Erro ao consultar atividade: ' . $e->getMessage(),
                 $e->getCode(),
                 $e
             );
@@ -178,34 +177,32 @@ class ManagerSaasClient
     }
     
     /**
-     * Cancela um documento
+     * Registra uma parada operacional
      */
-    public function cancelarDocumento(string $tipo, string $numero, string $justificativa): array
+    public function registrarParada(array $dados): array
     {
         try {
-            $response = $this->httpClient->post("/{$tipo}/{$numero}/cancelar", [
-                'json' => ['justificativa' => $justificativa]
+            $response = $this->httpClient->post('/paradas', [
+                'json' => $dados
             ]);
             
             $resultado = json_decode($response->getBody()->getContents(), true);
             
-            $this->logger->info('Documento cancelado com sucesso', [
-                'tipo' => $tipo,
-                'numero' => $numero,
-                'justificativa' => $justificativa
+            Log::channel($this->config['log_channel'])->info('Parada registrada com sucesso', [
+                'tipo' => $resultado['data']['tipo'] ?? null,
+                'dados' => $dados
             ]);
             
             return $resultado;
             
         } catch (RequestException $e) {
-            $this->logger->error('Erro ao cancelar documento', [
-                'tipo' => $tipo,
-                'numero' => $numero,
-                'error' => $e->getMessage()
+            Log::channel($this->config['log_channel'])->error('Erro ao registrar parada', [
+                'error' => $e->getMessage(),
+                'dados' => $dados
             ]);
             
-            throw new ManagerSaasException(
-                'Erro ao cancelar documento: ' . $e->getMessage(),
+            throw new GreenProductivityException(
+                'Erro ao registrar parada: ' . $e->getMessage(),
                 $e->getCode(),
                 $e
             );
@@ -213,25 +210,26 @@ class ManagerSaasClient
     }
     
     /**
-     * Download de arquivos (XML, PDF)
+     * Gera relatório de produtividade
      */
-    public function downloadArquivo(string $tipo, string $numero, string $formato): string
+    public function gerarRelatorio(string $tipo, array $filtros = []): array
     {
         try {
-            $response = $this->httpClient->get("/{$tipo}/{$numero}/{$formato}");
+            $response = $this->httpClient->get("/relatorios/{$tipo}", [
+                'query' => $filtros
+            ]);
             
-            return $response->getBody()->getContents();
+            return json_decode($response->getBody()->getContents(), true);
             
         } catch (RequestException $e) {
-            $this->logger->error('Erro ao baixar arquivo', [
+            Log::channel($this->config['log_channel'])->error('Erro ao gerar relatório', [
                 'tipo' => $tipo,
-                'numero' => $numero,
-                'formato' => $formato,
+                'filtros' => $filtros,
                 'error' => $e->getMessage()
             ]);
             
-            throw new ManagerSaasException(
-                'Erro ao baixar arquivo: ' . $e->getMessage(),
+            throw new GreenProductivityException(
+                'Erro ao gerar relatório: ' . $e->getMessage(),
                 $e->getCode(),
                 $e
             );
@@ -242,208 +240,157 @@ class ManagerSaasClient
 
 ## Exemplos de Uso
 
-### **1. Emissão de CT-e OS**
+### **1. Cadastro de Área**
 
 ```php
 <?php
-// examples/cte_os_example.php
+// examples/cadastrar_area_example.php
 
 require_once 'vendor/autoload.php';
 
-use App\ManagerSaas\ManagerSaasClient;
+use App\GreenProductivity\GreenProductivityClient;
 
 // Carrega configuração
-$config = require 'config/manager_saas.php';
-$client = new ManagerSaasClient($config);
+$config = require 'config/green_productivity.php';
+$client = new GreenProductivityClient($config);
 
-// Dados para emissão
-$dadosCTeOS = [
-    'tipo_documento' => 'CTE_OS',
-    'emissor' => [
-        'cnpj' => '12345678000199',
-        'inscricao_estadual' => '123456789',
-        'razao_social' => 'TRANSPORTADORA EXEMPLO LTDA',
-        'endereco' => [
-            'logradouro' => 'Rua das Flores, 123',
-            'bairro' => 'Centro',
-            'municipio' => 'São Paulo',
-            'uf' => 'SP',
-            'cep' => '01234-567'
-        ]
+// Dados para cadastro de área
+$dadosArea = [
+    'nome' => 'Talhão 01 - Soja',
+    'fazenda_id' => $config['fazenda_id'],
+    'area_hectares' => 25.5,
+    'localizacao' => [
+        'latitude' => -15.7942,
+        'longitude' => -47.8822
     ],
-    'tomador' => [
-        'cnpj' => '98765432000188',
-        'razao_social' => 'CLIENTE EXEMPLO LTDA',
-        'endereco' => [
-            'logradouro' => 'Av. Paulista, 1000',
-            'bairro' => 'Bela Vista',
-            'municipio' => 'São Paulo',
-            'uf' => 'SP',
-            'cep' => '01310-100'
-        ]
-    ],
-    'servico' => [
-        'descricao' => 'Transporte de carga geral',
-        'valor_frete' => 150.00,
-        'valor_seguro' => 25.00,
-        'valor_despesas' => 15.00,
-        'valor_total' => 190.00
-    ],
-    'transporte' => [
-        'tipo_veiculo' => 'TRUCK',
-        'placa' => 'ABC1234',
-        'motorista' => [
-            'nome' => 'João Silva',
-            'cpf' => '12345678901',
-            'cnh' => '12345678901'
-        ]
+    'cultura_principal' => 'Soja',
+    'variedade' => 'BRS 123',
+    'solo' => [
+        'tipo' => 'Latossolo Vermelho',
+        'ph' => 6.2,
+        'fertilidade' => 'Alta'
     ]
 ];
 
 try {
-    // Emite o CT-e OS
-    $resultado = $client->emitirCTeOS($dadosCTeOS);
+    // Cadastra a área
+    $resultado = $client->cadastrarArea($dadosArea);
     
-    echo "CT-e OS emitido com sucesso!\n";
-    echo "Número: " . $resultado['data']['numero'] . "\n";
-    echo "Chave de Acesso: " . $resultado['data']['chave_acesso'] . "\n";
+    echo "Área cadastrada com sucesso!\n";
+    echo "ID: " . $resultado['data']['id'] . "\n";
+    echo "Nome: " . $resultado['data']['nome'] . "\n";
+    echo "Área: " . $resultado['data']['area_hectares'] . " hectares\n";
+    
+    // Salva no banco de dados local
+    $this->salvarArea($resultado['data']);
+    
+} catch (Exception $e) {
+    echo "Erro ao cadastrar área: " . $e->getMessage() . "\n";
+}
+```
+
+### **2. Criação de Tarefa Agrícola**
+
+```php
+<?php
+// examples/criar_tarefa_example.php
+
+require_once 'vendor/autoload.php';
+
+use App\GreenProductivity\GreenProductivityClient;
+
+$config = require 'config/green_productivity.php';
+$client = new GreenProductivityClient($config);
+
+// Dados para criação de tarefa
+$dadosTarefa = [
+    'nome' => 'Plantio Soja - Talhão 01',
+    'descricao' => 'Plantio de soja no talhão 01 com semente BRS 123',
+    'tipo' => 'PLANTIO',
+    'area_id' => 1,
+    'equipe_id' => 5,
+    'data_prevista_inicio' => '2024-10-15',
+    'data_prevista_fim' => '2024-10-17',
+    'recursos_necessarios' => [
+        [
+            'produto_id' => 10,
+            'quantidade' => 50,
+            'unidade' => 'kg'
+        ],
+        [
+            'equipamento_id' => 2,
+            'horas_uso' => 16
+        ]
+    ],
+    'prioridade' => 'ALTA',
+    'observacoes' => 'Verificar umidade do solo antes do plantio'
+];
+
+try {
+    $resultado = $client->criarTarefa($dadosTarefa);
+    
+    echo "Tarefa criada com sucesso!\n";
+    echo "ID: " . $resultado['data']['id'] . "\n";
+    echo "Nome: " . $resultado['data']['nome'] . "\n";
     echo "Status: " . $resultado['data']['status'] . "\n";
     
-    // Salva no banco de dados
-    $this->salvarCTeOS($resultado['data']);
-    
 } catch (Exception $e) {
-    echo "Erro ao emitir CT-e OS: " . $e->getMessage() . "\n";
+    echo "Erro ao criar tarefa: " . $e->getMessage() . "\n";
 }
 ```
 
-### **2. Emissão de NF-e**
+### **3. Monitoramento de Atividades**
 
 ```php
 <?php
-// examples/nfe_example.php
+// examples/monitorar_atividades_example.php
 
 require_once 'vendor/autoload.php';
 
-use App\ManagerSaas\ManagerSaasClient;
+use App\GreenProductivity\GreenProductivityClient;
 
-$config = require 'config/manager_saas.php';
-$client = new ManagerSaasClient($config);
+$config = require 'config/green_productivity.php';
+$client = new GreenProductivityClient($config);
 
-// Dados para emissão de NF-e
-$dadosNFe = [
-    'tipo_documento' => 'NFE',
-    'emissor' => [
-        'cnpj' => '12345678000199',
-        'inscricao_estadual' => '123456789',
-        'razao_social' => 'EMPRESA EXEMPLO LTDA',
-        'endereco' => [
-            'logradouro' => 'Rua das Flores, 123',
-            'bairro' => 'Centro',
-            'municipio' => 'São Paulo',
-            'uf' => 'SP',
-            'cep' => '01234-567'
-        ]
-    ],
-    'destinatario' => [
-        'cnpj' => '98765432000188',
-        'razao_social' => 'CLIENTE EXEMPLO LTDA',
-        'endereco' => [
-            'logradouro' => 'Av. Paulista, 1000',
-            'bairro' => 'Bela Vista',
-            'municipio' => 'São Paulo',
-            'uf' => 'SP',
-            'cep' => '01310-100'
-        ]
-    ],
-    'itens' => [
-        [
-            'codigo' => 'PROD001',
-            'descricao' => 'Produto Exemplo',
-            'quantidade' => 2,
-            'valor_unitario' => 50.00,
-            'valor_total' => 100.00,
-            'ncm' => '12345678'
-        ]
-    ],
-    'impostos' => [
-        'icms' => [
-            'cst' => '102',
-            'aliquota' => 18.00,
-            'valor' => 18.00
-        ]
-    ],
-    'pagamento' => [
-        'forma' => 'CARTAO_CREDITO',
-        'valor' => 118.00
-    ]
+// Lista de atividades para monitorar
+$atividades = [
+    'ATV001', 'ATV002', 'ATV003'
 ];
 
-try {
-    $resultado = $client->emitirNFe($dadosNFe);
-    
-    echo "NF-e emitida com sucesso!\n";
-    echo "Número: " . $resultado['data']['numero'] . "\n";
-    echo "Chave de Acesso: " . $resultado['data']['chave_acesso'] . "\n";
-    
-} catch (Exception $e) {
-    echo "Erro ao emitir NF-e: " . $e->getMessage() . "\n";
-}
-```
+echo "Monitorando atividades agrícolas...\n\n";
 
-### **3. Monitoramento de Status**
-
-```php
-<?php
-// examples/monitor_status_example.php
-
-require_once 'vendor/autoload.php';
-
-use App\ManagerSaas\ManagerSaasClient;
-
-$config = require 'config/manager_saas.php';
-$client = new ManagerSaasClient($config);
-
-// Lista de documentos para monitorar
-$documentos = [
-    ['tipo' => 'cte', 'numero' => '123456'],
-    ['tipo' => 'nfe', 'numero' => '789012'],
-    ['tipo' => 'nfce', 'numero' => '345678']
-];
-
-echo "Monitorando status dos documentos...\n\n";
-
-foreach ($documentos as $doc) {
+foreach ($atividades as $id) {
     try {
-        $status = $client->consultarStatus($doc['tipo'], $doc['numero']);
+        $atividade = $client->consultarAtividade($id);
         
-        echo "Documento {$doc['tipo']} #{$doc['numero']}: {$status['data']['status']}\n";
+        echo "Atividade {$id}: {$atividade['data']['status']}\n";
+        echo "  Progresso: {$atividade['data']['progresso']}%\n";
+        echo "  Área: {$atividade['data']['area']['nome']}\n";
+        echo "  Equipe: {$atividade['data']['equipe']['nome']}\n";
         
-        // Se autorizado, baixa os arquivos
-        if ($status['data']['status'] === 'AUTORIZADO') {
-            $this->baixarArquivos($client, $doc['tipo'], $doc['numero']);
+        // Se concluída, gera relatório
+        if ($atividade['data']['status'] === 'CONCLUIDA') {
+            $this->gerarRelatorioAtividade($client, $id);
         }
         
     } catch (Exception $e) {
-        echo "Erro ao consultar {$doc['tipo']} #{$doc['numero']}: " . $e->getMessage() . "\n";
+        echo "Erro ao consultar atividade {$id}: " . $e->getMessage() . "\n";
     }
+    
+    echo "\n";
 }
 
-function baixarArquivos(ManagerSaasClient $client, string $tipo, string $numero): void
+function gerarRelatorioAtividade(GreenProductivityClient $client, string $id): void
 {
     try {
-        // Download do XML
-        $xml = $client->downloadArquivo($tipo, $numero, 'xml');
-        file_put_contents("downloads/{$tipo}_{$numero}.xml", $xml);
+        $relatorio = $client->gerarRelatorio('atividade', ['atividade_id' => $id]);
         
-        // Download do PDF
-        $pdf = $client->downloadArquivo($tipo, $numero, 'pdf');
-        file_put_contents("downloads/{$tipo}_{$numero}.pdf", $pdf);
-        
-        echo "  ✓ Arquivos baixados com sucesso\n";
+        echo "  ✓ Relatório gerado com sucesso\n";
+        echo "    Produtividade: {$relatorio['data']['produtividade']} kg/ha\n";
+        echo "    Eficiência: {$relatorio['data']['eficiencia']}%\n";
         
     } catch (Exception $e) {
-        echo "  ✗ Erro ao baixar arquivos: " . $e->getMessage() . "\n";
+        echo "  ✗ Erro ao gerar relatório: " . $e->getMessage() . "\n";
     }
 }
 ```
@@ -454,29 +401,29 @@ function baixarArquivos(ManagerSaasClient $client, string $tipo, string $numero)
 
 ```php
 <?php
-// app/Providers/ManagerSaasServiceProvider.php
+// app/Providers/GreenProductivityServiceProvider.php
 
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\ManagerSaas\ManagerSaasClient;
+use App\GreenProductivity\GreenProductivityClient;
 
-class ManagerSaasServiceProvider extends ServiceProvider
+class GreenProductivityServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(ManagerSaasClient::class, function ($app) {
-            $config = config('manager_saas');
+        $this->app->singleton(GreenProductivityClient::class, function ($app) {
+            $config = config('green_productivity');
             
-            return new ManagerSaasClient($config);
+            return new GreenProductivityClient($config);
         });
     }
     
     public function boot(): void
     {
         $this->publishes([
-            __DIR__.'/../../config/manager_saas.php' => config_path('manager_saas.php'),
-        ], 'manager-saas');
+            __DIR__.'/../../config/green_productivity.php' => config_path('green_productivity.php'),
+        ], 'green-productivity');
     }
 }
 ```
@@ -485,35 +432,35 @@ class ManagerSaasServiceProvider extends ServiceProvider
 
 ```php
 <?php
-// app/Http/Controllers/DocumentoController.php
+// app/Http/Controllers/AgriculturaController.php
 
 namespace App\Http\Controllers;
 
-use App\ManagerSaas\ManagerSaasClient;
+use App\GreenProductivity\GreenProductivityClient;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class DocumentoController extends Controller
+class AgriculturaController extends Controller
 {
     public function __construct(
-        private ManagerSaasClient $managerSaas
+        private GreenProductivityClient $greenProductivity
     ) {}
     
     /**
-     * Emite um CT-e OS
+     * Cadastra uma nova área
      */
-    public function emitirCTeOS(Request $request): JsonResponse
+    public function cadastrarArea(Request $request): JsonResponse
     {
         $request->validate([
-            'emissor.cnpj' => 'required|string',
-            'emissor.razao_social' => 'required|string',
-            'tomador.cnpj' => 'required|string',
-            'servico.descricao' => 'required|string',
-            'servico.valor_frete' => 'required|numeric|min:0'
+            'nome' => 'required|string',
+            'area_hectares' => 'required|numeric|min:0',
+            'localizacao.latitude' => 'required|numeric',
+            'localizacao.longitude' => 'required|numeric',
+            'cultura_principal' => 'required|string'
         ]);
         
         try {
-            $resultado = $this->managerSaas->emitirCTeOS($request->all());
+            $resultado = $this->greenProductivity->cadastrarArea($request->all());
             
             return response()->json([
                 'success' => true,
@@ -529,16 +476,24 @@ class DocumentoController extends Controller
     }
     
     /**
-     * Consulta status de um documento
+     * Cria uma nova tarefa
      */
-    public function consultarStatus(string $tipo, string $numero): JsonResponse
+    public function criarTarefa(Request $request): JsonResponse
     {
+        $request->validate([
+            'nome' => 'required|string',
+            'tipo' => 'required|string',
+            'area_id' => 'required|integer',
+            'equipe_id' => 'required|integer',
+            'data_prevista_inicio' => 'required|date'
+        ]);
+        
         try {
-            $status = $this->managerSaas->consultarStatus($tipo, $numero);
+            $resultado = $this->greenProductivity->criarTarefa($request->all());
             
             return response()->json([
                 'success' => true,
-                'data' => $status['data']
+                'data' => $resultado['data']
             ]);
             
         } catch (\Exception $e) {
@@ -550,20 +505,19 @@ class DocumentoController extends Controller
     }
     
     /**
-     * Cancela um documento
+     * Registra uma parada
      */
-    public function cancelar(Request $request, string $tipo, string $numero): JsonResponse
+    public function registrarParada(Request $request): JsonResponse
     {
         $request->validate([
-            'justificativa' => 'required|string|min:10'
+            'tipo' => 'required|string',
+            'motivo' => 'required|string',
+            'inicio' => 'required|date',
+            'atividade_id' => 'required|integer'
         ]);
         
         try {
-            $resultado = $this->managerSaas->cancelarDocumento(
-                $tipo, 
-                $numero, 
-                $request->justificativa
-            );
+            $resultado = $this->greenProductivity->registrarParada($request->all());
             
             return response()->json([
                 'success' => true,
@@ -586,11 +540,12 @@ class DocumentoController extends Controller
 <?php
 // routes/api.php
 
-Route::prefix('documentos')->group(function () {
-    Route::post('/cte-os', [DocumentoController::class, 'emitirCTeOS']);
-    Route::post('/nfe', [DocumentoController::class, 'emitirNFe']);
-    Route::get('/{tipo}/{numero}/status', [DocumentoController::class, 'consultarStatus']);
-    Route::post('/{tipo}/{numero}/cancelar', [DocumentoController::class, 'cancelar']);
+Route::prefix('agricultura')->group(function () {
+    Route::post('/areas', [AgriculturaController::class, 'cadastrarArea']);
+    Route::post('/tarefas', [AgriculturaController::class, 'criarTarefa']);
+    Route::post('/paradas', [AgriculturaController::class, 'registrarParada']);
+    Route::get('/atividades/{id}', [AgriculturaController::class, 'consultarAtividade']);
+    Route::get('/relatorios/{tipo}', [AgriculturaController::class, 'gerarRelatorio']);
 });
 ```
 
@@ -600,11 +555,11 @@ Route::prefix('documentos')->group(function () {
 
 ```php
 <?php
-// src/ManagerSaas/ManagerSaasException.php
+// src/GreenProductivity/GreenProductivityException.php
 
-namespace App\ManagerSaas;
+namespace App\GreenProductivity;
 
-class ManagerSaasException extends \Exception
+class GreenProductivityException extends \Exception
 {
     private array $context;
     
@@ -629,69 +584,26 @@ class ManagerSaasException extends \Exception
 }
 ```
 
-### **Middleware de Retry**
-
-```php
-<?php
-// app/Http/Middleware/ManagerSaasRetryMiddleware.php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use App\ManagerSaas\ManagerSaasException;
-
-class ManagerSaasRetryMiddleware
-{
-    public function handle(Request $request, Closure $next)
-    {
-        $maxRetries = config('manager_saas.retries', 3);
-        $attempts = 0;
-        
-        do {
-            try {
-                return $next($request);
-                
-            } catch (ManagerSaasException $e) {
-                $attempts++;
-                
-                if (!$e->isRetryable() || $attempts >= $maxRetries) {
-                    throw $e;
-                }
-                
-                // Aguarda antes de tentar novamente
-                sleep(pow(2, $attempts)); // Exponential backoff
-            }
-            
-        } while ($attempts < $maxRetries);
-        
-        throw $e;
-    }
-}
-```
-
 ## Testes
 
 ### **Teste Unitário**
 
 ```php
 <?php
-// tests/Unit/ManagerSaasClientTest.php
+// tests/Unit/GreenProductivityClientTest.php
 
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\ManagerSaas\ManagerSaasClient;
+use App\GreenProductivity\GreenProductivityClient;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Middleware;
 
-class ManagerSaasClientTest extends TestCase
+class GreenProductivityClientTest extends TestCase
 {
-    private ManagerSaasClient $client;
-    private array $container;
+    private GreenProductivityClient $client;
     
     protected function setUp(): void
     {
@@ -702,21 +614,17 @@ class ManagerSaasClientTest extends TestCase
             new Response(200, [], json_encode([
                 'status' => 'success',
                 'data' => [
-                    'numero' => '123456',
-                    'chave_acesso' => 'test_key',
-                    'status' => 'AUTORIZADO'
+                    'id' => 1,
+                    'nome' => 'Talhão Teste',
+                    'area_hectares' => 25.5
                 ]
             ]))
         ]);
         
         $handlerStack = HandlerStack::create($mock);
-        $this->container = [];
-        $history = Middleware::history($this->container);
-        $handlerStack->push($history);
-        
         $httpClient = new Client(['handler' => $handlerStack]);
         
-        $this->client = new ManagerSaasClient([
+        $this->client = new GreenProductivityClient([
             'api_url' => 'https://api.test.com',
             'token' => 'test_token'
         ]);
@@ -728,19 +636,19 @@ class ManagerSaasClientTest extends TestCase
         $property->setValue($this->client, $httpClient);
     }
     
-    public function test_emite_cte_os_com_sucesso(): void
+    public function test_cadastra_area_com_sucesso(): void
     {
         $dados = [
-            'tipo_documento' => 'CTE_OS',
-            'emissor' => ['cnpj' => '12345678000199'],
-            'servico' => ['descricao' => 'Teste']
+            'nome' => 'Talhão Teste',
+            'area_hectares' => 25.5,
+            'cultura_principal' => 'Soja'
         ];
         
-        $resultado = $this->client->emitirCTeOS($dados);
+        $resultado = $this->client->cadastrarArea($dados);
         
         $this->assertEquals('success', $resultado['status']);
-        $this->assertEquals('123456', $resultado['data']['numero']);
-        $this->assertEquals('AUTORIZADO', $resultado['data']['status']);
+        $this->assertEquals('Talhão Teste', $resultado['data']['nome']);
+        $this->assertEquals(25.5, $resultado['data']['area_hectares']);
     }
 }
 ```
@@ -753,25 +661,25 @@ class ManagerSaasClientTest extends TestCase
     href="/examples/nodejs"
     icon="code"
   >
-    Veja exemplos práticos em Laravel
+    Veja exemplos práticos em Node.js
   </Card>
   <Card
     title="Referência da API"
-    href="/api/endpoints/emission"
+    href="/api/endpoints/areas"
     icon="book"
   >
     Explore todos os endpoints disponíveis
   </Card>
   <Card
-    title="Monitorador de Pastas"
-    href="/api/monitor/overview"
-    icon="folder"
+    title="Dashboard Web"
+    href="/dashboard/overview"
+    icon="monitor"
   >
-    Alternativa à API REST
+    Interface web para gestão
   </Card>
   <Card
     title="Suporte"
-    href="mailto:suporte@managersaas.com"
+    href="mailto:suporte@greenproductivity.com"
     icon="message-circle"
   >
     Entre em contato conosco
@@ -780,4 +688,4 @@ class ManagerSaasClientTest extends TestCase
 
 ---
 
-💻 **Código Pronto para Produção**: Todos os exemplos incluem tratamento de erros, logging e boas práticas para uso em ambiente de produção. 
+🌱 **Código Pronto para Produção**: Todos os exemplos incluem tratamento de erros, logging e boas práticas para uso em ambiente de produção agrícola. 
