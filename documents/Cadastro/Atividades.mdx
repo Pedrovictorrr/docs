@@ -1,0 +1,169 @@
+---
+title: "Atividades"
+description: "Gerenciamento de atividades e processos operacionais"
+---
+
+# Cadastro de Atividades
+
+O cadastro de atividades permite organizar e controlar os processos operacionais compostos por conjuntos de tarefas relacionadas.
+
+## Visão Geral
+
+O módulo de atividades facilita:
+
+- Organização de processos complexos
+- Sequenciamento de tarefas
+- Controle de fluxo de trabalho
+- Monitoramento de etapas
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Atividades**
+
+## Funcionalidades
+
+### Criar Nova Atividade
+
+Para criar uma nova atividade:
+
+1. Clique no botão **"Nova Atividade"**
+2. Preencha as informações básicas:
+   - **Código**: Código único da atividade
+   - **Nome**: Nome da atividade
+   - **Descrição**: Descrição do processo
+   - **Tipo**: Tipo de atividade
+3. Configure o fluxo:
+   - **Tarefas**: Adicione tarefas componentes
+   - **Sequência**: Defina ordem de execução
+   - **Condições**: Configure regras de transição
+4. Defina responsáveis
+5. Clique em **"Salvar"**
+
+### Configurar Fluxo de Trabalho
+
+Para configurar o fluxo:
+
+1. Acesse a atividade desejada
+2. Clique na aba **"Fluxo"**
+3. Arraste tarefas para criar sequência
+4. Configure condições entre etapas
+
+### Monitorar Execução
+
+Para acompanhar a execução:
+
+1. Acesse **"Monitor de Atividades"**
+2. Visualize status em tempo real
+3. Identifique gargalos
+4. Tome ações corretivas
+
+## Campos do Formulário
+
+### Informações Básicas
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Código | Texto | Sim | Código único da atividade |
+| Nome | Texto | Sim | Nome da atividade |
+| Descrição | Texto longo | Não | Descrição do processo |
+| Tipo | Seleção | Sim | Tipo de atividade |
+| Prioridade | Seleção | Sim | Alta/Média/Baixa |
+| Status | Seleção | Sim | Ativo/Inativo |
+
+### Configurações do Fluxo
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Permite Execução Paralela | Sim/Não | Sim | Se permite tarefas simultâneas |
+| Requer Aprovação | Sim/Não | Sim | Se requer aprovação para início |
+| Tempo Máximo | Tempo | Não | Tempo máximo total |
+| Notificações | Sim/Não | Sim | Se envia notificações |
+
+## Tipos de Atividades
+
+O sistema suporta diferentes tipos:
+
+- **Produção**: Atividades produtivas principais
+- **Manutenção**: Processos de manutenção
+- **Qualidade**: Controles de qualidade
+- **Logística**: Movimentação e armazenagem
+- **Administrativa**: Processos administrativos
+
+## Estados da Atividade
+
+As atividades podem estar em:
+
+- **Planejada**: Aguardando início
+- **Iniciada**: Em execução
+- **Pausada**: Temporariamente parada
+- **Concluída**: Finalizada com sucesso
+- **Cancelada**: Cancelada
+- **Com Erro**: Finalizada com problemas
+
+## Fluxo de Trabalho
+
+### Tipos de Sequência
+
+- **Sequencial**: Tarefas executadas uma após a outra
+- **Paralela**: Tarefas executadas simultaneamente
+- **Condicional**: Execução baseada em condições
+- **Opcional**: Tarefas opcionais no fluxo
+
+### Condições de Transição
+
+Configure condições para:
+
+- Aprovações necessárias
+- Resultados de qualidade
+- Disponibilidade de recursos
+- Horários específicos
+
+## Relatórios
+
+### Relatório de Atividades
+
+Gera relatórios com:
+
+- Status das atividades em execução
+- Tempo médio por atividade
+- Gargalos identificados
+- Eficiência do processo
+
+### Dashboard
+
+Visualização em tempo real:
+
+- Atividades em andamento
+- Alertas e pendências
+- Indicadores de performance
+- Gráficos de produtividade
+
+## Integração com Outros Módulos
+
+### Tarefas
+
+- Utiliza tarefas cadastradas
+- Controla execução individual
+- Coleta métricas de performance
+
+### Colaboradores
+
+- Atribui responsáveis
+- Controla permissões
+- Monitora carga de trabalho
+
+### Equipamentos
+
+- Verifica disponibilidade
+- Agenda uso de recursos
+- Controla manutenções
+
+## Dicas e Boas Práticas
+
+- Projete fluxos simples e claros
+- Defina pontos de controle adequados
+- Configure alertas para situações críticas
+- Monitore regularmente os indicadores
+- Revise e otimize processos periodicamente 

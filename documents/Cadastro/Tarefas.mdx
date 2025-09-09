@@ -1,0 +1,140 @@
+---
+title: "Tarefas"
+description: "Gerenciamento de tarefas e atividades operacionais"
+---
+
+# Cadastro de Tarefas
+
+O cadastro de tarefas permite definir e gerenciar as diferentes atividades que podem ser executadas nos processos operacionais.
+
+## Visão Geral
+
+O módulo de tarefas facilita:
+
+- Padronização de processos
+- Controle de tempo de execução
+- Alocação de recursos
+- Monitoramento de produtividade
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Tarefas**
+
+## Funcionalidades
+
+### Criar Nova Tarefa
+
+Para criar uma nova tarefa:
+
+1. Clique no botão **"Nova Tarefa"**
+2. Preencha as informações básicas:
+   - **Código**: Código único da tarefa
+   - **Nome**: Nome da tarefa
+   - **Descrição**: Descrição detalhada
+   - **Categoria**: Categoria da tarefa
+3. Configure os parâmetros:
+   - **Tempo Estimado**: Duração esperada
+   - **Recursos Necessários**: Equipamentos/materiais
+   - **Pré-requisitos**: Tarefas dependentes
+4. Defina responsáveis e permissões
+5. Clique em **"Salvar"**
+
+### Configurar Dependências
+
+Para configurar dependências entre tarefas:
+
+1. Acesse a tarefa desejada
+2. Clique na aba **"Dependências"**
+3. Adicione tarefas pré-requisitas
+4. Configure o tipo de dependência
+
+### Definir Recursos
+
+Para definir recursos necessários:
+
+1. Acesse a aba **"Recursos"**
+2. Adicione equipamentos necessários
+3. Defina materiais/insumos
+4. Configure quantidade de pessoas
+
+## Campos do Formulário
+
+### Informações Básicas
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Código | Texto | Sim | Código único da tarefa |
+| Nome | Texto | Sim | Nome da tarefa |
+| Descrição | Texto longo | Não | Descrição detalhada |
+| Categoria | Seleção | Sim | Categoria da tarefa |
+| Prioridade | Seleção | Sim | Alta/Média/Baixa |
+| Status | Seleção | Sim | Ativo/Inativo |
+
+### Configurações
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Tempo Estimado | Tempo | Não | Duração estimada |
+| Tempo Máximo | Tempo | Não | Tempo máximo permitido |
+| Permite Pausa | Sim/Não | Sim | Se permite interrupção |
+| Requer Aprovação | Sim/Não | Sim | Se requer aprovação |
+
+### Recursos
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Equipamentos | Lista | Não | Equipamentos necessários |
+| Materiais | Lista | Não | Materiais necessários |
+| Pessoas | Número | Não | Quantidade de pessoas |
+| Competências | Lista | Não | Competências necessárias |
+
+## Tipos de Tarefas
+
+O sistema suporta diferentes tipos de tarefas:
+
+- **Operacional**: Tarefas do processo produtivo
+- **Manutenção**: Atividades de manutenção
+- **Inspeção**: Verificações e controles
+- **Limpeza**: Atividades de higienização
+- **Administrativa**: Tarefas administrativas
+
+## Estados da Tarefa
+
+As tarefas podem ter os seguintes estados:
+
+- **Pendente**: Aguardando início
+- **Em Andamento**: Sendo executada
+- **Pausada**: Temporariamente interrompida
+- **Concluída**: Finalizada com sucesso
+- **Cancelada**: Cancelada antes da conclusão
+- **Erro**: Finalizada com problemas
+
+## Relatórios
+
+### Relatório de Tarefas
+
+Gera relatórios com:
+
+- Lista de tarefas por categoria
+- Tempo médio de execução
+- Taxa de conclusão
+- Gargalos identificados
+
+### Indicadores
+
+O sistema calcula indicadores como:
+
+- Produtividade por tarefa
+- Tempo médio vs. estimado
+- Taxa de retrabalho
+- Eficiência por executor
+
+## Dicas e Boas Práticas
+
+- Defina tempos realistas baseados no histórico
+- Mantenha descrições claras e objetivas
+- Configure dependências corretamente
+- Monitore regularmente os indicadores
+- Atualize estimativas com base na experiência 

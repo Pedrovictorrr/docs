@@ -1,0 +1,272 @@
+---
+title: "Áreas"
+description: "Gerenciamento de áreas físicas e operacionais"
+---
+
+# Cadastro de Áreas
+
+O cadastro de áreas permite organizar e gerenciar os espaços físicos e operacionais da empresa, facilitando o controle de atividades e recursos por localização.
+
+## Visão Geral
+
+O módulo de áreas facilita:
+
+- Organização espacial da empresa
+- Controle de acesso por área
+- Alocação de recursos por localização
+- Monitoramento de atividades por espaço
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Áreas**
+
+## Funcionalidades
+
+### Criar Nova Área
+
+Para criar uma nova área:
+
+1. Clique no botão **"Nova Área"**
+2. Preencha as informações básicas:
+   - **Código**: Código único da área
+   - **Nome**: Nome da área
+   - **Descrição**: Descrição detalhada
+   - **Tipo**: Tipo de área
+3. Configure a localização:
+   - **Área Pai**: Área hierarquicamente superior
+   - **Endereço**: Localização física
+   - **Coordenadas**: GPS se necessário
+4. Defina características:
+   - **Capacidade**: Número de pessoas/equipamentos
+   - **Recursos Disponíveis**
+   - **Restrições de Acesso**
+5. Clique em **"Salvar"**
+
+### Configurar Hierarquia
+
+Para configurar hierarquia de áreas:
+
+1. Acesse a área desejada
+2. Configure a **"Área Pai"**
+3. Visualize a estrutura hierárquica
+4. Organize subáreas conforme necessário
+
+### Controle de Acesso
+
+Para configurar controle de acesso:
+
+1. Acesse a aba **"Permissões"**
+2. Defina grupos de usuários
+3. Configure níveis de acesso
+4. Estabeleça horários permitidos
+
+## Campos do Formulário
+
+### Informações Básicas
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Código | Texto | Sim | Código único da área |
+| Nome | Texto | Sim | Nome da área |
+| Descrição | Texto longo | Não | Descrição detalhada |
+| Tipo | Seleção | Sim | Tipo de área |
+| Área Pai | Seleção | Não | Área hierarquicamente superior |
+| Status | Seleção | Sim | Ativo/Inativo |
+
+### Localização
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Endereço | Texto | Não | Endereço físico |
+| CEP | Texto | Não | Código postal |
+| Latitude | Decimal | Não | Coordenada GPS |
+| Longitude | Decimal | Não | Coordenada GPS |
+| Andar | Texto | Não | Andar do prédio |
+| Bloco | Texto | Não | Bloco ou seção |
+
+### Características
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Capacidade Pessoas | Número | Não | Número máximo de pessoas |
+| Capacidade Equipamentos | Número | Não | Número máximo de equipamentos |
+| Área m² | Decimal | Não | Área em metros quadrados |
+| Altura | Decimal | Não | Altura em metros |
+| Clima Controlado | Sim/Não | Não | Se possui clima controlado |
+
+## Tipos de Áreas
+
+O sistema suporta diferentes tipos de áreas:
+
+### Áreas Produtivas
+
+- **Linha de Produção**: Áreas de fabricação
+- **Montagem**: Áreas de montagem
+- **Embalagem**: Áreas de embalagem
+- **Teste**: Áreas de testes e validação
+
+### Áreas de Apoio
+
+- **Almoxarifado**: Armazenagem de materiais
+- **Expedição**: Envio de produtos
+- **Recebimento**: Recepção de materiais
+- **Manutenção**: Oficinas e reparos
+
+### Áreas Administrativas
+
+- **Escritório**: Áreas administrativas
+- **Reunião**: Salas de reunião
+- **Treinamento**: Salas de capacitação
+- **Refeitório**: Áreas de alimentação
+
+### Áreas Especiais
+
+- **Laboratório**: Áreas de análise
+- **Limpeza**: Áreas de higienização
+- **Segurança**: Áreas de segurança
+- **Utilidades**: Áreas de serviços
+
+## Hierarquia de Áreas
+
+O sistema permite criar estrutura hierárquica:
+
+```
+Empresa
+├── Fábrica A
+│   ├── Prédio 1
+│   │   ├── Térreo
+│   │   │   ├── Produção A
+│   │   │   └── Produção B
+│   │   └── 1º Andar
+│   │       ├── Escritório
+│   │       └── Laboratório
+│   └── Prédio 2
+│       └── Almoxarifado
+└── Fábrica B
+    └── Área Externa
+```
+
+## Recursos por Área
+
+### Equipamentos
+
+- Lista de equipamentos instalados
+- Capacidade de processamento
+- Status operacional
+- Programação de uso
+
+### Pessoal
+
+- Colaboradores alocados
+- Competências necessárias
+- Turnos de trabalho
+- Responsáveis pela área
+
+### Materiais
+
+- Materiais armazenados
+- Capacidade de estoque
+- Controle de acesso
+- Movimentação de itens
+
+## Controle de Acesso
+
+### Níveis de Acesso
+
+- **Total**: Acesso completo à área
+- **Restrito**: Acesso com supervisão
+- **Proibido**: Sem acesso à área
+- **Emergência**: Acesso apenas em emergências
+
+### Configurações
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| Requer Autorização | Sim/Não | Se precisa de autorização |
+| Horário Permitido | Tempo | Horários de acesso |
+| EPI Obrigatório | Lista | EPIs necessários |
+| Treinamento Exigido | Lista | Treinamentos obrigatórios |
+
+## Relatórios
+
+### Relatório de Áreas
+
+Gera relatórios com:
+
+- Lista de todas as áreas
+- Hierarquia organizacional
+- Capacidade vs. utilização
+- Status operacional
+
+### Ocupação por Área
+
+Monitora:
+
+- Taxa de ocupação
+- Utilização de recursos
+- Movimentação de pessoas
+- Eficiência espacial
+
+### Controle de Acesso
+
+Acompanha:
+
+- Acessos por área
+- Violações de segurança
+- Histórico de permissões
+- Auditoria de entrada/saída
+
+## Integração com Outros Módulos
+
+### Colaboradores
+
+- Vincula colaboradores a áreas
+- Controla acesso por função
+- Monitora localização
+
+### Equipamentos
+
+- Aloca equipamentos por área
+- Controla movimentação
+- Programa manutenções
+
+### Atividades
+
+- Executa atividades por área
+- Controla fluxo entre áreas
+- Monitora produtividade
+
+### Segurança
+
+- Controla acesso físico
+- Monitora câmeras
+- Gera alertas de segurança
+
+## Indicadores
+
+### Utilização
+
+- Taxa de ocupação
+- Tempo de uso
+- Eficiência operacional
+- Produtividade por m²
+
+### Segurança
+
+- Incidentes por área
+- Cumprimento de EPIs
+- Treinamentos realizados
+- Auditorias de segurança
+
+## Dicas e Boas Práticas
+
+- Mantenha hierarquia clara e lógica
+- Use códigos padronizados para identificação
+- Configure capacidades realistas
+- Monitore regularmente a utilização
+- Mantenha informações de localização atualizadas
+- Implemente controles de segurança adequados
+- Faça manutenção preventiva dos espaços
+- Revise periodicamente as necessidades de cada área 

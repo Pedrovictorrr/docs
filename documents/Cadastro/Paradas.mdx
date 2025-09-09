@@ -1,0 +1,212 @@
+---
+title: "Paradas"
+description: "Gerenciamento de paradas e interrupções operacionais"
+---
+
+# Cadastro de Paradas
+
+O cadastro de paradas permite registrar e categorizar as diferentes tipos de interrupções que podem ocorrer nos processos operacionais.
+
+## Visão Geral
+
+O módulo de paradas facilita:
+
+- Classificação de interrupções
+- Análise de causas de paradas
+- Controle de tempo perdido
+- Identificação de melhorias
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Paradas**
+
+## Funcionalidades
+
+### Criar Novo Tipo de Parada
+
+Para criar um novo tipo de parada:
+
+1. Clique no botão **"Nova Parada"**
+2. Preencha as informações básicas:
+   - **Código**: Código único da parada
+   - **Nome**: Nome do tipo de parada
+   - **Descrição**: Descrição detalhada
+   - **Categoria**: Categoria da parada
+3. Configure os parâmetros:
+   - **Impacto**: Nivel de impacto na produção
+   - **Criticidade**: Urgência de resolução
+   - **Responsável**: Setor responsável
+4. Defina ações padrão
+5. Clique em **"Salvar"**
+
+### Configurar Ações Automáticas
+
+Para configurar ações automáticas:
+
+1. Acesse o tipo de parada
+2. Clique na aba **"Ações"**
+3. Configure notificações automáticas
+4. Defina procedimentos padrão
+
+### Análise de Impacto
+
+Para analisar o impacto:
+
+1. Acesse **"Análise de Paradas"**
+2. Visualize relatórios de frequência
+3. Identifique padrões
+4. Defina ações preventivas
+
+## Campos do Formulário
+
+### Informações Básicas
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Código | Texto | Sim | Código único da parada |
+| Nome | Texto | Sim | Nome do tipo de parada |
+| Descrição | Texto longo | Não | Descrição detalhada |
+| Categoria | Seleção | Sim | Categoria da parada |
+| Cor | Cor | Não | Cor para identificação visual |
+| Status | Seleção | Sim | Ativo/Inativo |
+
+### Configurações
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Impacto | Seleção | Sim | Alto/Médio/Baixo |
+| Criticidade | Seleção | Sim | Crítica/Normal/Baixa |
+| Setor Responsável | Seleção | Não | Setor responsável pela resolução |
+| Tempo Máximo | Tempo | Não | Tempo máximo aceitável |
+| Requer Justificativa | Sim/Não | Sim | Se requer justificativa |
+
+## Categorias de Paradas
+
+O sistema organiza paradas em categorias:
+
+### Paradas Planejadas
+
+- **Manutenção Preventiva**: Manutenções programadas
+- **Limpeza**: Higienização programada
+- **Setup**: Preparação de equipamentos
+- **Treinamento**: Capacitação de equipes
+
+### Paradas Não Planejadas
+
+- **Falha de Equipamento**: Quebras e defeitos
+- **Falta de Material**: Ausência de insumos
+- **Falta de Pessoal**: Ausência de operadores
+- **Problema de Qualidade**: Não conformidades
+
+### Paradas Externas
+
+- **Energia Elétrica**: Falta de energia
+- **Fornecedor**: Problemas com fornecedores
+- **Transporte**: Problemas logísticos
+- **Regulamentação**: Questões regulatórias
+
+## Níveis de Impacto
+
+### Alto Impacto
+
+- Para toda a produção
+- Afeta múltiplas linhas
+- Grandes perdas financeiras
+- Comprometimento de prazos
+
+### Médio Impacto
+
+- Para linha específica
+- Impacto localizado
+- Perdas moderadas
+- Atraso controlável
+
+### Baixo Impacto
+
+- Redução de velocidade
+- Impacto mínimo
+- Perdas pequenas
+- Sem atraso significativo
+
+## Relatórios
+
+### Relatório de Paradas
+
+Gera relatórios com:
+
+- Frequência por tipo de parada
+- Tempo total perdido
+- Custos associados
+- Tendências mensais
+
+### Análise de Pareto
+
+Identifica:
+
+- Principais causas de paradas
+- 80/20 dos problemas
+- Prioridades de ação
+- Oportunidades de melhoria
+
+### Dashboard de Paradas
+
+Visualização em tempo real:
+
+- Paradas ativas
+- Tempo de duração
+- Impacto na produção
+- Alertas de criticidade
+
+## Indicadores
+
+### OEE (Overall Equipment Effectiveness)
+
+- Disponibilidade
+- Performance
+- Qualidade
+- OEE geral
+
+### MTTR (Mean Time To Repair)
+
+- Tempo médio de reparo
+- Por tipo de equipamento
+- Por tipo de falha
+- Tendências históricas
+
+### MTBF (Mean Time Between Failures)
+
+- Tempo entre falhas
+- Confiabilidade de equipamentos
+- Planejamento de manutenção
+- Vida útil de componentes
+
+## Integração com Outros Módulos
+
+### Atividades
+
+- Registra paradas automáticas
+- Calcula impacto no cronograma
+- Atualiza status em tempo real
+
+### Equipamentos
+
+- Vincula paradas a equipamentos
+- Histórico de manutenção
+- Planejamento preventivo
+
+### Colaboradores
+
+- Notifica responsáveis
+- Registra ações tomadas
+- Controla permissões
+
+## Dicas e Boas Práticas
+
+- Mantenha classificações claras e consistentes
+- Configure alertas para paradas críticas
+- Analise regularmente os relatórios
+- Implemente ações preventivas
+- Treine equipes para registro correto
+- Use cores padronizadas para identificação visual 

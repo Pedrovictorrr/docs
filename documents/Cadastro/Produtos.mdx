@@ -1,0 +1,129 @@
+---
+title: "Produtos"
+description: "Gerenciamento de produtos e insumos"
+---
+
+# Cadastro de Produtos
+
+O cadastro de produtos gerencia todos os itens utilizados nos processos produtivos e operacionais da empresa.
+
+## Visão Geral
+
+O módulo de produtos permite:
+
+- Controle de estoque
+- Gestão de especificações técnicas
+- Controle de fornecedores
+- Rastreabilidade de lotes
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Produtos**
+
+## Funcionalidades
+
+### Cadastrar Novo Produto
+
+Para cadastrar um novo produto:
+
+1. Clique no botão **"Novo Produto"**
+2. Preencha as informações básicas:
+   - **Código**: Código único do produto
+   - **Nome**: Denominação do produto
+   - **Descrição**: Descrição detalhada
+   - **Categoria**: Categoria do produto
+   - **Unidade de Medida**: kg, litros, peças, etc.
+3. Configure as especificações:
+   - **Especificações Técnicas**
+   - **Peso/Volume**
+   - **Dimensões**
+4. Defina fornecedores e preços
+5. Clique em **"Salvar"**
+
+### Gerenciar Estoque
+
+Para controlar o estoque:
+
+1. Acesse o produto desejado
+2. Clique na aba **"Estoque"**
+3. Registre entradas e saídas
+4. Monitore níveis mínimos
+
+### Controle de Lotes
+
+Para produtos com controle de lote:
+
+1. Configure a opção **"Controle de Lote"**
+2. Registre informações do lote na entrada
+3. Acompanhe a rastreabilidade
+
+## Campos do Formulário
+
+### Informações Básicas
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Código | Texto | Sim | Código único do produto |
+| Nome | Texto | Sim | Nome do produto |
+| Descrição | Texto longo | Não | Descrição detalhada |
+| Categoria | Seleção | Sim | Categoria do produto |
+| Unidade | Seleção | Sim | Unidade de medida |
+| Status | Seleção | Sim | Ativo/Inativo |
+
+### Especificações
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Peso | Decimal | Não | Peso do produto |
+| Volume | Decimal | Não | Volume do produto |
+| Comprimento | Decimal | Não | Comprimento |
+| Largura | Decimal | Não | Largura |
+| Altura | Decimal | Não | Altura |
+
+### Controle de Estoque
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Estoque Mínimo | Decimal | Não | Quantidade mínima em estoque |
+| Estoque Máximo | Decimal | Não | Quantidade máxima em estoque |
+| Localização | Texto | Não | Local de armazenamento |
+| Controla Lote | Sim/Não | Sim | Se controla lote/validade |
+
+## Categorias de Produtos
+
+O sistema permite organizar produtos em categorias:
+
+- **Matéria-Prima**: Insumos básicos
+- **Insumos**: Materiais auxiliares
+- **Produtos Acabados**: Produtos finais
+- **Ferramentas**: Equipamentos e ferramentas
+- **EPI**: Equipamentos de proteção individual
+
+## Relatórios
+
+### Relatório de Produtos
+
+Gera relatórios com:
+
+- Lista de produtos por categoria
+- Controle de estoque
+- Produtos em falta
+- Movimentação de estoque
+
+### Alertas
+
+O sistema gera alertas para:
+
+- Estoque abaixo do mínimo
+- Produtos próximos ao vencimento
+- Produtos sem movimentação
+
+## Dicas e Boas Práticas
+
+- Use códigos padronizados para facilitar identificação
+- Mantenha descrições claras e completas
+- Configure corretamente os níveis de estoque
+- Faça inventários periódicos
+- Mantenha fornecedores atualizados 

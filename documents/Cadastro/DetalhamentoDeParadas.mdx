@@ -1,0 +1,252 @@
+---
+title: "Detalhamento De Paradas"
+description: "Registro detalhado de ocorrências de paradas operacionais"
+---
+
+# Detalhamento de Paradas
+
+O detalhamento de paradas permite registrar informações específicas sobre cada ocorrência de parada, incluindo causas, ações tomadas e resultados obtidos.
+
+## Visão Geral
+
+O módulo de detalhamento facilita:
+
+- Registro detalhado de ocorrências
+- Análise de causas raiz
+- Acompanhamento de soluções
+- Histórico de ações corretivas
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Detalhamento De Paradas**
+
+## Funcionalidades
+
+### Registrar Nova Ocorrência
+
+Para registrar uma nova ocorrência:
+
+1. Clique no botão **"Nova Ocorrência"**
+2. Selecione o tipo de parada cadastrado
+3. Preencha os detalhes:
+   - **Data/Hora de Início**
+   - **Data/Hora de Fim**
+   - **Equipamento/Área Afetada**
+   - **Operador Responsável**
+4. Descreva a situação:
+   - **Descrição da Ocorrência**
+   - **Causa Identificada**
+   - **Ações Tomadas**
+   - **Resultado Obtido**
+5. Anexe evidências se necessário
+6. Clique em **"Salvar"**
+
+### Análise de Causa Raiz
+
+Para realizar análise detalhada:
+
+1. Acesse a ocorrência
+2. Clique na aba **"Análise"**
+3. Use ferramentas como:
+   - **5 Porquês**
+   - **Diagrama de Ishikawa**
+   - **Árvore de Falhas**
+4. Documente conclusões
+
+### Plano de Ação
+
+Para criar plano de ação:
+
+1. Acesse a aba **"Ações"**
+2. Defina ações corretivas
+3. Configure responsáveis e prazos
+4. Monitore execução
+
+## Campos do Formulário
+
+### Informações da Ocorrência
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Tipo de Parada | Seleção | Sim | Tipo pré-cadastrado |
+| Data/Hora Início | Data/Hora | Sim | Momento de início da parada |
+| Data/Hora Fim | Data/Hora | Não | Momento de fim da parada |
+| Duração | Calculado | Auto | Duração total calculada |
+| Equipamento | Seleção | Não | Equipamento afetado |
+| Área | Seleção | Sim | Área onde ocorreu |
+| Turno | Seleção | Sim | Turno de trabalho |
+
+### Detalhes da Parada
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Descrição | Texto longo | Sim | Descrição detalhada |
+| Causa Imediata | Texto longo | Não | Causa aparente |
+| Causa Raiz | Texto longo | Não | Causa fundamental |
+| Ações Tomadas | Texto longo | Não | Ações realizadas |
+| Resultado | Texto longo | Não | Resultado das ações |
+| Observações | Texto longo | Não | Observações adicionais |
+
+### Responsáveis
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Operador | Seleção | Sim | Operador que identificou |
+| Técnico | Seleção | Não | Técnico que atendeu |
+| Supervisor | Seleção | Não | Supervisor responsável |
+| Registrado Por | Auto | Auto | Usuário que registrou |
+
+## Estados da Ocorrência
+
+### Em Andamento
+
+- Parada ainda não resolvida
+- Ações sendo executadas
+- Monitoramento ativo
+
+### Resolvida
+
+- Problema solucionado
+- Equipamento retomou operação
+- Ações concluídas
+
+### Pendente
+
+- Aguardando recursos
+- Aguardando aprovação
+- Aguardando peças/materiais
+
+### Cancelada
+
+- Falso alarme
+- Duplicação de registro
+- Cancelamento justificado
+
+## Análise de Causa Raiz
+
+### Método dos 5 Porquês
+
+1. **Por que ocorreu?** - Primeira causa
+2. **Por que essa causa?** - Segunda causa
+3. **Por que essa causa?** - Terceira causa
+4. **Por que essa causa?** - Quarta causa
+5. **Por que essa causa?** - Causa raiz
+
+### Diagrama de Ishikawa
+
+Análise por categorias:
+
+- **Máquina**: Problemas de equipamento
+- **Material**: Problemas de insumos
+- **Método**: Problemas de processo
+- **Mão de Obra**: Problemas humanos
+- **Meio Ambiente**: Problemas ambientais
+- **Medição**: Problemas de controle
+
+## Planos de Ação
+
+### Ações Corretivas
+
+- Corrigem o problema imediato
+- Restauram a operação normal
+- São de curto prazo
+
+### Ações Preventivas
+
+- Evitam recorrência
+- Atacam a causa raiz
+- São de médio/longo prazo
+
+### Campos do Plano de Ação
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Descrição da Ação | Texto | Sim | O que será feito |
+| Responsável | Seleção | Sim | Quem fará |
+| Prazo | Data | Sim | Quando deve ser concluído |
+| Status | Seleção | Sim | Pendente/Em Andamento/Concluída |
+| Resultado | Texto | Não | Resultado obtido |
+
+## Relatórios
+
+### Relatório de Ocorrências
+
+Gera relatórios com:
+
+- Lista de ocorrências por período
+- Tempo médio de resolução
+- Principais causas
+- Efetividade das ações
+
+### Análise de Tendências
+
+Identifica:
+
+- Padrões de ocorrência
+- Horários mais críticos
+- Equipamentos problemáticos
+- Causas recorrentes
+
+### Dashboard de Ocorrências
+
+Visualização em tempo real:
+
+- Ocorrências abertas
+- Tempo de resolução
+- Status dos planos de ação
+- Alertas de prazos
+
+## Anexos e Evidências
+
+### Tipos de Anexos
+
+- Fotos da situação
+- Vídeos explicativos
+- Documentos técnicos
+- Laudos de análise
+
+### Gerenciamento
+
+- Upload múltiplo de arquivos
+- Visualização integrada
+- Controle de versões
+- Comentários por anexo
+
+## Integração com Outros Módulos
+
+### Paradas
+
+- Utiliza tipos pré-cadastrados
+- Herda configurações
+- Aplica regras automáticas
+
+### Equipamentos
+
+- Vincula a equipamentos específicos
+- Histórico de manutenção
+- Alertas preventivos
+
+### Colaboradores
+
+- Notificações automáticas
+- Atribuição de responsabilidades
+- Controle de permissões
+
+### Ordens de Serviço
+
+- Gera OS automáticas
+- Acompanha execução
+- Registra custos
+
+## Dicas e Boas Práticas
+
+- Registre ocorrências imediatamente
+- Use linguagem clara e objetiva
+- Anexe evidências sempre que possível
+- Realize análise de causa raiz sistemática
+- Monitore cumprimento de prazos
+- Revise periodicamente padrões identificados
+- Treine equipes no método de análise
+- Mantenha histórico para aprendizado 

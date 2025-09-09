@@ -16,7 +16,36 @@
         "groups": [
           {
             "group": "Primeiros passos",
-            "pages": ["index", "quickstart"]
+            "pages": []
+          }
+        ]
+      },
+      {
+        "tab": "Cadastros",
+        "groups": [
+          {
+            "group": "Estrutura Organizacional",
+            "pages": [
+              "documents/Cadastro/Setor",
+              "documents/Cadastro/Equipes",
+              "documents/Cadastro/Colaboradores",
+              "documents/Cadastro/Areas"
+            ]
+          },
+          {
+            "group": "Operações",
+            "pages": [
+              "documents/Cadastro/Produtos",
+              "documents/Cadastro/Tarefas",
+              "documents/Cadastro/Atividades"
+            ]
+          },
+          {
+            "group": "Controle de Paradas",
+            "pages": [
+              "documents/Cadastro/Paradas",
+              "documents/Cadastro/DetalhamentoDeParadas"
+            ]
           }
         ]
       },
@@ -25,38 +54,19 @@
         "groups": [
           {
             "group": "Visão Geral",
-            "pages": ["documents/cte/overview"]
+            "pages": []
           },
           {
             "group": "Configuração",
-            "pages": [
-              "documents/cte/autenticacao",
-              "documents/cte/certificado",
-              "documents/cte/configuracao-modo"
-            ]
+            "pages": []
           },
           {
             "group": "Operações",
-            "pages": [
-              "documents/cte/consulta",
-              "documents/cte/enviar",
-              "documents/cte/TX2",
-              "documents/cte/enviar-cce",
-              "documents/cte/descartar",
-              "documents/cte/inutilizar"
-            ]
+            "pages": []
           },
           {
             "group": "Utilitários",
-            "pages": [
-              "documents/cte/importar",
-              "documents/cte/exportar-v2",
-              "documents/cte/converter-tx2-xml",
-              "documents/cte/obter-xml",
-              "documents/cte/imprimir",
-              "documents/cte/prever-dacte",
-              "documents/cte/resolver"
-            ]
+            "pages": []
           }
         ]
       },
@@ -65,9 +75,7 @@
         "groups": [
           {
             "group": "Operações",
-            "pages": [
-              "documents/NFSe/Emitir"
-            ]
+            "pages": []
           }
         ]
       }

@@ -1,0 +1,101 @@
+---
+title: "Setores"
+description: "Gerenciamento de setores da empresa"
+---
+
+# Cadastro de Setores
+
+O cadastro de setores permite organizar e gerenciar as diferentes áreas e departamentos da empresa.
+
+## Visão Geral
+
+O módulo de setores é fundamental para a estruturação organizacional, permitindo:
+
+- Organização hierárquica da empresa
+- Controle de acesso por setor
+- Relatórios segmentados
+- Gestão de responsabilidades
+
+## Como Acessar
+
+1. Acesse o menu principal
+2. Clique em **Cadastros**
+3. Selecione **Setores**
+
+## Funcionalidades
+
+### Criar Novo Setor
+
+Para criar um novo setor:
+
+1. Clique no botão **"Novo Setor"**
+2. Preencha os campos obrigatórios:
+   - **Nome**: Nome do setor
+   - **Código**: Código identificador único
+   - **Descrição**: Descrição detalhada do setor
+   - **Setor Pai**: Setor hierarquicamente superior (opcional)
+3. Configure as permissões e responsabilidades
+4. Clique em **"Salvar"**
+
+### Editar Setor
+
+Para editar um setor existente:
+
+1. Localize o setor na lista
+2. Clique no ícone de **edição**
+3. Modifique as informações necessárias
+4. Clique em **"Salvar"**
+
+### Excluir Setor
+
+Para excluir um setor:
+
+1. Localize o setor na lista
+2. Clique no ícone de **exclusão**
+3. Confirme a ação
+
+<Note>
+⚠️ **Atenção**: Não é possível excluir setores que possuem colaboradores vinculados.
+</Note>
+
+## Campos do Formulário
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| Nome | Texto | Sim | Nome do setor |
+| Código | Texto | Sim | Código único identificador |
+| Descrição | Texto longo | Não | Descrição detalhada |
+| Setor Pai | Seleção | Não | Setor hierarquicamente superior |
+| Status | Seleção | Sim | Ativo/Inativo |
+
+## Hierarquia de Setores
+
+O sistema permite criar uma estrutura hierárquica de setores, onde um setor pode ter subsetores. Isso facilita:
+
+- Organização por departamentos e subdepartamentos
+- Controle de acesso em cascata
+- Relatórios consolidados por hierarquia
+
+## Relatórios
+
+### Relatório de Setores
+
+Gera um relatório completo com todos os setores cadastrados, incluindo:
+
+- Lista de setores ativos/inativos
+- Hierarquia organizacional
+- Quantidade de colaboradores por setor
+
+### Exportação
+
+Os dados podem ser exportados em:
+- PDF
+- Excel
+- CSV
+
+## Dicas e Boas Práticas
+
+- Mantenha uma nomenclatura clara e consistente
+- Use códigos padronizados para facilitar identificação
+- Organize a hierarquia de forma lógica
+- Revise periodicamente a estrutura organizacional
