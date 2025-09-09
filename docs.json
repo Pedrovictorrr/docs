@@ -83,14 +83,6 @@
     "light": "/logo/logo2.png",
     "dark": "/logo/logo_dark.png"
   },
-  "navbar": {
-    "links": [],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.greenproductivity.com"
-    }
-  },
   "contextual": {
     "options": [
       "copy",

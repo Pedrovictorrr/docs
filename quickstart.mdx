@@ -1,352 +1,359 @@
 ---
 title: 'Primeiros Passos - Green Productivity'
-description: 'Configure seu sistema de gestão agrícola em poucos minutos e comece a organizar suas operações rurais'
+description: 'Aprenda a usar o sistema de gestão agrícola em poucos minutos e organize suas operações rurais'
 ---
 
 # Primeiros Passos - Green Productivity
 
-Configure seu sistema de gestão agrícola em poucos minutos e comece a organizar todas as operações da sua propriedade rural com máxima eficiência.
+Aprenda a usar o sistema Green Productivity em poucos minutos e comece a organizar todas as operações da sua propriedade rural com máxima eficiência.
 
-## Pré-requisitos
+## Acessando o Sistema
 
-### **Informações da Propriedade**
-- Dados básicos da propriedade rural
-- Localização e coordenadas
-- Área total e divisões (talhões)
-- Tipos de cultivo ou atividades
+### **Login no Sistema**
+1. Acesse [app.greenproductivity.com](https://app.greenproductivity.com)
+2. Digite seu e-mail e senha
+3. Clique em "Entrar"
 
-### **Recursos Humanos**
-- Lista de colaboradores
-- Estrutura organizacional
-- Setores e equipes
-- Funções e especialidades
+### **Primeiro Acesso**
+Se é seu primeiro acesso:
+1. Use as credenciais fornecidas pelo administrador
+2. Você será solicitado a alterar sua senha
+3. Complete seu perfil com informações pessoais
 
-### **Ambiente de Trabalho**
-- Acesso à internet
-- Dispositivo móvel ou computador
-- Navegador web atualizado
-- Conhecimento básico de sistemas
+## Passo 1: Configurando sua Propriedade
 
-## Passo 1: Configuração Inicial da Propriedade
+### **1.1 Cadastrando Áreas**
 
-### **1.1 Cadastro de Áreas**
+No menu lateral, acesse **Cadastros > Áreas**:
 
-Comece cadastrando as áreas da sua propriedade:
+1. Clique no botão **"Nova Área"**
+2. Preencha as informações básicas:
+   - **Nome da área**: Ex: "Talhão 01"
+   - **Tamanho**: Área em hectares
+   - **Localização**: Use o mapa para marcar a posição
+   - **Tipo de cultura**: Selecione a cultura principal
 
-**Informações Necessárias:**
-- Nome da propriedade
-- Área total (hectares)
-- Localização (coordenadas GPS)
-- Divisões e talhões
+3. Defina características do solo:
+   - **Tipo de solo**: Escolha da lista
+   - **pH**: Se conhecido
+   - **Fertilidade**: Alta, Média ou Baixa
 
-**Exemplo de Cadastro:**
-```json
-{
-  "nome": "Fazenda Santa Maria",
-  "area_total": 500.5,
-  "localizacao": {
-    "latitude": -15.7942,
-    "longitude": -47.8822
-  },
-  "talhoes": [
-    {
-      "nome": "Talhão 01",
-      "area": 25.5,
-      "cultura": "Soja"
-    },
-    {
-      "nome": "Talhão 02", 
-      "area": 30.0,
-      "cultura": "Milho"
-    }
-  ]
-}
-```
+4. Clique em **"Salvar"** para confirmar
 
-### **1.2 Definição de Setores**
+### **1.2 Organizando Setores**
 
-Organize sua propriedade em setores:
+Acesse **Cadastros > Setores**:
 
-**Setores Típicos:**
-- Cultivo de Grãos
-- Pecuária
-- Manutenção
-- Administrativo
-- Armazenagem
+1. Crie setores para organizar sua propriedade:
+   - **Cultivo de Grãos**
+   - **Pecuária**  
+   - **Manutenção**
+   - **Administrativo**
 
-## Passo 2: Gestão de Recursos Humanos
+2. Para cada setor, defina:
+   - Nome do responsável
+   - Descrição das atividades
+   - Áreas vinculadas
 
-### **2.1 Cadastro de Colaboradores**
+## Passo 2: Cadastrando sua Equipe
 
-Registre todos os funcionários:
+### **2.1 Adicionando Colaboradores**
 
-**Dados Necessários:**
-- Nome completo
-- Função/cargo
-- Setor de trabalho
-- Contato
-- Especialidades
+No menu **Cadastros > Colaboradores**:
 
-**Exemplo:**
-```json
-{
-  "nome": "João Silva",
-  "funcao": "Operador de Máquinas",
-  "setor": "Cultivo de Grãos",
-  "telefone": "(61) 99999-9999",
-  "especialidades": ["Plantio", "Colheita", "Pulverização"]
-}
-```
+1. Clique em **"Novo Colaborador"**
+2. Preencha os dados pessoais:
+   - Nome completo
+   - CPF
+   - Telefone
+   - E-mail (opcional)
 
-### **2.2 Formação de Equipes**
+3. Defina informações profissionais:
+   - **Função**: Ex: Operador de Máquinas
+   - **Setor**: Escolha o setor de trabalho
+   - **Especialidades**: Marque as habilidades
+   - **Salário**: Se aplicável
 
-Organize equipes de trabalho:
+### **2.2 Formando Equipes**
 
-**Estrutura de Equipe:**
-- Nome da equipe
-- Líder responsável
-- Membros da equipe
-- Área de atuação
-- Atividades principais
+Acesse **Cadastros > Equipes**:
 
-## Passo 3: Cadastro de Produtos e Insumos
+1. Crie equipes de trabalho:
+   - **Nome da equipe**: Ex: "Equipe Plantio"
+   - **Líder**: Selecione o responsável
+   - **Membros**: Adicione os colaboradores
 
-### **3.1 Produtos Agrícolas**
+2. Defina áreas de atuação:
+   - Marque quais áreas a equipe pode trabalhar
+   - Configure horários de trabalho
+   - Estabeleça metas de produtividade
 
-Registre os produtos da sua propriedade:
+## Passo 3: Cadastrando Produtos e Insumos
 
-**Tipos de Produtos:**
-- Sementes e mudas
-- Fertilizantes e adubos
-- Defensivos agrícolas
-- Combustíveis
-- Equipamentos
+### **3.1 Registrando Produtos**
 
-**Exemplo de Cadastro:**
-```json
-{
-  "nome": "Semente de Soja BRS 123",
-  "categoria": "Semente",
-  "unidade": "kg",
-  "fornecedor": "Empresa ABC",
-  "preco_unitario": 8.50,
-  "estoque_minimo": 100
-}
-```
+No menu **Cadastros > Produtos**:
 
-### **3.2 Controle de Estoque**
+1. Adicione todos os insumos da fazenda:
+   - **Sementes**: Variedades utilizadas
+   - **Fertilizantes**: NPK, calcário, etc.
+   - **Defensivos**: Herbicidas, fungicidas, inseticidas
+   - **Combustíveis**: Diesel, gasolina
+   - **Outros**: Óleo, peças, etc.
 
-Configure níveis de estoque:
-- Estoque mínimo
-- Estoque máximo
-- Ponto de reposição
-- Alertas automáticos
+2. Para cada produto, configure:
+   - **Estoque mínimo**: Alerta quando estiver baixo
+   - **Unidade**: kg, litros, unidades
+   - **Fornecedor**: Principal fornecedor
+   - **Preço**: Para controle de custos
 
-## Passo 4: Planejamento de Atividades
+### **3.2 Controlando Estoque**
 
-### **4.1 Criação de Tarefas**
+Use a tela **Estoque** para:
+- Monitorar quantidades disponíveis
+- Receber alertas de estoque baixo
+- Registrar entradas e saídas
+- Gerar relatórios de consumo
 
-Defina as atividades da propriedade:
+## Passo 4: Planejando Atividades
 
-**Tipos de Tarefas:**
-- Preparo do solo
-- Plantio
-- Aplicação de defensivos
-- Irrigação
-- Colheita
+### **4.1 Criando Tarefas**
 
-**Exemplo de Tarefa:**
-```json
-{
-  "nome": "Plantio Soja - Talhão 01",
-  "descricao": "Plantio de soja no talhão 01",
-  "area": "Talhão 01",
-  "data_prevista": "2024-10-15",
-  "equipe_responsavel": "Equipe Plantio",
-  "duracao_estimada": "2 dias",
-  "recursos_necessarios": [
-    "Semente de Soja BRS 123",
-    "Trator John Deere",
-    "Plantadeira"
-  ]
-}
-```
+Acesse **Cadastros > Tarefas**:
 
-### **4.2 Cronograma Agrícola**
+1. Defina as atividades da safra:
+   - **Preparo do solo**: Aração, gradagem
+   - **Plantio**: Por área e cultura
+   - **Aplicações**: Defensivos e fertilizantes
+   - **Irrigação**: Se aplicável
+   - **Colheita**: Programação da colheita
 
-Estabeleça cronogramas sazonais:
+2. Para cada tarefa, estabeleça:
+   - **Área onde será executada**
+   - **Equipe responsável**
+   - **Data prevista**
+   - **Recursos necessários**
+   - **Tempo estimado**
 
-**Cronograma Típico:**
-1. **Preparo** (Setembro-Outubro)
-2. **Plantio** (Outubro-Novembro)
-3. **Manejo** (Dezembro-Janeiro)
-4. **Colheita** (Fevereiro-Março)
+### **4.2 Cronograma da Safra**
 
-## Passo 5: Execução e Monitoramento
+Use o **Calendário Agrícola**:
 
-### **5.1 Início de Atividades**
+1. Visualize todas as atividades programadas
+2. Identifique conflitos de recursos
+3. Ajuste datas conforme necessário
+4. Acompanhe o progresso das atividades
 
-Execute as tarefas planejadas:
+## Passo 5: Executando e Acompanhando
 
-**Fluxo de Execução:**
-1. Selecionar tarefa
-2. Alocar equipe
-3. Verificar recursos
-4. Iniciar atividade
-5. Acompanhar progresso
+### **5.1 Iniciando Atividades**
 
-### **5.2 Acompanhamento em Tempo Real**
+Na tela **Trabalhos > Atividades**:
 
-Monitore o andamento:
+1. Selecione a tarefa a ser executada
+2. Confirme a equipe designada
+3. Verifique disponibilidade de recursos
+4. Clique em **"Iniciar Atividade"**
+5. O sistema começará a cronometrar
 
-**Indicadores de Acompanhamento:**
-- Percentual de conclusão
-- Tempo decorrido vs. estimado
-- Recursos utilizados
-- Qualidade da execução
+### **5.2 Acompanhando Progresso**
 
-## Passo 6: Controle de Paradas
+Durante a execução:
+- Acompanhe o tempo decorrido
+- Registre observações importantes
+- Tire fotos do andamento (se disponível)
+- Marque o percentual de conclusão
 
-### **6.1 Registro de Paradas**
+### **5.3 Finalizando Atividades**
 
-Documente interrupções:
+Ao concluir:
+1. Clique em **"Finalizar Atividade"**
+2. Registre consumo real de insumos
+3. Anote observações finais
+4. Avalie a qualidade do trabalho
 
-**Tipos de Paradas:**
-- Manutenção preventiva
-- Quebra de equipamento
-- Condições climáticas
-- Falta de insumos
+## Passo 6: Gerenciando Paradas
 
-**Exemplo de Parada:**
-```json
-{
-  "tipo": "Manutenção",
-  "equipamento": "Trator John Deere 123",
-  "motivo": "Manutenção preventiva",
-  "inicio": "2024-01-15T08:00:00",
-  "fim": "2024-01-15T16:00:00",
-  "impacto": "Atraso de 1 dia no plantio"
-}
-```
+### **6.1 Registrando Paradas**
 
-### **6.2 Análise de Impactos**
+Quando houver interrupções, acesse **Cadastros > Paradas**:
 
-Avalie o impacto das paradas:
-- Tempo perdido
-- Custo adicional
-- Atraso no cronograma
-- Medidas preventivas
+1. Tipos de parada mais comuns:
+   - **Manutenção preventiva**
+   - **Quebra de equipamento**
+   - **Condições climáticas**
+   - **Falta de insumos**
+   - **Pausa para refeição**
+
+2. Para cada parada, registre:
+   - **Hora de início e fim**
+   - **Motivo detalhado**
+   - **Equipamento envolvido**
+   - **Impacto na atividade**
+
+### **6.2 Analisando Impactos**
+
+Use os relatórios de parada para:
+- Identificar gargalos operacionais
+- Planejar manutenções preventivas
+- Otimizar uso de recursos
+- Reduzir tempo de parada
 
 ## Passo 7: Relatórios e Análises
 
-### **7.1 Relatórios de Produtividade**
+### **7.1 Dashboard Principal**
 
-Gere relatórios periódicos:
+Acesse **Dashboard** para visão geral:
+- **Atividades em andamento**
+- **Equipamentos em uso**
+- **Alertas importantes**
+- **Clima do dia**
+- **Produtividade do período**
 
-**Relatórios Disponíveis:**
-- Produtividade por área
-- Performance de equipes
+### **7.2 Relatórios Detalhados**
+
+No menu **Relatórios**, encontre:
+
+**Relatórios de Produtividade:**
+- Produção por área (kg/ha)
+- Eficiência de equipes
 - Consumo de insumos
-- Custos operacionais
+- Custos por hectare
 
-### **7.2 Indicadores de Performance**
+**Relatórios Operacionais:**
+- Horas trabalhadas
+- Tempo de equipamentos
+- Histórico de paradas
+- Performance de colaboradores
 
-Acompanhe métricas importantes:
+**Relatórios Financeiros:**
+- Custos por atividade
+- Gastos com insumos
+- ROI por área
+- Projeções de lucro
 
-**KPIs Agrícolas:**
-- Produtividade (kg/ha)
-- Eficiência de equipes (%)
-- Consumo de combustível (L/ha)
-- Tempo médio de atividades
+## Passo 8: Configurações do Sistema
 
-## Passo 8: Configurações Avançadas
+### **8.1 Alertas Automáticos**
 
-### **8.1 Alertas e Notificações**
+Configure alertas em **Configurações > Notificações**:
+- **Estoque baixo**: Quando produtos estão acabando
+- **Atividades atrasadas**: Tarefas fora do prazo
+- **Manutenção pendente**: Equipamentos precisando revisão
+- **Condições climáticas**: Alertas meteorológicos
 
-Configure alertas automáticos:
+### **8.2 Personalização**
 
-**Tipos de Alertas:**
-- Estoque baixo
-- Atividade atrasada
-- Equipamento em manutenção
-- Condições climáticas
+Ajuste o sistema às suas necessidades:
+- **Unidades de medida**: Hectares, alqueires, etc.
+- **Moeda**: Real, dólar, etc.
+- **Idioma**: Português, inglês, espanhol
+- **Fuso horário**: Conforme sua região
 
-### **8.2 Integração com Equipamentos**
+## Dicas para Máxima Eficiência
 
-Conecte equipamentos IoT:
+### **✅ Boas Práticas**
 
-**Dispositivos Compatíveis:**
-- Sensores de umidade
-- Estações meteorológicas
-- GPS de tratores
-- Monitores de plantio
+1. **Mantenha dados atualizados**:
+   - Registre atividades em tempo real
+   - Atualize estoques regularmente
+   - Confirme presenças diariamente
+
+2. **Use o aplicativo móvel**:
+   - Registre atividades no campo
+   - Tire fotos das operações
+   - Acesse mapas offline
+
+3. **Estabeleça rotinas**:
+   - Revise o planejamento semanalmente
+   - Analise relatórios mensalmente
+   - Faça backup dos dados
+
+4. **Treine sua equipe**:
+   - Todos devem saber usar o básico
+   - Defina responsáveis por cada módulo
+   - Promova treinamentos regulares
+
+### **⚠️ Cuidados Importantes**
+
+- **Internet**: Algumas funções precisam de conexão
+- **Backup**: Dados são salvos automaticamente na nuvem
+- **Permissões**: Cada usuário vê apenas suas funções
+- **Suporte**: Use o chat do sistema para dúvidas
 
 ## Próximos Passos
 
 <CardGroup cols={2}>
   <Card
-    title="Cadastro de Áreas"
-    href="/documents/Cadastro/Areas"
-    icon="map"
+    title="Vídeo Tutorial"
+    href="/tutorials/video-basico"
+    icon="play"
   >
-    Configure suas propriedades e talhões
+    Assista ao tutorial completo em vídeo
   </Card>
   <Card
-    title="Gestão de Equipes"
-    href="/documents/Cadastro/Equipes"
+    title="Guia de Cadastros"
+    href="/documents/Cadastro/Areas"
+    icon="book"
+  >
+    Aprenda todos os cadastros em detalhes
+  </Card>
+  <Card
+    title="Suporte Online"
+    href="mailto:suporte@greenproductivity.com"
+    icon="headphones"
+  >
+    Fale com nossa equipe de suporte
+  </Card>
+  <Card
+    title="Treinamento Presencial"
+    href="/contato/treinamento"
     icon="users"
   >
-    Organize seus colaboradores
-  </Card>
-  <Card
-    title="Controle de Produtos"
-    href="/documents/Cadastro/Produtos"
-    icon="package"
-  >
-    Cadastre insumos e equipamentos
-  </Card>
-  <Card
-    title="Planejamento de Tarefas"
-    href="/documents/Cadastro/Tarefas"
-    icon="calendar"
-  >
-    Crie cronogramas de atividades
+    Agende treinamento na sua fazenda
   </Card>
 </CardGroup>
 
-## Solução de Problemas
+## Solução de Problemas Comuns
 
-### **Problemas Comuns**
+### **🔧 Problemas Técnicos**
 
-**Erro ao Cadastrar Área**
-- Verifique coordenadas GPS
-- Confirme área em hectares
-- Valide nome único para talhões
+**Sistema lento ou travando:**
+- Verifique sua conexão de internet
+- Feche outras abas do navegador
+- Limpe cache e cookies
+- Reinicie o navegador
 
-**Equipe Não Encontrada**
-- Verifique cadastro de colaboradores
-- Confirme vinculação ao setor
-- Valide permissões de acesso
+**Não consigo fazer login:**
+- Verifique e-mail e senha
+- Use "Esqueci minha senha" se necessário
+- Contate o administrador do sistema
 
-**Tarefa Não Iniciada**
-- Confirme disponibilidade da equipe
-- Verifique recursos necessários
-- Valide cronograma estabelecido
+**Dados não aparecem:**
+- Aguarde alguns segundos para carregar
+- Atualize a página (F5)
+- Verifique suas permissões de acesso
 
-### **Dicas de Otimização**
+### **📱 Aplicativo Móvel**
 
-- Mantenha cadastros sempre atualizados
-- Use coordenadas GPS precisas
-- Estabeleça cronogramas realistas
-- Monitore regularmente os indicadores
+**Download do App:**
+- Android: Google Play Store
+- iOS: App Store
+- Busque por "Green Productivity"
 
-## Recursos Adicionais
+**Sincronização:**
+- App sincroniza automaticamente
+- Alguns dados funcionam offline
+- Sincronize ao voltar à internet
 
-- **Documentação Completa**: [docs.greenproductivity.com](https://docs.greenproductivity.com)
-- **Suporte Técnico**: suporte@greenproductivity.com
-- **Treinamentos**: [treinamento.greenproductivity.com](https://treinamento.greenproductivity.com)
-- **Dashboard**: [app.greenproductivity.com](https://app.greenproductivity.com)
+## Recursos de Ajuda
+
+- **Central de Ajuda**: [help.greenproductivity.com](https://help.greenproductivity.com)
+- **Vídeos Tutoriais**: [youtube.com/greenproductivity](https://youtube.com/greenproductivity)
+- **Suporte por Chat**: Disponível no sistema
+- **Telefone**: 0800-123-4567
+- **E-mail**: suporte@greenproductivity.com
 
 ---
 
-🌱 **Parabéns!** Você configurou com sucesso seu sistema de gestão agrícola. Agora pode gerenciar todas as operações da sua propriedade de forma eficiente e sustentável.
+🌱 **Parabéns!** Você está pronto para usar o Green Productivity e transformar a gestão da sua propriedade rural. Comece devagar e vá explorando as funcionalidades conforme sua necessidade.
