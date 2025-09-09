@@ -55,6 +55,12 @@
         "tab": "Dashboard",
         "groups": [
           {
+            "group": "Visão Geral",
+            "pages": [
+              "documents/Dashboard/index"
+            ]
+          },
+          {
             "group": "Relatórios",
             "pages": []
           },
@@ -65,8 +71,36 @@
         ]
       },
       {
+        "tab": "Leitores",
+        "groups": [
+          {
+            "group": "Sistema de Leitura",
+            "pages": [
+              "documents/Leitores/index"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Relatórios",
+        "groups": [
+          {
+            "group": "Geração de Relatórios",
+            "pages": [
+              "documents/Relatorios/index"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Trabalhos",
         "groups": [
+          {
+            "group": "Visão Geral",
+            "pages": [
+              "documents/Trabalhos/index"
+            ]
+          },
           {
             "group": "Planejamento",
             "pages": []
