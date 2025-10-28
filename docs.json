@@ -5,8 +5,8 @@
   "description": "Guia completo para moradores, síndicos e administradores do sistema Hades",
   "colors": {
     "primary": "#144B4B",
-    "light": "#818CF8",
-    "dark": "#4F46E5"
+    "light": "#144B4B",
+    "dark": "#144B4B"
   },
   "favicon": "/favicon.svg",
   "navigation": {
