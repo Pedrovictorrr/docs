@@ -1,310 +1,164 @@
 ---
-title: 'Manager SaaS API - CT-e'
-description: 'API completa para emissão de Conhecimento de Transporte Eletrônico (CT-e) no Brasil'
+title: 'Bem-vindo ao Hades Condomínios'
+description: 'Sistema completo de gestão de condomínios - Simples, moderno e eficiente'
 ---
 
-# Manager SaaS API - CT-e
+# Bem-vindo ao Hades Condomínios
 
-O **Manager SaaS** é uma solução completa em nuvem para gerenciar e executar todos os processos de emissão de **Conhecimento de Transporte Eletrônico (CT-e)** no Brasil.
+O **Hades** é um sistema completo de gestão de condomínios desenvolvido para facilitar a vida de moradores, síndicos, porteiros e administradores.
 
-## O que é o Manager SaaS CT-e?
-
-O Manager SaaS CT-e é uma API robusta que automatiza todo o processo de emissão de CT-e, desde a geração do XML até a impressão do DACTE (Documento Auxiliar do Conhecimento de Transporte Eletrônico). Nossa solução elimina a complexidade de implementar e manter sistemas fiscais para transporte, permitindo que você foque no seu negócio.
-
-## Tipos de CT-e Suportados
+## Para quem é o Hades?
 
 <CardGroup cols={2}>
   <Card
-    title="CT-e Normal"
-    icon="file-text"
+    title="Moradores"
+    icon="house-user"
+    href="/moradores/avisos"
   >
-    Para transportes de cargas entre diferentes estabelecimentos, documentando o transporte de mercadorias
+    Acompanhe avisos, reserve áreas comuns, receba encomendas e muito mais
   </Card>
   <Card
-    title="CT-e OS (Outros Serviços)"
-    href="/documents/cte/os-emission"
-    icon="clipboard-list"
+    title="Síndicos"
+    icon="user-tie"
+    href="/sindicos/dashboard"
   >
-    Para prestação de serviços de transporte diversos como armazenagem e logística
+    Gerencie seu condomínio com facilidade, crie avisos, controle reservas e finanças
   </Card>
   <Card
-    title="CT-e Complementar"
-    icon="plus-circle"
+    title="Porteiros"
+    icon="shield-halved"
+    href="/porteiros/registrar-visitantes"
   >
-    Para complementar informações de CT-e já emitido, adicionando dados não incluídos no original
+    Controle de acesso, registro de visitantes e encomendas de forma rápida
   </Card>
   <Card
-    title="CT-e Substituição"
-    icon="refresh-cw"
+    title="Administradores"
+    icon="building"
+    href="/sindicos/dashboard"
   >
-    Para substituir CT-e anterior em caso de correções ou alterações necessárias
+    Gerencie múltiplos condomínios e tenha visão completa de tudo
   </Card>
 </CardGroup>
 
 ## Funcionalidades Principais
 
-<CardGroup cols={2}>
-  <Card
-    title="Emissão"
-    href="/documents/cte/enviar"
-    icon="file-plus"
-  >
-    Emissão completa de CT-e com validação automática e transmissão para SEFAZ
-  </Card>
-  <Card
-    title="Ordem de Serviço"
-    href="/documents/cte/os-emission"
-    icon="clipboard-list"
-  >
-    Emissão de CT-e de Ordem de Serviço para prestadores de serviços de transporte
-  </Card>
-  <Card
-    title="Consulta e Status"
-    href="/documents/cte/consulta"
-    icon="search"
-  >
-    Consulta de status e informações detalhadas de CT-e emitidos
-  </Card>
-  <Card
-    title="Cancelamento"
-    href="/documents/cte/inutilizar"
-    icon="x-circle"
-  >
-    Cancelamento e inutilização de CT-e conforme legislação vigente
-  </Card>
-  <Card
-    title="Carta de Correção"
-    href="/documents/cte/enviar-cce"
-    icon="edit-3"
-  >
-    Envio de Carta de Correção Eletrônica para correções permitidas
-  </Card>
-  <Card
-    title="Descarte"
-    href="/documents/cte/descartar"
-    icon="trash-2"
-  >
-    Descarte de CT-e com justificativa e controle de auditoria
-  </Card>
-</CardGroup>
-
-## Utilitários e Ferramentas
-
-<CardGroup cols={2}>
-  <Card
-    title="Importação/Exportação"
-    href="/documents/cte/importar"
-    icon="download"
-  >
-    Importe e exporte CT-e em diversos formatos para integração com sistemas
-  </Card>
-  <Card
-    title="Conversão TX2"
-    href="/documents/cte/converter-tx2-xml"
-    icon="refresh-cw"
-  >
-    Converta arquivos TX2 para XML conforme especificações da SEFAZ
-  </Card>
-  <Card
-    title="Prévia DACTE"
-    href="/documents/cte/prever-dacte"
-    icon="eye"
-  >
-    Visualize o DACTE antes da emissão para validação
-  </Card>
-  <Card
-    title="Impressão"
-    href="/documents/cte/imprimir"
-    icon="printer"
-  >
-    Impressão de DACTE e outros documentos relacionados
-  </Card>
-  <Card
-    title="Obter XML"
-    href="/documents/cte/obter-xml"
-    icon="code"
-  >
-    Download dos arquivos XML originais da SEFAZ
-  </Card>
-  <Card
-    title="Resolver Pendências"
-    href="/documents/cte/resolver"
-    icon="check-circle"
-  >
-    Resolução automática de pendências e problemas de processamento
-  </Card>
-</CardGroup>
-
-## Configuração e Autenticação
-
-<CardGroup cols={2}>
-  <Card
-    title="Autenticação"
-    href="/documents/cte/autenticacao"
-    icon="key"
-  >
-    Configuração de autenticação por API Key para acesso seguro à API
-  </Card>
-  <Card
-    title="Configurações"
-    href="/documents/cte/configuracao-modo"
-    icon="settings"
-  >
-    Configurações avançadas para personalizar o comportamento do sistema
-  </Card>
-  <Card
-    title="Certificados"
-    href="/documents/cte/certificado"
-    icon="shield"
-  >
-    Gerenciamento de certificados digitais para assinatura eletrônica
-  </Card>
-  <Card
-    title="Exportar V2"
-    href="/documents/cte/exportar-v2"
-    icon="upload"
-  >
-    Sistema avançado de exportação de dados e relatórios
-  </Card>
-</CardGroup>
-
-## Como Funciona
-
-### 1. **API REST**
-Comunique-se diretamente com nossa API através de requisições HTTPS para emissão, cancelamento e consulta de CT-e.
-
-### 2. **Monitorador de Pastas**
-Alternativamente, utilize nosso sistema de monitoramento de pastas para troca de arquivos, ideal para integrações batch de transporte.
-
-### 3. **Processamento Automático**
-Forneça os parâmetros necessários e o Manager SaaS cuida de todo o processo:
-- Validação dos dados de transporte
-- Geração do XML conforme especificações da SEFAZ
-- Transmissão para a SEFAZ
-- Processamento da resposta
-- Geração do DACTE
-
-## Estrutura do CT-e
-
-### **Cabeçalho**
-- Dados do emitente (transportadora)
-- Dados do tomador (contratante)
-- Informações do documento
-- Dados fiscais
-
-### **Dados de Transporte**
-- Origem e destino
-- Tipo de veículo
-- Dados do motorista
-- Rota de transporte
-
-### **Carga**
-- Descrição das mercadorias
-- Peso e volume
-- Valor da carga
-- Impostos incidentes
-
-### **Serviços**
-- Valor do frete
-- Despesas acessórias
-- Seguro de transporte
-- Condições de pagamento
-
-## Vantagens para Transporte
-
 <CardGroup cols={3}>
   <Card
-    title="Simplicidade"
-    icon="zap"
+    title="Avisos"
+    icon="bullhorn"
+    href="/funcionalidades/avisos"
   >
-    API intuitiva e bem documentada para rápida integração com sistemas de transporte
+    Comunicação eficiente com todos os moradores
   </Card>
   <Card
-    title="Confiabilidade"
-    icon="shield-check"
+    title="Reservas"
+    icon="calendar-check"
+    href="/funcionalidades/reservas"
   >
-    Infraestrutura robusta com 99.9% de disponibilidade para operações críticas
+    Gestão de áreas comuns (churrasqueira, salão, piscina, etc)
   </Card>
   <Card
-    title="Conformidade"
-    icon="check-circle"
+    title="Encomendas"
+    icon="box"
+    href="/funcionalidades/encomendas"
   >
-    Sempre atualizado com as últimas legislações fiscais de transporte
+    Controle completo de encomendas na portaria
+  </Card>
+  <Card
+    title="Visitantes"
+    icon="user-plus"
+    href="/funcionalidades/visitantes"
+  >
+    Controle de acesso e registro de visitantes
+  </Card>
+  <Card
+    title="Documentos"
+    icon="file-pdf"
+    href="/funcionalidades/documentos"
+  >
+    Armazene e compartilhe documentos importantes
+  </Card>
+  <Card
+    title="Enquetes"
+    icon="chart-simple"
+    href="/funcionalidades/enquetes"
+  >
+    Tome decisões coletivas de forma democrática
   </Card>
 </CardGroup>
 
-## Casos de Uso
+## Acesse de Qualquer Lugar
 
 <CardGroup cols={2}>
   <Card
-    title="Transportadoras"
-    icon="truck"
+    title="Sistema Web"
+    icon="desktop"
+    href="https://hadescondo.com.br"
   >
-    Emissão em massa de CT-e para operações de frete e transporte de cargas
+    Acesse pelo navegador no computador ou tablet
   </Card>
   <Card
-    title="E-commerce"
-    icon="shopping-cart"
+    title="Aplicativo Mobile"
+    icon="mobile-screen"
+    href="/primeiros-passos/aplicativo-mobile"
   >
-    Integração automática para emissão de CT-e em vendas online
-  </Card>
-  <Card
-    title="ERP/Logística"
-    icon="database"
-  >
-    Sistema integrado para gestão completa de documentos de transporte
-  </Card>
-  <Card
-    title="Prestadores de Serviço"
-    icon="users"
-  >
-    Emissão de CT-e para serviços de transporte e logística
+    Aplicativo para iOS e Android
   </Card>
 </CardGroup>
 
-## Status do Documento
-
-### **Fluxo de Status**
-1. **PENDENTE**: Documento recebido
-2. **PROCESSANDO**: Em processamento
-3. **AUTORIZADO**: Documento aprovado
-4. **REJEITADO**: Documento rejeitado
-5. **CANCELADO**: Documento cancelado
-
-### **Consultas**
-- Status em tempo real
-- Histórico de alterações
-- Logs de processamento
-- Arquivos XML e PDF
-
 ## Comece Agora
+
+<Steps>
+  <Step title="Acesse o Sistema">
+    Entre em [hadescondo.com.br](https://hadescondo.com.br) ou baixe o aplicativo
+  </Step>
+  <Step title="Faça Login">
+    Use o email e senha fornecidos pelo seu síndico ou administrador
+  </Step>
+  <Step title="Explore">
+    Navegue pelas funcionalidades e descubra tudo que o Hades pode fazer por você
+  </Step>
+</Steps>
+
+## Precisa de Ajuda?
 
 <CardGroup cols={2}>
   <Card
     title="Primeiros Passos"
-    href="/quickstart"
     icon="rocket"
+    href="/primeiros-passos/acessar-sistema"
   >
-    Configure sua primeira integração de CT-e em minutos
+    Guia completo para começar a usar o sistema
   </Card>
   <Card
-    title="Visão Geral CT-e"
-    href="/documents/cte/overview"
-    icon="file-text"
+    title="Recuperar Senha"
+    icon="key"
+    href="/primeiros-passos/recuperar-senha"
   >
-    Conheça todos os detalhes sobre Conhecimento de Transporte Eletrônico
+    Esqueceu sua senha? Veja como recuperar
   </Card>
 </CardGroup>
 
-## Suporte
+## Por que o Hades é Diferente?
 
-Precisa de ajuda com CT-e? Nossa equipe especializada está sempre disponível:
-
-- 📧 **Email**: suporte@managersaas.com
-- 📚 **Documentação**: docs.managersaas.com
-- 🚀 **Dashboard**: dashboard.managersaas.com
+<AccordionGroup>
+  <Accordion title="Simples e Intuitivo">
+    Interface moderna e fácil de usar, não precisa ser expert em tecnologia
+  </Accordion>
+  <Accordion title="Acesso Mobile">
+    Aplicativo nativo para iOS e Android, acesse de qualquer lugar
+  </Accordion>
+  <Accordion title="Notificações em Tempo Real">
+    Receba avisos importantes instantaneamente no seu celular
+  </Accordion>
+  <Accordion title="Seguro">
+    Seus dados protegidos com as melhores práticas de segurança
+  </Accordion>
+  <Accordion title="Suporte Nacional">
+    Atendimento em português com equipe especializada
+  </Accordion>
+</AccordionGroup>
 
 ---
 
-*Manager SaaS CT-e - Simplificando a gestão fiscal de transporte do seu negócio*
-
+**Pronto para começar?** Escolha seu perfil acima e descubra tudo que o Hades pode fazer por você!

@@ -1,44 +1,111 @@
-# Mintlify Starter Kit
+# 📚 Documentação Hades Condomínios
 
-Use the starter kit to get your docs deployed and ready to customize.
+Documentação completa do sistema Hades focada no usuário final (não-técnica).
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## 🎯 Objetivo
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+Esta documentação foi criada para **moradores, síndicos, porteiros e administradores** de condomínios que usam o sistema Hades. O foco é em **como usar** o sistema, não em aspectos técnicos de desenvolvimento.
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+## 📖 Estrutura
 
-## Development
+### Para Moradores
+- ✅ Avisos e comunicados
+- ✅ Reservas de áreas comuns
+- ✅ Encomendas na portaria
+- ✅ Controle de visitantes
+- ✅ Reclamações e chamados
+- ✅ Enquetes e votações
+- ✅ Cadastro de veículos e pets
+- ✅ Gestão de perfil
+- ✅ Boletos e pagamentos
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+### Para Síndicos
+- ✅ Dashboard gerencial
+- ✅ Gestão de moradores e apartamentos
+- ✅ Criação e gerenciamento de avisos
+- ✅ Gestão de enquetes e reuniões
+- ✅ Controle de áreas comuns e reservas
+- ✅ Gestão de ocorrências
+- ✅ Financeiro completo
+- ✅ Relatórios e análises
+
+### Para Porteiros
+- ✅ Registro de visitantes
+- ✅ Controle de entrada/saída
+- ✅ Gestão de encomendas
+- ✅ Registro de ocorrências
+
+### Primeiros Passos
+- ✅ Como acessar o sistema
+- ✅ Aplicativo mobile
+- ✅ Recuperar senha
+
+## 🛠️ Tecnologia
+
+Esta documentação usa [Mintlify](https://mintlify.com), uma plataforma moderna para documentação.
+
+### Desenvolvimento Local
+
+```bash
+cd docs
+npm install -g mintlify
+mintlify dev
+```
+
+Acesse: `http://localhost:3000`
+
+### Deploy
+
+A documentação pode ser hospedada em:
+- Mintlify Cloud (recomendado)
+- Vercel
+- Netlify
+- Qualquer servidor web estático
+
+## 📝 Contribuir
+
+Para adicionar ou atualizar documentação:
+
+1. Edite os arquivos `.mdx` nas pastas apropriadas
+2. Siga o padrão de escrita clara e objetiva
+3. Use linguagem simples, sem jargões técnicos
+4. Inclua exemplos práticos
+5. Adicione imagens quando útil
+
+## 🗂️ Organização de Arquivos
 
 ```
-npm i -g mint
+docs/
+├── index.mdx                 # Página inicial
+├── docs.json                 # Configuração de navegação
+├── primeiros-passos/         # Guias iniciais
+├── moradores/                # Documentação para moradores
+├── sindicos/                 # Documentação para síndicos
+├── porteiros/                # Documentação para porteiros
+└── funcionalidades/          # Funcionalidades gerais
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+## 🎨 Componentes Mintlify
 
-```
-mint dev
-```
+A documentação usa componentes especiais:
 
-View your local preview at `http://localhost:3000`.
+- `<Card>` - Cartões destacados
+- `<CardGroup>` - Grupo de cartões
+- `<Steps>` - Passos numerados
+- `<Tabs>` - Abas
+- `<Accordion>` - Conteúdo recolhível
+- `<Check>` - Lista de checagem
+- `<Warning>` - Avisos importantes
+- `<Info>` - Informações adicionais
+- `<Tip>` - Dicas úteis
 
-## Publishing changes
+## 📞 Suporte
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+Para dúvidas sobre o sistema Hades:
+- 🌐 Site: hadescondo.com.br
+- 📧 Email: contato@hadescondo.com.br
 
-## Need help?
+---
 
-### Troubleshooting
+**Documentação criada para facilitar o uso do Hades por todos!** 🏢✨
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
-- [Mintlify community](https://mintlify.com/community)
